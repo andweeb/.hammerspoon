@@ -136,7 +136,6 @@ local function createWorkflowEvents(Ki)
 
     local fileWorkflowEvents = {
         { nil, "c", File:new("~/Code"), { "Files", "Code" } },
-        { nil, "v", File:new("~/Documents/Virtual Machines"), { "Files", "Virtual Machines" } },
         { { "alt" }, "d", File:new("~/Dropbox"), { "Files", "Dropbox" } },
     }
 
