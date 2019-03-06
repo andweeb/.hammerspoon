@@ -73,17 +73,39 @@ local function createVLC(Application)
     return Application:new("VLC", vlcShortcuts)
 end
 
+-- Create ClipboardText entity
+local function createClipboardTextEntity(Entity)
+    local function convertBase64Event(translation)
+        return function()
+            local clipboardText = hs.pasteboard.getContents()
+            hs.pasteboard.setContents(hs.base64[translation](clipboardText))
+        end
+    end
+    local actions = {
+         encodeBase64Text = convertBase64Event("encode"),
+         decodeBase64Text = convertBase64Event("decode"),
+    }
+    local shortcuts = {
+        { nil, "d", actions.decodeBase64Text, { "Clipboard Text", "Decode Base64" } },
+        { nil, "e", actions.encodeBase64Text, { "Clipboard Text", "Encode Base64" } },
+    }
+
+    return Entity:new("ClipboardText", shortcuts, true)
+end
+
 -- Create custom Ki workflow events
 local function createWorkflowEvents(Ki)
     local File = Ki.File
+    local Entity = Ki.Entity
     local Application = Ki.Application
 
+    -- Applications
     local Alacritty = Application:new("Alacritty")
     local Discord = Application:new("Discord")
     local IINA = createIINA(Application)
     local iTerm = createiTerm(Application)
     local Hammerspoon = Application:new("Hammerspoon")
-    local Slack = Application:new("Sblack")
+    local Sblack = Application:new("Sblack")
     local ScriptEditor = Application:new("Script Editor")
     local MicrosoftOutlook = createMicrosoftOutlook(Application)
     local MicrosoftExcel = Application:new("Microsoft Excel")
@@ -93,11 +115,15 @@ local function createWorkflowEvents(Ki)
     local VMWareFusion = Application:new("VMware Fusion")
     local VLC = createVLC(Application)
 
+    -- Custom Desktop Entities
+    local ClipboardText = createClipboardTextEntity(Entity)
+
     local entityWorkflowEvents = {
         { nil, "a", Alacritty, { "Entities", "Alacritty" } },
         { nil, "e", MicrosoftExcel, { "Entities", "Microsoft Excel" } },
         { nil, "w", MicrosoftWord, { "Entities", "Microsoft Word" } },
         { nil, "v", VMWareFusion, { "Entities", "VMware Fusion" } },
+        { { "cmd" }, "c", ClipboardText, { "Entities", "Clipboard Text" } },
         { { "ctrl" }, "s", ScriptEditor, { "Entities", "Script Editor" } },
         { { "shift" }, "d", Discord, { "Entities", "Discord" } },
         { { "shift" }, "i", IINA, { "Entities", "IINA" } },
@@ -107,7 +133,7 @@ local function createWorkflowEvents(Ki)
         { { "shift" }, "v", VLC, { "Entities", "VLC" } },
         { { "shift", "cmd" }, "m", MicrosoftOutlook, { "Entities", "Microsoft Outlook" } },
         { { "shift", "cmd" }, "p", Postico, { "Entities", "Postico" } },
-        { { "shift", "cmd" }, "s", Slack, { "Entities", "Sblack" } },
+        { { "shift", "cmd" }, "s", Sblack, { "Entities", "Sblack" } },
     }
 
     local selectEntityWorkflowEvents = {
