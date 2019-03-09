@@ -75,6 +75,12 @@ end
 
 -- Create ClipboardText entity
 local function createClipboardTextEntity(Entity)
+    local function updateTextCaseEvent(case)
+        return function()
+            local clipboardText = hs.pasteboard.getContents()
+            hs.pasteboard.setContents(clipboardText[case](clipboardText))
+        end
+    end
     local function convertBase64Event(translation)
         return function()
             local clipboardText = hs.pasteboard.getContents()
@@ -82,12 +88,16 @@ local function createClipboardTextEntity(Entity)
         end
     end
     local actions = {
-         encodeBase64Text = convertBase64Event("encode"),
-         decodeBase64Text = convertBase64Event("decode"),
+        lowercase = updateTextCaseEvent("lower"),
+        uppercase = updateTextCaseEvent("upper"),
+        encodeBase64Text = convertBase64Event("encode"),
+        decodeBase64Text = convertBase64Event("decode"),
     }
     local shortcuts = {
         { nil, "d", actions.decodeBase64Text, { "Clipboard Text", "Decode Base64" } },
         { nil, "e", actions.encodeBase64Text, { "Clipboard Text", "Encode Base64" } },
+        { nil, "l", actions.lowercase, { "Clipboard Text", "Convert Text to Lowercase" } },
+        { nil, "u", actions.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
     }
 
     return Entity:new("ClipboardText", shortcuts, true)
