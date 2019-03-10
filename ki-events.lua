@@ -166,6 +166,7 @@ local function createWorkflowEvents(Ki)
     local urlWorkflowEvents = {
         { nil, "b", urlEvent("https://www.bankofamerica.com"), { "URL Events", "Bank Of America" } },
         { nil, "c", urlEvent("https://www.chase.com"), { "URL Events", "Chase" } },
+        { nil, "d", urlEvent("https://www.dropbox.com"), { "URL Events", "Dropbox" } },
         { { "cmd" }, "h", urlEvent("http://www.hammerspoon.org"), { "URL Events", "Hammerspoon" } },
         { { "shift" }, "a", urlEvent("https://www.airbnb.com"), { "URL Events", "Airbnb" } },
     }
