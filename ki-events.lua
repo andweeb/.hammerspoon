@@ -174,10 +174,12 @@ local function createWorkflowEvents(Ki)
 
     -- Applications
     local Alacritty = Application:new("Alacritty")
+    local AppStore = Application:new("App Store")
     local Discord = Application:new("Discord")
     local Hammerspoon = Application:new("Hammerspoon")
     local Sblack = Application:new("Sblack")
     local ScriptEditor = Application:new("Script Editor")
+    local Simulator = Application:new("Simulator")
     local MicrosoftExcel = Application:new("Microsoft Excel")
     local MicrosoftWord = Application:new("Microsoft Word")
     local Postico = Application:new("Postico")
@@ -198,6 +200,7 @@ local function createWorkflowEvents(Ki)
         { nil, "e", MicrosoftExcel, { "Entities", "Microsoft Excel" } },
         { nil, "w", MicrosoftWord, { "Entities", "Microsoft Word" } },
         { nil, "v", VMWareFusion, { "Entities", "VMware Fusion" } },
+        { { "cmd" }, "a", AppStore, { "Entities", "App Store" } },
         { { "cmd" }, "c", ClipboardText, { "Entities", "Clipboard Text" } },
         { { "ctrl" }, "s", ScriptEditor, { "Entities", "Script Editor" } },
         { { "shift" }, "d", Discord, { "Entities", "Discord" } },
@@ -206,6 +209,7 @@ local function createWorkflowEvents(Ki)
         { { "shift" }, "p", TablePlus, { "Entities", "TablePlus" } },
         { { "shift" }, "t", iTerm, { "Entities", "iTerm" } },
         { { "shift" }, "v", VLC, { "Entities", "VLC" } },
+        { { "alt", "cmd" }, "s", Simulator, { "Entities", "VMware Fusion" } },
         { { "shift", "cmd" }, "m", MicrosoftOutlook, { "Entities", "Microsoft Outlook" } },
         { { "shift", "cmd" }, "p", Postico, { "Entities", "Postico" } },
         { { "shift", "cmd" }, "s", Sblack, { "Entities", "Sblack" } },
