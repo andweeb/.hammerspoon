@@ -166,6 +166,20 @@ local function createClipboardTextEntity(Entity)
     return Entity:new("ClipboardText", shortcuts, true)
 end
 
+-- Create LIFX entity
+local function createLIFXLight(Entity, selector)
+    local function getenv(name)
+        local handle = io.popen(". ~/.lifx && printf $"..name)
+        local value = handle:read("*a")
+        handle:close()
+        return value
+    end
+
+    local LIFX = require("lifx-entity")
+
+    return LIFX:init(Entity, getenv("LIFX_TOKEN"), selector)
+end
+
 -- Create custom Ki workflow events
 local function createWorkflowEvents(Ki)
     local File = Ki.File
@@ -194,10 +208,12 @@ local function createWorkflowEvents(Ki)
 
     -- Custom Desktop Entities
     local ClipboardText = createClipboardTextEntity(Entity)
+    local BedroomLIFX = createLIFXLight(Entity, "label:Bedroom")
 
     local entityWorkflowEvents = {
         { nil, "a", Alacritty, { "Entities", "Alacritty" } },
         { nil, "e", MicrosoftExcel, { "Entities", "Microsoft Excel" } },
+        { nil, "l", BedroomLIFX, { "Entities", "Bedroom LIFX Light" } },
         { nil, "w", MicrosoftWord, { "Entities", "Microsoft Word" } },
         { nil, "v", VMWareFusion, { "Entities", "VMware Fusion" } },
         { { "cmd" }, "a", AppStore, { "Entities", "App Store" } },
