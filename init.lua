@@ -25,8 +25,3 @@ spoon.Ki.workflowEvents = workflowEvents
 
 -- Start Ki
 spoon.Ki:start()
-
--- Start Emojis spoon if available
-if pcall(hs.loadSpoon("Emojis")) then
-    spoon.Emojis:bindHotkeys({ toggle = { {"cmd"}, ";" } })
-end
