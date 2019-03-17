@@ -1,7 +1,17 @@
 local LifxEntity = {}
 
-function LifxEntity:init(Entity, token, selector)
+local function getenv(name)
+    local handle = io.popen(". ~/.lifx && printf $"..name)
+    local value = handle:read("*a")
+
+    handle:close()
+
+    return value
+end
+
+function LifxEntity:init(Entity, selector)
     local LIFX = Entity:subclass("LIFX")
+    local token = getenv("LIFX_TOKEN")
 
     function LIFX:initialize(selector, token, shortcuts)
         self.selector = selector
