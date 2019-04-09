@@ -25,6 +25,16 @@ function ClipboardTextEntity:init(Entity)
         end
     end
 
+    function ClipboardText.convertRtfToPlainText()
+        local text = hs.execute([[
+            osascript -e 'the clipboard as «class RTF »' | \
+                perl -ne 'print chr foreach unpack("C*",pack("H*",substr($_,11,-3)))' | \
+                textutil -stdin -stdout -convert txt
+        ]])
+        hs.pasteboard.setContents(text)
+        ClipboardText.notify("Clipboard RTF text converted to plain text")
+    end
+
     function ClipboardText.formatXML()
         -- Format XML with four-space indentation
         hs.execute("pbpaste | XMLLINT_INDENT='    ' xmllint --format - | pbcopy")
@@ -42,6 +52,7 @@ function ClipboardTextEntity:init(Entity)
         uppercase = ClipboardText.updateTextCaseEvent("upper"),
         encodeBase64Text = ClipboardText.convertBase64Event("encode"),
         decodeBase64Text = ClipboardText.convertBase64Event("decode"),
+        convertRtfToPlainText = ClipboardText.convertRtfToPlainText,
         formatXML = ClipboardText.formatXML,
         formatJSON = ClipboardText.formatJSON,
     }
@@ -50,6 +61,7 @@ function ClipboardTextEntity:init(Entity)
         { nil, "e", actions.encodeBase64Text, { "Clipboard Text", "Encode Base64" } },
         { nil, "j", actions.formatJSON, { "Clipboard Text", "Format JSON" } },
         { nil, "l", actions.lowercase, { "Clipboard Text", "Convert Text to Lowercase" } },
+        { nil, "r", actions.convertRtfToPlainText, { "Clipboard Text", "Convert RTF Text to Plain Text" } },
         { nil, "u", actions.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
         { nil, "x", actions.formatXML, { "Clipboard Text", "Format XML" } },
     }

@@ -29,7 +29,7 @@ local function createWorkflowEvents(Ki)
     local ClipboardText = require("ki-entities/clipboard-text"):init(Entity)
 
     -- Add some emoticons :^)
-    ClipboardText.shortcuts = ClipboardText.mergeShortcuts(shortcuts, {
+    ClipboardText.shortcuts = ClipboardText.mergeShortcuts(ClipboardText.shortcuts, {
         { { "shift" }, "d", function() hs.pasteboard.setContents("(งツ)ว") end, "(งツ)ว" },
         { { "shift" }, "s", function() hs.pasteboard.setContents("¯\\_(ツ)_/¯") end, "¯\\_(ツ)_/¯" },
     })
