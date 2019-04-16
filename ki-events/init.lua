@@ -1,3 +1,6 @@
+----------------------------------------------------------------------------------------------------
+-- Custom Ki events
+--
 local KiEvents = {}
 
 function KiEvents.require(file)
@@ -10,7 +13,7 @@ function KiEvents:init(Ki)
     local Entity = Ki.Entity
     local Application = Ki.Application
 
-    -- Applications
+    -- Basic application entities
     local Alacritty = Application:new("Alacritty")
     local AppStore = Application:new("App Store")
     local Discord = Application:new("Discord")
@@ -23,14 +26,14 @@ function KiEvents:init(Ki)
     local Postico = Application:new("Postico")
     local VMWareFusion = Application:new("VMware Fusion")
 
-    -- Applications with custom shortcuts
+    -- Application entities with custom shortcuts
     local IINA = self.require("iina"):init(Application)
     local iTerm = self.require("iterm"):init(Application)
     local MicrosoftOutlook = self.require("microsoft-outlook"):init(Application)
     local TablePlus = self.require("tableplus"):init(Application)
     local VLC = self.require("vlc"):init(Application)
 
-    -- Custom Desktop Entities
+    -- Custom entities
     local BedroomLIFX = self.require("lifx"):init(Entity, "label:Bedroom")
     local ClipboardText = self.require("clipboard-text"):init(Entity)
 
@@ -77,6 +80,8 @@ function KiEvents:init(Ki)
         { nil, "b", urlEvent("https://www.bankofamerica.com"), { "URL Events", "Bank Of America" } },
         { nil, "c", urlEvent("https://www.chase.com"), { "URL Events", "Chase" } },
         { nil, "d", urlEvent("https://www.dropbox.com"), { "URL Events", "Dropbox" } },
+        { nil, "s", urlEvent("https://stackoverflow.com"), { "URL Events", "Stack Overflow" } },
+        { nil, "t", urlEvent("http://twitch.tv"), { "URL Events", "Twitch" } },
         { { "cmd" }, "h", urlEvent("http://www.hammerspoon.org"), { "URL Events", "Hammerspoon" } },
         { { "shift" }, "a", urlEvent("https://www.airbnb.com"), { "URL Events", "Airbnb" } },
     }
