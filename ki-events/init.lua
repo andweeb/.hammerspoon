@@ -1,5 +1,11 @@
+local KiEvents = {}
+
+function KiEvents.require(file)
+    return require("ki-events/entities/"..file)
+end
+
 -- Create custom Ki workflow events
-local function createWorkflowEvents(Ki)
+function KiEvents:init(Ki)
     local File = Ki.File
     local Entity = Ki.Entity
     local Application = Ki.Application
@@ -18,21 +24,15 @@ local function createWorkflowEvents(Ki)
     local VMWareFusion = Application:new("VMware Fusion")
 
     -- Applications with custom shortcuts
-    local IINA = require("ki-entities/iina"):init(Application)
-    local iTerm = require("ki-entities/iterm"):init(Application)
-    local MicrosoftOutlook = require("ki-entities/microsoft-outlook"):init(Application)
-    local TablePlus = require("ki-entities/tableplus"):init(Application)
-    local VLC = require("ki-entities/vlc"):init(Application)
+    local IINA = self.require("iina"):init(Application)
+    local iTerm = self.require("iterm"):init(Application)
+    local MicrosoftOutlook = self.require("microsoft-outlook"):init(Application)
+    local TablePlus = self.require("tableplus"):init(Application)
+    local VLC = self.require("vlc"):init(Application)
 
     -- Custom Desktop Entities
-    local BedroomLIFX = require("ki-entities/lifx"):init(Entity, "label:Bedroom")
-    local ClipboardText = require("ki-entities/clipboard-text"):init(Entity)
-
-    -- Add some emoticons :^)
-    ClipboardText.shortcuts = ClipboardText.mergeShortcuts(ClipboardText.shortcuts, {
-        { { "shift" }, "d", function() hs.pasteboard.setContents("(งツ)ว") end, "(งツ)ว" },
-        { { "shift" }, "s", function() hs.pasteboard.setContents("¯\\_(ツ)_/¯") end, "¯\\_(ツ)_/¯" },
-    })
+    local BedroomLIFX = self.require("lifx"):init(Entity, "label:Bedroom")
+    local ClipboardText = self.require("clipboard-text"):init(Entity)
 
     local entityWorkflowEvents = {
         { nil, "a", Alacritty, { "Entities", "Alacritty" } },
@@ -94,4 +94,4 @@ local function createWorkflowEvents(Ki)
     }
 end
 
-return createWorkflowEvents
+return KiEvents

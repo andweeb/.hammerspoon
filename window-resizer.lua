@@ -1,30 +1,12 @@
----------------------------
--- Custom Window Resizer --
----------------------------
+----------------------------------------------------------------------------------------------------
+-- Custom Window Resizer
+--
+local WindowResizer = {}
 
-local windowResizer = {}
-
--- Disable animation and bind all resize functions
-hs.window.animationDuration = 0
-hs.hotkey.bind({ "alt" }, "left", function() windowResizer.moveWindowLeft() end)
-hs.hotkey.bind({ "alt" }, "right", function() windowResizer.moveWindowRight() end)
-hs.hotkey.bind({ "alt" }, "up", function() windowResizer.maximizeWindow() end)
-hs.hotkey.bind({ "alt" }, "down", function() windowResizer.centerWindow() end)
-hs.hotkey.bind({ "alt", "shift" }, "left", function() windowResizer.moveWindowUpperLeft() end)
-hs.hotkey.bind({ "alt", "shift" }, "right", function() windowResizer.moveWindowUpperRight() end)
-hs.hotkey.bind({ "alt", "cmd" }, "left", function() windowResizer.moveWindowBottomLeft() end)
-hs.hotkey.bind({ "alt", "cmd" }, "right", function() windowResizer.moveWindowBottomRight() end)
-hs.hotkey.bind({ "ctrl", "alt" }, "left", function() windowResizer.moveWindowOneSpace("left") end)
-hs.hotkey.bind({ "ctrl", "alt" }, "right", function() windowResizer.moveWindowOneSpace("right") end)
-hs.hotkey.bind({ "alt" }, "space", function() windowResizer.moveWindowToNextMonitor() end)
-
------------------------------
--- Window Resize Functions --
------------------------------
--- Move left --
-function windowResizer.moveWindowLeft()
+-- Move left
+function WindowResizer.moveWindowLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = window:frame()
 
     windowFrame.x = screenDimensions.x
@@ -35,10 +17,10 @@ function windowResizer.moveWindowLeft()
     window:setFrame(windowFrame)
 end
 
--- Move window to the right half --
-function windowResizer.moveWindowRight()
+-- Move window to the right half
+function WindowResizer.moveWindowRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = window:frame()
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
@@ -49,10 +31,10 @@ function windowResizer.moveWindowRight()
     window:setFrame(windowFrame)
 end
 
--- Move window to the upper left --
-function windowResizer.moveWindowUpperLeft()
+-- Move window to the upper left
+function WindowResizer.moveWindowUpperLeft()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = win:frame()
@@ -65,10 +47,10 @@ function windowResizer.moveWindowUpperLeft()
     win:setFrame(windowFrame)
 end
 
--- Move window to the upper right --
-function windowResizer.moveWindowUpperRight()
+-- Move window to the upper right
+function WindowResizer.moveWindowUpperRight()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = win:frame()
@@ -81,10 +63,10 @@ function windowResizer.moveWindowUpperRight()
     win:setFrame(windowFrame)
 end
 
--- Move window to the bottom left --
-function windowResizer.moveWindowBottomLeft()
+-- Move window to the bottom left
+function WindowResizer.moveWindowBottomLeft()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = win:frame()
 
     windowFrame.x = screenDimensions.x
@@ -95,10 +77,10 @@ function windowResizer.moveWindowBottomLeft()
     win:setFrame(windowFrame)
 end
 
--- Move window to the bottom right --
-function windowResizer.moveWindowBottomRight()
+-- Move window to the bottom right
+function WindowResizer.moveWindowBottomRight()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = win:frame()
@@ -111,18 +93,18 @@ function windowResizer.moveWindowBottomRight()
     win:setFrame(windowFrame)
 end
 
--- Maximize window --
-function windowResizer.maximizeWindow()
+-- Maximize window
+function WindowResizer.maximizeWindow()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
 
     win:setFrame(screenDimensions)
 end
 
--- Center window --
-function windowResizer.centerWindow()
+-- Center window
+function WindowResizer.centerWindow()
     local win = hs.window.focusedWindow()
-    local screenDimensions = windowResizer.getScreenDimensions()
+    local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = win:frame()
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w * 0.25)
@@ -133,8 +115,8 @@ function windowResizer.centerWindow()
     win:setFrame(windowFrame)
 end
 
--- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219) --
-function windowResizer.moveWindowOneSpace(direction)
+-- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219)
+function WindowResizer.moveWindowOneSpace(direction)
     local mouseOrigin = hs.mouse.getAbsolutePosition()
     local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
@@ -169,8 +151,8 @@ function windowResizer.moveWindowOneSpace(direction)
     hs.mouse.setAbsolutePosition(mouseOrigin)
 end
 
--- Move window to the next monitor --
-function windowResizer.moveWindowToNextMonitor()
+-- Move window to the next monitor
+function WindowResizer.moveWindowToNextMonitor()
     local win = hs.window.focusedWindow()
     local screenFrame = win:screen():frame()
     local nextScreenFrame = win:screen():next():frame()
@@ -184,9 +166,9 @@ function windowResizer.moveWindowToNextMonitor()
     win:setFrame(windowFrame)
 end
 
------------------------
--- Utility Functions --
------------------------
-function windowResizer.getScreenDimensions()
+-- Screen dimensions utility function
+function WindowResizer.getScreenDimensions()
     return hs.window.focusedWindow():screen():frame()
 end
+
+return WindowResizer

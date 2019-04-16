@@ -1,4 +1,14 @@
 std = {
-    globals = {'hs', 'os', 'require', 'print', pairs}
+    globals = {
+        'hs',
+        'spoon',
+        'io',
+        'os',
+        'require',
+        'print',
+        'pairs',
+        'table',
+        'setmetatable',
+    }
 }
 

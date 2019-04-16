@@ -17,7 +17,7 @@ function VLCEntity:init(Application)
         { nil, "s", actions.stop, { "Playback", "Stop" } },
     }
 
-    return Application:new("VLC", vlcShortcuts)
+    return Application:new("VLC", shortcuts)
 end
 
 return VLCEntity
