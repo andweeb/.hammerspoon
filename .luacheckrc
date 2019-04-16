@@ -9,6 +9,8 @@ std = {
         'pairs',
         'table',
         'setmetatable',
+        'tostring',
+        'pcall',
     }
 }
 

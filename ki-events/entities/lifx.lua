@@ -1,6 +1,7 @@
 local LifxEntity = {}
 
-local function getenv(name)
+-- TODO: Find a better way to read environment variable than to export from `.lifx` file
+function LifxEntity.getenv(name)
     local handle = io.popen(". ~/.lifx && printf $"..name)
     local value = handle:read("*a")
 
@@ -11,7 +12,7 @@ end
 
 function LifxEntity:init(Entity, selector)
     local LIFX = Entity:subclass("LIFX")
-    local token = getenv("LIFX_TOKEN")
+    local token = self.getenv("LIFX_TOKEN")
 
     function LIFX:initialize(selector, token, shortcuts)
         self.selector = selector
@@ -25,9 +26,16 @@ function LifxEntity:init(Entity, selector)
             Authorization = "Bearer "..self.token,
         }
 
-        hs.http.asyncPost(url, nil, headers, function(status, response)
-            if tostring(status):sub(1, 1) ~= "2" then
-                self.notifyError("Unable to communicate with LIFX light (status "..tostring(status)..")", response)
+        hs.http.asyncPost(url, nil, headers, function(status, rawResponse)
+            local success, response = pcall(function() return hs.json.decode(rawResponse) end)
+            local acceptedRequest = tostring(status):sub(1, 1) == "2"
+
+            if acceptedRequest and success and response.results then
+                for _, result in pairs(response.results) do
+                    self.notifyError(result.label.." light "..result.status, "")
+                end
+            else
+                self.notifyError("Error communicating with LIFX light (status "..tostring(status)..")", response)
             end
         end)
     end
