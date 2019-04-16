@@ -5,7 +5,7 @@ function ClipboardTextEntity:init(Entity)
 
     function ClipboardText.notify(message, isError)
         local title = "Ki - Clipboard Text Entity"
-        local details = isError and "Unable to manipulate text in clipboard" or "Result copied to the clipboard"
+        local details = isError and "Unable to manipulate text in clipboard" or hs.pasteboard.getContents()
         return hs.notify.show(title, message, details)
     end
 
@@ -47,6 +47,11 @@ function ClipboardTextEntity:init(Entity)
         ClipboardText.notify("Formatted JSON text in clipboard")
     end
 
+    function ClipboardText.formatSQL()
+        hs.execute("pbpaste | format-sql -p console_monochrome | pbcopy")
+        ClipboardText.notify("Formatted SQL text in clipboard")
+    end
+
     local actions = {
         lowercase = ClipboardText.updateTextCaseEvent("lower"),
         uppercase = ClipboardText.updateTextCaseEvent("upper"),
@@ -55,6 +60,7 @@ function ClipboardTextEntity:init(Entity)
         convertRtfToPlainText = ClipboardText.convertRtfToPlainText,
         formatXML = ClipboardText.formatXML,
         formatJSON = ClipboardText.formatJSON,
+        formatSQL = ClipboardText.formatSQL,
     }
     local shortcuts = {
         { nil, "d", actions.decodeBase64Text, { "Clipboard Text", "Decode Base64" } },
@@ -62,6 +68,7 @@ function ClipboardTextEntity:init(Entity)
         { nil, "j", actions.formatJSON, { "Clipboard Text", "Format JSON" } },
         { nil, "l", actions.lowercase, { "Clipboard Text", "Convert Text to Lowercase" } },
         { nil, "r", actions.convertRtfToPlainText, { "Clipboard Text", "Convert RTF Text to Plain Text" } },
+        { nil, "s", actions.formatSQL, { "Clipboard Text", "Format SQL" } },
         { nil, "u", actions.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
         { nil, "x", actions.formatXML, { "Clipboard Text", "Format XML" } },
     }
