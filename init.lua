@@ -12,20 +12,16 @@ hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function() hs.reload() end)
 --
 hs.loadSpoon("Ki")
 
-local workflowEvents = KiEvents:init(spoon.Ki)
+local events = KiEvents:init(spoon.Ki)
 
--- Merge any untracked local workflow events to the list of default ones if a local file exists
-if io.open("local-ki-events.lua", "rb") then
-    local createLocalWorkflowEvents = require("local-ki-events")
-    local localWorkflowEvents = createLocalWorkflowEvents(spoon.Ki)
-
-    setmetatable(localWorkflowEvents, spoon.Ki:_createEventsMetatable(true))
-
-    workflowEvents = localWorkflowEvents + workflowEvents
-end
+-- Configure events locally if a local event configurer exists
+pcall(function()
+    local LocalEventsConfigurer = require("local-event-configurer")
+    events = LocalEventsConfigurer:configure(spoon.Ki, events)
+end)
 
 -- Set custom workflows
-spoon.Ki.workflowEvents = workflowEvents
+spoon.Ki.workflowEvents = events
 
 -- Start Ki
 spoon.Ki:start()
