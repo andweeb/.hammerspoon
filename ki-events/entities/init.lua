@@ -9,6 +9,7 @@ end
 
 -- Create custom Ki workflow events
 function Entities:init(Ki)
+    local URL = Ki.URL
     local File = Ki.File
     local Entity = Ki.Entity
     local Application = Ki.Application
@@ -19,14 +20,22 @@ function Entities:init(Ki)
         end
     end
 
+    local Hammerspoon = URL:new("http://www.hammerspoon.org/docs/index.html")
+
+    Hammerspoon.paths = {
+        "http://www.hammerspoon.org",
+        "http://www.hammerspoon.org/docs/index.html",
+        "https://github.com/Hammerspoon/hammerspoon",
+    }
+
     local urls = {
         BoA = urlEvent("https://www.bankofamerica.com"),
         Chase = urlEvent("https://www.chase.com"),
         Dropbox = urlEvent("https://www.dropbox.com"),
         StackOverflow = urlEvent("https://stackoverflow.com"),
         Twitch = urlEvent("http://twitch.tv"),
-        Hammerspoon = urlEvent("http://www.hammerspoon.org"),
         Airbnb = urlEvent("https://www.airbnb.com"),
+        Hammerspoon = Hammerspoon,
     }
 
     local files = {
@@ -62,8 +71,9 @@ function Entities:init(Ki)
 
     -- Configure entities locally if a local configurer file exists
     pcall(function()
-        local LocalEntityConfigurer = require("ki-events/entities/local-entity-configurer")
-        LocalEntityConfigurer:configure(entities)
+        local LocalEntityConfigurer = self.require("local-entity-configurer")
+
+        LocalEntityConfigurer:configure(Ki, entities, files, urls)
     end)
 
     return urls, files, entities
