@@ -3,7 +3,7 @@
 --
 local WindowResizer = {}
 
--- Move left
+-- Move window to the left half
 function WindowResizer.moveWindowLeft()
     local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
@@ -67,12 +67,14 @@ end
 function WindowResizer.moveWindowBottomLeft()
     local win = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenWidth = screenDimensions.w
+    local screenHeight = screenDimensions.h
     local windowFrame = win:frame()
 
     windowFrame.x = screenDimensions.x
-    windowFrame.y = screenDimensions.h / 2
-    windowFrame.w = screenDimensions.w / 2
-    windowFrame.h = (screenDimensions.h / 2) + 50
+    windowFrame.y = screenDimensions.y + (screenHeight / 2) - 50
+    windowFrame.w = screenWidth / 2
+    windowFrame.h = (screenHeight / 2) + 50
 
     win:setFrame(windowFrame)
 end
@@ -85,8 +87,8 @@ function WindowResizer.moveWindowBottomRight()
     local screenHeight = screenDimensions.h
     local windowFrame = win:frame()
 
-    windowFrame.x = screenWidth / 2
-    windowFrame.y = screenHeight / 2
+    windowFrame.x = screenDimensions.x + (screenWidth / 2)
+    windowFrame.y = screenDimensions.y + (screenHeight / 2) - 50
     windowFrame.w = screenWidth / 2
     windowFrame.h = (screenHeight / 2) + 50
 
