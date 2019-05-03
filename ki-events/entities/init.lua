@@ -57,7 +57,7 @@ function Entities:init(Ki)
         Postico = Application:new("Postico"),
         VMWareFusion = Application:new("VMware Fusion"),
 
-        -- Application entities with custom shortcuts
+        -- Require external application entities
         IINA = self.require("iina"):init(Application),
         iTerm = self.require("iterm"):init(Application),
         MicrosoftOutlook = self.require("microsoft-outlook"):init(Application),
