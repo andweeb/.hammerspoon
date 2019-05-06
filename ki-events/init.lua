@@ -48,6 +48,7 @@ function Events:init(Ki)
         { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
         { nil, "c", urls.Chase, { "URL Events", "Chase" } },
         { nil, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
+        { nil, "m", urls.FacebookMessenger, { "URL Events", "Facebook Messenger" } },
         { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
         { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
         { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },

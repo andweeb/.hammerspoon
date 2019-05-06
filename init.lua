@@ -17,7 +17,11 @@ local events = KiEvents:init(spoon.Ki)
 -- Configure events locally if a local event configurer exists
 pcall(function()
     local LocalEventsConfigurer = require("local-event-configurer")
-    events = LocalEventsConfigurer:configure(spoon.Ki, events)
+    local localEvents = LocalEventsConfigurer:configure(spoon.Ki, KiEvents)
+
+    setmetatable(localEvents, spoon.Ki:_createEventsMetatable(true))
+
+    events = localEvents + events
 end)
 
 -- Set custom workflows
