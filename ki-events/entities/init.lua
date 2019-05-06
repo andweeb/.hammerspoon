@@ -20,8 +20,8 @@ function Entities:init(Ki)
         end
     end
 
+    local FacebookMessenger = self.require("facebook-messenger"):init(URL)
     local Hammerspoon = URL:new("http://www.hammerspoon.org/docs/index.html")
-
     Hammerspoon.paths = {
         "http://www.hammerspoon.org",
         "http://www.hammerspoon.org/docs/index.html",
@@ -35,6 +35,7 @@ function Entities:init(Ki)
         StackOverflow = urlEvent("https://stackoverflow.com"),
         Twitch = urlEvent("http://twitch.tv"),
         Airbnb = urlEvent("https://www.airbnb.com"),
+        FacebookMessenger = FacebookMessenger,
         Hammerspoon = Hammerspoon,
     }
 
