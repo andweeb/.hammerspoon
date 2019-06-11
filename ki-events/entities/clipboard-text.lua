@@ -28,6 +28,13 @@ function ClipboardTextEntity:init(Entity)
         end
     end
 
+    function ClipboardText.dottedCaseToNormal()
+        local clipboardText = hs.pasteboard.getContents()
+        local convertedText = clipboardText:gsub("%.", " ")
+        hs.pasteboard.setContents(convertedText)
+        ClipboardText.notify("Clipboard text in normal case")
+    end
+
     function ClipboardText.convertBase64Event(translation)
         return function()
             local clipboardText = hs.pasteboard.getContents()
@@ -66,6 +73,7 @@ function ClipboardTextEntity:init(Entity)
     local actions = {
         lowercase = ClipboardText.updateTextCaseEvent("lower"),
         uppercase = ClipboardText.updateTextCaseEvent("upper"),
+        dottedCaseToNormal = ClipboardText.dottedCaseToNormal,
         encodeBase64Text = ClipboardText.convertBase64Event("encode"),
         decodeBase64Text = ClipboardText.convertBase64Event("decode"),
         convertRtfToPlainText = ClipboardText.convertRtfToPlainText,
@@ -84,6 +92,7 @@ function ClipboardTextEntity:init(Entity)
         { nil, "u", actions.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
         { nil, "x", actions.formatXML, { "Clipboard Text", "Format XML" } },
         { { "cmd" }, "e", actions.selectEmoji, { "Clipboard Text", "Copy an Emoji" } },
+        { { "shift" }, "d", actions.dottedCaseToNormal, { "Clipboard Text", "Convert Dotted Text Case to Normal" } },
     }
 
     ClipboardText:initialize("Clipboard Text", shortcuts, true)
