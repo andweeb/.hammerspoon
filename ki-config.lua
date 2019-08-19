@@ -12,7 +12,7 @@ local function requireEntity(type, file)
 end
 local function getEnvironmentVariable(name)
     local variable = hs.execute("printenv "..name, true)
-    return variable:gsub("n", "")
+    return variable:gsub("\n", "")
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -98,6 +98,7 @@ local files = {
 }
 
 -- Create custom application entities
+local BedroomLIFX = requireEntity("entity", "lifx")
 local entities = {
     -- Basic application entities
     Alacritty = Application:new("Alacritty"),
@@ -120,12 +121,9 @@ local entities = {
     VLC = requireEntity("entity", "vlc"),
 
     -- Custom non-application entities
-    BedroomLIFX = requireEntity("entity", "lifx"),
+    BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
     ClipboardText = requireEntity("entity", "clipboard-text"),
 }
-
--- Initialize bedroom LIFX light
-entities.BedroomLIFX:initialize("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"))
 
 ----------------------------------------------------------------------------------------------------
 -- Define custom workflow events for various modes
