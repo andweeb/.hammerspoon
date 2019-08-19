@@ -1,10 +1,12 @@
 ----------------------------------------------------------------------------------------------------
 -- Main init file
 --
-local WindowResizer = require("window-resizer")
 
 -- Reload Hammerspoon hotkey
 hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function() hs.reload() end)
+
+-- Disable window animation
+hs.window.animationDuration = 0
 
 ----------------------------------------------------------------------------------------------------
 -- Load, initialize, and configure Ki
@@ -22,22 +24,3 @@ end
 
 -- Start Ki
 spoon.Ki:start()
-
-----------------------------------------------------------------------------------------------------
--- Bind window resizer hotkeys
---
--- Disable animation and bind all resize functions
-hs.window.animationDuration = 0
-hs.hotkey.bind({ "alt" }, "left", function() WindowResizer.moveWindowLeft() end)
-hs.hotkey.bind({ "alt" }, "right", function() WindowResizer.moveWindowRight() end)
-hs.hotkey.bind({ "alt" }, "up", function() WindowResizer.maximizeWindow() end)
-hs.hotkey.bind({ "alt" }, "down", function() WindowResizer.centerWindow() end)
-hs.hotkey.bind({ "alt", "shift" }, "left", function() WindowResizer.moveWindowUpperLeft() end)
-hs.hotkey.bind({ "alt", "shift" }, "right", function() WindowResizer.moveWindowUpperRight() end)
-hs.hotkey.bind({ "alt", "cmd" }, "left", function() WindowResizer.moveWindowBottomLeft() end)
-hs.hotkey.bind({ "alt", "cmd" }, "right", function() WindowResizer.moveWindowBottomRight() end)
-hs.hotkey.bind({ "ctrl", "alt" }, "left", function() WindowResizer.moveWindowOneSpace("left") end)
-hs.hotkey.bind({ "ctrl", "alt" }, "right", function() WindowResizer.moveWindowOneSpace("right") end)
-hs.hotkey.bind({ "alt" }, "space", function() WindowResizer.moveWindowToNextMonitor() end)
-
-----------------------------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 local Ki = spoon.Ki
 local File = spoon.Ki.File
 local Application = spoon.Ki.Application
+local WindowResizer = require("window-resizer")
 
 -- Helper functions
 local function requireEntity(type, file)
@@ -13,6 +14,54 @@ local function getEnvironmentVariable(name)
     local variable = hs.execute("printenv "..name, true)
     return variable:gsub("n", "")
 end
+
+----------------------------------------------------------------------------------------------------
+-- Define state and transition events for custom modes
+--
+
+-- Set custom state and transition events
+Ki.stateEvents = {
+    { name = "enterWindowMode", from = "normal", to = "window" },
+    { name = "enterWindowMode", from = "entity", to = "window" },
+    { name = "enterWindowMode", from = "select", to = "window" },
+    { name = "enterSelectMode", from = "window", to = "select" },
+    { name = "exitMode", from = "window", to = "desktop" },
+}
+Ki.transitionEvents = {
+    normal = {
+        {
+            {"cmd"}, "w",
+            function() Ki.state:enterWindowMode() end,
+            { "Normal Mode", "Transition to Window Mode" },
+        },
+    },
+    window = {
+        {
+            nil, "escape",
+            function() Ki.state:exitMode() end,
+            { "Window Mode", "Exit to Desktop Mode" },
+        },
+        {
+            {"cmd"}, "e",
+            function() Ki.state:enterEntityMode() end,
+            { "Window Mode", "Transition to Entity Mode" },
+        },
+    },
+    entity = {
+        {
+            {"cmd"}, "w",
+            function() Ki.state:enterWindowMode() end,
+            { "Entity Mode", "Transition to Window Mode" },
+        },
+    },
+    select = {
+        {
+            {"cmd"}, "w",
+            function() Ki.state:enterWindowMode() end,
+            { "Select Mode", "Transition to Window Mode" },
+        },
+    }
+}
 
 ----------------------------------------------------------------------------------------------------
 -- Create custom ki entities
@@ -79,10 +128,10 @@ local entities = {
 entities.BedroomLIFX:initialize("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"))
 
 ----------------------------------------------------------------------------------------------------
--- Define workflow events from ki entities created above
+-- Define custom workflow events for various modes
 --
 
--- Define entity workflow events
+-- Define entity mode workflow events
 local entityWorkflowEvents = {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
@@ -104,7 +153,7 @@ local entityWorkflowEvents = {
     { { "shift", "cmd" }, "s", entities.Slack, { "Entities", "Slack" } },
 }
 
--- Define select workflow events
+-- Define select mode workflow events
 local selectEntityWorkflowEvents = {
     { nil, "e", entities.MicrosoftExcel, { "Select Events", "Select a Microsoft Excel window" } },
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
@@ -117,7 +166,7 @@ local selectEntityWorkflowEvents = {
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Select Events", "Select a Microsoft Outlook window" } },
 }
 
--- Define URL workflow events
+-- Define URL mode workflow events
 local urlWorkflowEvents = {
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
@@ -131,10 +180,27 @@ local urlWorkflowEvents = {
     { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
 }
 
--- Define file workflow events
+-- Define file mode workflow events
 local fileWorkflowEvents = {
     { nil, "c", files.Code, { "Files", "Code" } },
     { { "alt" }, "d", files.Dropbox, { "Files", "Dropbox" } },
+}
+
+-- Define window mode workflow events
+local function moveWindowOneSpaceLeft() WindowResizer.moveWindowOneSpace("left") end
+local function moveWindowOneSpaceRight() WindowResizer.moveWindowOneSpace("right") end
+local windowWorkflowEvents = {
+    { nil, "h", WindowResizer.moveWindowLeft, { "Window Mode", "Move Window Left" } },
+    { nil, "j", WindowResizer.centerWindow, { "Window Mode", "Center Window" } },
+    { nil, "k", WindowResizer.maximizeWindow, { "Window Mode", "Maximize Window" } },
+    { nil, "l", WindowResizer.moveWindowRight, { "Window Mode", "Move Window Right" } },
+    { nil, "space", WindowResizer.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
+    { { "ctrl" }, "h", WindowResizer.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
+    { { "ctrl" }, "l", WindowResizer.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
+    { { "shift" }, "h", WindowResizer.moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
+    { { "shift" }, "l", WindowResizer.moveWindowUpperRight,{ "Window Mode", "Move Window Upper Right" } },
+    { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
+    { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
 }
 
 -- Save custom entities to reference in local configs
@@ -148,4 +214,5 @@ Ki.workflowEvents = {
     select = selectEntityWorkflowEvents,
     url = urlWorkflowEvents,
     file = fileWorkflowEvents,
+    window = windowWorkflowEvents,
 }
