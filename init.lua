@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 -- Main init file
 --
-local KiEvents = require("ki-events")
 local WindowResizer = require("window-resizer")
 
 -- Reload Hammerspoon hotkey
@@ -12,20 +11,14 @@ hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function() hs.reload() end)
 --
 hs.loadSpoon("Ki")
 
-local events = KiEvents:init(spoon.Ki)
+-- Configure ki
+require("ki-config")
 
--- Configure events locally if a local event configurer exists
-pcall(function()
-    local LocalEventsConfigurer = require("local-event-configurer")
-    local localEvents = LocalEventsConfigurer:configure(spoon.Ki, KiEvents)
-
-    setmetatable(localEvents, spoon.Ki:_createEventsMetatable(true))
-
-    events = localEvents + events
-end)
-
--- Set custom workflows
-spoon.Ki.workflowEvents = events
+-- Use local config if it exists
+local loadedOk, err = pcall(function() require("local-ki-config") end)
+if not loadedOk then
+    print("Unable to load local ki config, received error: "..err)
+end
 
 -- Start Ki
 spoon.Ki:start()
