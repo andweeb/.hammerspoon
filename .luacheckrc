@@ -7,6 +7,7 @@ std = {
         'require',
         'print',
         'pairs',
+        'ipairs',
         'table',
         'setmetatable',
         'tostring',
