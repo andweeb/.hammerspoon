@@ -5,7 +5,7 @@ local URL = spoon.Ki.URL
 
 local baseURL = "http://www.hammerspoon.org"
 local baseGithubURL = "https://github.com/Hammerspoon/hammerspoon"
-local Hammerspoon = URL:new(baseURL.."/docs/index.html")
+local Hammerspoon = URL:new(baseURL)
 
 Hammerspoon.paths = {
     -- Main routes
