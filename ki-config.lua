@@ -123,6 +123,7 @@ local entities = {
     -- Custom non-application entities
     BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
     ClipboardText = requireEntity("entity", "clipboard-text"),
+    Emoji = requireEntity("entity", "emoji"),
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -137,6 +138,7 @@ local entityWorkflowEvents = {
     { nil, "w", entities.MicrosoftWord, { "Entities", "Microsoft Word" } },
     { nil, "v", entities.VMWareFusion, { "Entities", "VMware Fusion" } },
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
+    { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
     { { "shift" }, "d", entities.Discord, { "Entities", "Discord" } },
