@@ -61,6 +61,11 @@ function ClipboardText.formatSQL()
     ClipboardText.notify("Formatted SQL text in clipboard")
 end
 
+function ClipboardText.openURL()
+    local copiedURL = hs.pasteboard.getContents()
+    hs.urlevent.openURL(copiedURL)
+end
+
 local actions = {
     lowercase = ClipboardText.updateTextCaseEvent("lower"),
     uppercase = ClipboardText.updateTextCaseEvent("upper"),
@@ -71,6 +76,7 @@ local actions = {
     formatXML = ClipboardText.formatXML,
     formatJSON = ClipboardText.formatJSON,
     formatSQL = ClipboardText.formatSQL,
+    openURL = ClipboardText.openURL,
 }
 
 local shortcuts = {
@@ -82,6 +88,7 @@ local shortcuts = {
     { nil, "s", actions.formatSQL, { "Clipboard Text", "Format SQL" } },
     { nil, "u", actions.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
     { nil, "x", actions.formatXML, { "Clipboard Text", "Format XML" } },
+    { nil, "space", actions.openURL, { "Clipboard Text", "Open Copied URL" } },
     { { "shift" }, "d", actions.dottedCaseToNormal, { "Clipboard Text", "Convert Dotted Text Case to Normal" } },
 }
 
