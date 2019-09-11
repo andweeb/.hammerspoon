@@ -2,6 +2,9 @@
 -- Main init file
 --
 
+-- Start IPC module
+require("hs.ipc")
+
 -- Reload Hammerspoon hotkey
 hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function() hs.reload() end)
 
