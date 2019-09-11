@@ -78,6 +78,7 @@ local Reddit = requireEntity("url", "reddit")
 local FacebookMessenger = requireEntity("url", "messenger")
 local Hammerspoon = requireEntity("url", "hammerspoon")
 local Airbnb = requireEntity("url", "airbnb")
+local DuckDuckGo = requireEntity("url", "duckduckgo")
 local urls = {
     BoA = openUrlEvent("https://www.bankofamerica.com"),
     Chase = openUrlEvent("https://www.chase.com"),
@@ -85,6 +86,7 @@ local urls = {
     StackOverflow = openUrlEvent("https://stackoverflow.com"),
     Twitch = openUrlEvent("http://twitch.tv"),
     Airbnb = Airbnb,
+    DuckDuckGo = DuckDuckGo,
     FacebookMessenger = FacebookMessenger,
     Github = Github,
     Hammerspoon = Hammerspoon,
@@ -104,6 +106,7 @@ local entities = {
     Alacritty = Application:new("Alacritty"),
     AppStore = Application:new("App Store"),
     Discord = Application:new("Discord"),
+    Firefox = Application:new("Firefox"),
     Hammerspoon = Application:new("Hammerspoon"),
     Slack = Application:new("Slack"),
     ScriptEditor = Application:new("Script Editor"),
@@ -113,9 +116,10 @@ local entities = {
     Postico = Application:new("Postico"),
     VMWareFusion = Application:new("VMware Fusion"),
 
-    -- Require external application entities
+    -- Require externally defined application entities
     IINA = requireEntity("entity", "iina"),
     iTerm = requireEntity("entity", "iterm"),
+    Keyboard = requireEntity("entity", "keyboard"),
     MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
     TablePlus = requireEntity("entity", "tableplus"),
     VLC = requireEntity("entity", "vlc"),
@@ -134,6 +138,7 @@ local entities = {
 local entityWorkflowEvents = {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
+    { nil, "k", entities.Keyboard, { "Entities", "Keyboard" } },
     { nil, "l", entities.BedroomLIFX, { "Entities", "Bedroom LIFX Light" } },
     { nil, "w", entities.MicrosoftWord, { "Entities", "Microsoft Word" } },
     { nil, "v", entities.VMWareFusion, { "Entities", "VMware Fusion" } },
@@ -142,6 +147,7 @@ local entityWorkflowEvents = {
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
     { { "shift" }, "d", entities.Discord, { "Entities", "Discord" } },
+    { { "shift" }, "f", entities.Firefox, { "Entities", "Firefox" } },
     { { "shift" }, "i", entities.IINA, { "Entities", "IINA" } },
     { { "shift" }, "h", entities.Hammerspoon, { "Entities", "Hammerspoon" } },
     { { "shift" }, "p", entities.TablePlus, { "Entities", "TablePlus" } },
@@ -170,12 +176,13 @@ local selectEntityWorkflowEvents = {
 local urlWorkflowEvents = {
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
-    { nil, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
+    { nil, "d", urls.DuckDuckGo, { "URL Events", "DuckDuckGo" } },
     { nil, "m", urls.FacebookMessenger, { "URL Events", "Facebook Messenger" } },
     { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
     { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
     { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
     { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
+    { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
     { { "shift" }, "a", urls.Airbnb, { "URL Events", "Airbnb" } },
     { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
 }
