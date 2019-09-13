@@ -2,6 +2,7 @@
 -- Configure Ki
 --
 local Ki = spoon.Ki
+local URL = spoon.Ki.URL
 local File = spoon.Ki.File
 local Application = spoon.Ki.Application
 local WindowResizer = require("window-resizer")
@@ -21,11 +22,15 @@ end
 
 -- Set custom state and transition events
 Ki.stateEvents = {
+    -- Window Mode
     { name = "enterWindowMode", from = "normal", to = "window" },
     { name = "enterWindowMode", from = "entity", to = "window" },
     { name = "enterWindowMode", from = "select", to = "window" },
     { name = "enterSelectMode", from = "window", to = "select" },
     { name = "exitMode", from = "window", to = "desktop" },
+    -- Search Mode
+    { name = "enterSearchMode", from = "normal", to = "search" },
+    { name = "exitMode", from = "search", to = "desktop" },
 }
 Ki.transitionEvents = {
     normal = {
@@ -33,6 +38,18 @@ Ki.transitionEvents = {
             {"cmd"}, "w",
             function() Ki.state:enterWindowMode() end,
             { "Normal Mode", "Transition to Window Mode" },
+        },
+        {
+            {"shift", "cmd"}, "s",
+            function() Ki.state:enterSearchMode() end,
+            { "Normal Mode", "Transition to Search Mode" },
+        },
+    },
+    search = {
+        {
+            nil, "escape",
+            function() Ki.state:exitMode() end,
+            { "Search Mode", "Exit to Desktop Mode" },
         },
     },
     window = {
@@ -63,34 +80,32 @@ Ki.transitionEvents = {
     }
 }
 
+-- Add URL entity behavior for search mode to invoke
+-- a `search` method implemented on searchable URL entities
+URL.behaviors.search = function(self)
+    self:search()
+end
+
 ----------------------------------------------------------------------------------------------------
 -- Create custom ki entities
 --
 
 -- Create custom URL entities
-local function openUrlEvent(url)
-    return function()
-        return hs.urlevent.openURL(url)
-    end
-end
-local Github = requireEntity("url", "github")
-local Reddit = requireEntity("url", "reddit")
-local FacebookMessenger = requireEntity("url", "messenger")
-local Hammerspoon = requireEntity("url", "hammerspoon")
-local Airbnb = requireEntity("url", "airbnb")
-local DuckDuckGo = requireEntity("url", "duckduckgo")
 local urls = {
-    BoA = openUrlEvent("https://www.bankofamerica.com"),
-    Chase = openUrlEvent("https://www.chase.com"),
-    Dropbox = openUrlEvent("https://www.dropbox.com"),
-    StackOverflow = openUrlEvent("https://stackoverflow.com"),
-    Twitch = openUrlEvent("http://twitch.tv"),
-    Airbnb = Airbnb,
-    DuckDuckGo = DuckDuckGo,
-    FacebookMessenger = FacebookMessenger,
-    Github = Github,
-    Hammerspoon = Hammerspoon,
-    Reddit = Reddit,
+    Airbnb = requireEntity("url", "airbnb"),
+    Amazon = requireEntity("url", "amazon"),
+    BoA = URL:new("https://www.bankofamerica.com"),
+    Chase = URL:new("https://www.chase.com"),
+    Dropbox = URL:new("https://www.dropbox.com"),
+    DuckDuckGo = requireEntity("url", "duckduckgo"),
+    FacebookMessenger = requireEntity("url", "messenger"),
+    Github = requireEntity("url", "github"),
+    Hammerspoon = requireEntity("url", "hammerspoon"),
+    Reddit = requireEntity("url", "reddit"),
+    StackOverflow = URL:new("https://stackoverflow.com"),
+    Twitch = URL:new("http://twitch.tv"),
+    Yelp = requireEntity("url", "yelp"),
+    YouTube = requireEntity("url", "youtube"),
 }
 
 -- Create custom file entities
@@ -174,6 +189,7 @@ local selectEntityWorkflowEvents = {
 
 -- Define URL mode workflow events
 local urlWorkflowEvents = {
+    { nil, "a", urls.Amazon, { "URL Events", "Amazon" } },
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
     { nil, "d", urls.DuckDuckGo, { "URL Events", "DuckDuckGo" } },
@@ -181,10 +197,20 @@ local urlWorkflowEvents = {
     { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
     { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
     { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
+    { nil, "y", urls.YouTube, { "URL Events", "YouTube" } },
     { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
     { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
     { { "shift" }, "a", urls.Airbnb, { "URL Events", "Airbnb" } },
     { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
+    { { "shift" }, "y", urls.Yelp, { "URL Events", "Yelp" } },
+}
+
+-- Define search mode workflow events
+local searchWorkflowEvents = {
+    { nil, "a", urls.Amazon, { "Search Events", "Amazon" } },
+    { nil, "d", urls.DuckDuckGo, { "Search Events", "DuckDuckGo" } },
+    { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
+    { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },
 }
 
 -- Define file mode workflow events
@@ -222,4 +248,5 @@ Ki.workflowEvents = {
     url = urlWorkflowEvents,
     file = fileWorkflowEvents,
     window = windowWorkflowEvents,
+    search = searchWorkflowEvents,
 }
