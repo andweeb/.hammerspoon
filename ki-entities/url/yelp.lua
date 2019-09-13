@@ -56,6 +56,6 @@ local shortcuts = {
     { nil, "s", actions.search, { "Yelp", "Search" } },
 }
 
-Yelp:initialize("Yelp", shortcuts, true)
+Yelp:initialize(baseURL, shortcuts)
 
 return Yelp

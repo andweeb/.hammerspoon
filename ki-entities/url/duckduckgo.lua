@@ -36,6 +36,6 @@ local shortcuts = {
     { nil, "s", actions.search, { "DuckDuckGo", "Search" } },
 }
 
-DuckDuckGo:initialize("DuckDuckGo", shortcuts, true)
+DuckDuckGo:initialize(baseURL, shortcuts)
 
 return DuckDuckGo

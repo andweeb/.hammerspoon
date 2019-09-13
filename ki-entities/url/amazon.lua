@@ -36,6 +36,6 @@ local shortcuts = {
     { nil, "s", actions.search, { "Amazon", "Search" } },
 }
 
-Amazon:initialize("Amazon", shortcuts, true)
+Amazon:initialize(baseURL, shortcuts)
 
 return Amazon

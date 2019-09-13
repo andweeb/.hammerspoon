@@ -36,6 +36,6 @@ local shortcuts = {
     { nil, "s", actions.search, { "YouTube", "Search" } },
 }
 
-YouTube:initialize("YouTube", shortcuts, true)
+YouTube:initialize(baseURL, shortcuts)
 
 return YouTube
