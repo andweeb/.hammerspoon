@@ -4,7 +4,15 @@
 local URL = spoon.Ki.URL
 
 local baseURL = "https://www.amazon.com"
+
 local Amazon = URL:new(baseURL)
+
+Amazon.paths = {
+    { name = "Account", path = "/gp/css/homepage.html" },
+    { name = "Order History", path = "/gp/css/order-history" },
+    { name = "Cart", path = "/gp/cart/view.html" },
+    { name = "Today's Deals", path = "/gp/goldbox" },
+}
 
 function Amazon:search()
     spoon.Ki.state:exitMode()
@@ -27,22 +35,5 @@ function Amazon:search()
         end
     end)
 end
-
-local actions = {
-    search = function() Amazon:search() end,
-}
-
-local shortcuts = {
-    { nil, "s", actions.search, { "Amazon", "Search" } },
-}
-
-Amazon:initialize(baseURL, shortcuts)
-
-Amazon.paths = {
-    { name = "Account", path = "/gp/css/homepage.html" },
-    { name = "Order History", path = "/gp/css/order-history" },
-    { name = "Cart", path = "/gp/cart/view.html" },
-    { name = "Today's Deals", path = "/gp/goldbox" },
-}
 
 return Amazon

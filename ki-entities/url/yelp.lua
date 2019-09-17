@@ -48,14 +48,4 @@ function Yelp:search()
     end)
 end
 
-local actions = {
-    search = function() Yelp:search() end,
-}
-
-local shortcuts = {
-    { nil, "s", actions.search, { "Yelp", "Search" } },
-}
-
-Yelp:initialize(baseURL, shortcuts)
-
 return Yelp

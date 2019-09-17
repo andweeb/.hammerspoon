@@ -6,6 +6,15 @@ local URL = spoon.Ki.URL
 local baseURL = "https://www.youtube.com"
 local YouTube = URL:new(baseURL)
 
+YouTube.paths = {
+    { name = "YouTube", path = "https://youtube.com" },
+    { name = "Trending", path = "/feed/trending" },
+    { name = "Subscriptions", path = "/feed/subscriptions" },
+    { name = "Library", path = "/feed/library" },
+    { name = "History", path = "/feed/history" },
+    { name = "Watch Later", path = "/playlist?list=WL" },
+}
+
 function YouTube:search()
     spoon.Ki.state:exitMode()
 
@@ -27,24 +36,5 @@ function YouTube:search()
         end
     end)
 end
-
-local actions = {
-    search = function() YouTube:search() end,
-}
-
-local shortcuts = {
-    { nil, "s", actions.search, { "YouTube", "Search" } },
-}
-
-YouTube:initialize(baseURL, shortcuts)
-
- YouTube.paths = {
-     { name = "YouTube", path = "https://youtube.com" },
-     { name = "Trending", path = "/feed/trending" },
-     { name = "Subscriptions", path = "/feed/subscriptions" },
-     { name = "Library", path = "/feed/library" },
-     { name = "History", path = "/feed/history" },
-     { name = "Watch Later", path = "/playlist?list=WL" },
- }
 
 return YouTube
