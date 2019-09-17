@@ -3,7 +3,6 @@
 --
 local Entity = spoon.Ki.Entity
 
-local NotificationCenter = Entity:new("NotificationCenter")
 local applescriptLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/notification-center.applescript")
 
 local actions = {}
@@ -23,6 +22,4 @@ local shortcuts = {
     { nil, "delete", actions.dismissNotifications, { "Notification Center", "Dismiss Notifications" } }
 }
 
-NotificationCenter:initialize("NotificationCenter", shortcuts, true)
-
-return NotificationCenter
+return Entity:new("NotificationCenter", shortcuts)
