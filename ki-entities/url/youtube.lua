@@ -38,4 +38,13 @@ local shortcuts = {
 
 YouTube:initialize(baseURL, shortcuts)
 
+ YouTube.paths = {
+     { name = "YouTube", path = "https://youtube.com" },
+     { name = "Trending", path = "/feed/trending" },
+     { name = "Subscriptions", path = "/feed/subscriptions" },
+     { name = "Library", path = "/feed/library" },
+     { name = "History", path = "/feed/history" },
+     { name = "Watch Later", path = "/playlist?list=WL" },
+ }
+
 return YouTube
