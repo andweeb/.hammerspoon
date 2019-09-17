@@ -17,6 +17,66 @@ local function getEnvironmentVariable(name)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- Create custom ki entities
+--
+
+-- Create custom URL entities
+local urls = {
+    Airbnb = requireEntity("url", "airbnb"),
+    Amazon = requireEntity("url", "amazon"),
+    BoA = URL:new("https://www.bankofamerica.com"),
+    Chase = URL:new("https://www.chase.com"),
+    Dropbox = URL:new("https://www.dropbox.com"),
+    DuckDuckGo = requireEntity("url", "duckduckgo"),
+    FacebookMessenger = requireEntity("url", "messenger"),
+    Github = requireEntity("url", "github"),
+    Hammerspoon = requireEntity("url", "hammerspoon"),
+    Reddit = requireEntity("url", "reddit"),
+    StackOverflow = URL:new("https://stackoverflow.com"),
+    Twitch = URL:new("http://twitch.tv"),
+    Yelp = requireEntity("url", "yelp"),
+    YouTube = requireEntity("url", "youtube"),
+}
+
+-- Create custom file entities
+local files = {
+    Code = File:new("~/Code"),
+    Dropbox = File:new("~/Dropbox"),
+}
+
+-- Create custom application entities
+local BedroomLIFX = requireEntity("entity", "lifx")
+local entities = {
+    -- Basic application entities
+    Alacritty = Application:new("Alacritty"),
+    AppStore = Application:new("App Store"),
+    Discord = Application:new("Discord"),
+    Firefox = Application:new("Firefox"),
+    Hammerspoon = Application:new("Hammerspoon"),
+    Slack = Application:new("Slack"),
+    ScriptEditor = Application:new("Script Editor"),
+    Simulator = Application:new("Simulator"),
+    MicrosoftExcel = Application:new("Microsoft Excel"),
+    MicrosoftWord = Application:new("Microsoft Word"),
+    Postico = Application:new("Postico"),
+    VMWareFusion = Application:new("VMware Fusion"),
+
+    -- Require externally defined application entities
+    IINA = requireEntity("entity", "iina"),
+    iTerm = requireEntity("entity", "iterm"),
+    Keyboard = requireEntity("entity", "keyboard"),
+    MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
+    NotificationCenter = requireEntity("entity", "notification-center"),
+    TablePlus = requireEntity("entity", "tableplus"),
+    VLC = requireEntity("entity", "vlc"),
+
+    -- Custom non-application entities
+    BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
+    ClipboardText = requireEntity("entity", "clipboard-text"),
+    Emoji = requireEntity("entity", "emoji"),
+}
+
+----------------------------------------------------------------------------------------------------
 -- Define state and transition events for custom modes
 --
 
@@ -87,65 +147,6 @@ URL.behaviors.search = function(self)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Create custom ki entities
---
-
--- Create custom URL entities
-local urls = {
-    Airbnb = requireEntity("url", "airbnb"),
-    Amazon = requireEntity("url", "amazon"),
-    BoA = URL:new("https://www.bankofamerica.com"),
-    Chase = URL:new("https://www.chase.com"),
-    Dropbox = URL:new("https://www.dropbox.com"),
-    DuckDuckGo = requireEntity("url", "duckduckgo"),
-    FacebookMessenger = requireEntity("url", "messenger"),
-    Github = requireEntity("url", "github"),
-    Hammerspoon = requireEntity("url", "hammerspoon"),
-    Reddit = requireEntity("url", "reddit"),
-    StackOverflow = URL:new("https://stackoverflow.com"),
-    Twitch = URL:new("http://twitch.tv"),
-    Yelp = requireEntity("url", "yelp"),
-    YouTube = requireEntity("url", "youtube"),
-}
-
--- Create custom file entities
-local files = {
-    Code = File:new("~/Code"),
-    Dropbox = File:new("~/Dropbox"),
-}
-
--- Create custom application entities
-local BedroomLIFX = requireEntity("entity", "lifx")
-local entities = {
-    -- Basic application entities
-    Alacritty = Application:new("Alacritty"),
-    AppStore = Application:new("App Store"),
-    Discord = Application:new("Discord"),
-    Firefox = Application:new("Firefox"),
-    Hammerspoon = Application:new("Hammerspoon"),
-    Slack = Application:new("Slack"),
-    ScriptEditor = Application:new("Script Editor"),
-    Simulator = Application:new("Simulator"),
-    MicrosoftExcel = Application:new("Microsoft Excel"),
-    MicrosoftWord = Application:new("Microsoft Word"),
-    Postico = Application:new("Postico"),
-    VMWareFusion = Application:new("VMware Fusion"),
-
-    -- Require externally defined application entities
-    IINA = requireEntity("entity", "iina"),
-    iTerm = requireEntity("entity", "iterm"),
-    Keyboard = requireEntity("entity", "keyboard"),
-    MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
-    TablePlus = requireEntity("entity", "tableplus"),
-    VLC = requireEntity("entity", "vlc"),
-
-    -- Custom non-application entities
-    BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
-    ClipboardText = requireEntity("entity", "clipboard-text"),
-    Emoji = requireEntity("entity", "emoji"),
-}
-
-----------------------------------------------------------------------------------------------------
 -- Define custom workflow events for various modes
 --
 
@@ -160,6 +161,7 @@ local entityWorkflowEvents = {
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
+    { { "ctrl" }, "n", entities.NotificationCenter, { "Entities", "Notification Center" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
     { { "shift" }, "d", entities.Discord, { "Entities", "Discord" } },
     { { "shift" }, "f", entities.Firefox, { "Entities", "Firefox" } },
@@ -235,6 +237,10 @@ local windowWorkflowEvents = {
     { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
     { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
 }
+
+----------------------------------------------------------------------------------------------------
+-- Finish up and finally set custom shortcuts
+--
 
 -- Save custom entities to reference in local configs
 Ki.customEntities = entities
