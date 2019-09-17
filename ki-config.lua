@@ -212,6 +212,7 @@ local searchWorkflowEvents = {
     { nil, "a", urls.Amazon, { "Search Events", "Amazon" } },
     { nil, "d", urls.DuckDuckGo, { "Search Events", "DuckDuckGo" } },
     { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
+    { { "shift" }, "g", urls.Github, { "Search Events", "Github" } },
     { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },
 }
 

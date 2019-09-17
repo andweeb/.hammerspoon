@@ -36,4 +36,26 @@ Github.paths = {
     { name = "New project", path = "/new/project" },
 }
 
+function Github:search()
+    spoon.Ki.state:exitMode()
+
+    hs.timer.doAfter(0, function()
+        hs.focus()
+
+        local choice, searchQuery =
+            hs.dialog.textPrompt("Ki - Github", "Enter Github search query:", "", "Search", "Cancel")
+
+        if choice == "Search" then
+            local success, encodedQuery, descriptor =
+                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
+
+            if success then
+                self.open(baseURL.."/search?q="..encodedQuery)
+            else
+                self.notifyError("Ki - Github", descriptor.NSLocalizedDescription)
+            end
+        end
+    end)
+end
+
 return Github
