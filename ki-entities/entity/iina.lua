@@ -7,6 +7,9 @@ local actions = {
     about = Application.createMenuItemEvent("About IINA", { focusAfter = true }),
     audioTrack = Application.createMenuItemSelectionEvent({ "Audio", "Audio Track" }),
     audioDevice = Application.createMenuItemSelectionEvent({ "Audio", "Audio Device" }),
+    chapters = Application.createMenuItemSelectionEvent({ "Playback", "Chapters" }, {
+        focusBefore = true,
+    }),
     jumpToBeginning = Application.createMenuItemEvent("Jump to Beginning", { focusBefore = true }),
     jumpToTime = Application.createMenuItemEvent("Jump to...", { focusBefore = true }),
     open = Application.createMenuItemEvent("Open...", { focusBefore = true }),
@@ -26,6 +29,7 @@ local actions = {
 
 local shortcuts = {
     { nil, "a", actions.about, { "IINA", "About IINA" } },
+    { nil, "c", actions.chapters, { "Playback", "Chapters" } },
     { nil, "j", actions.jumpToTime, { "Playback", "Jump to..." } },
     { nil, "n", actions.playNext, { "Playback", "Next Media" } },
     { nil, "o", actions.open, { "File", "Open..." } },
