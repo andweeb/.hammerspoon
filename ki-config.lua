@@ -34,6 +34,7 @@ local urls = {
     Reddit = requireEntity("url", "reddit"),
     StackOverflow = URL:new("https://stackoverflow.com"),
     Twitch = URL:new("http://twitch.tv"),
+    Wikipedia = requireEntity("url", "wikipedia"),
     Yelp = requireEntity("url", "yelp"),
     YouTube = requireEntity("url", "youtube"),
 }
@@ -199,6 +200,7 @@ local urlWorkflowEvents = {
     { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
     { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
     { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
+    { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "URL Events", "YouTube" } },
     { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
     { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
@@ -212,6 +214,7 @@ local searchWorkflowEvents = {
     { nil, "a", urls.Amazon, { "Search Events", "Amazon" } },
     { nil, "d", urls.DuckDuckGo, { "Search Events", "DuckDuckGo" } },
     { nil, "r", urls.Reddit, { "Search Events", "Reddit" } },
+    { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
     { { "shift" }, "g", urls.Github, { "Search Events", "Github" } },
     { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },
