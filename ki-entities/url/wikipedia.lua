@@ -1,11 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- Wikipedia URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local Wikipedia = DefaultUrlEntities.Wikipedia
 
-local baseURL = "https://en.wikipedia.org"
-
-local Wikipedia = URL:new(baseURL)
+Wikipedia.searchPath = "w/index.php"
+Wikipedia.queryParam = "search"
+Wikipedia.class:include(SearchMixin)
 
 Wikipedia.paths = {
     { name = "Main Page", path = "/wiki/Main_Page" },
@@ -13,27 +15,5 @@ Wikipedia.paths = {
     { name = "Current Events", path = "/wiki/Portal:Current_events" },
     { name = "Random Article", path = "/wiki/Special:Random" },
 }
-
-function Wikipedia:search()
-    spoon.Ki.state:exitMode()
-
-    hs.timer.doAfter(0, function()
-        hs.focus()
-
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - Wikipedia", "Enter Wikipedia search query:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local success, encodedQuery, descriptor =
-                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-            if success then
-                self.open(baseURL.."/w/index.php?search="..encodedQuery)
-            else
-                self.notifyError("Ki - Wikipedia", descriptor.NSLocalizedDescription)
-            end
-        end
-    end)
-end
 
 return Wikipedia

@@ -1,13 +1,14 @@
 ----------------------------------------------------------------------------------------------------
--- Local Reddit URL entity
+-- Reddit URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local Reddit = DefaultUrlEntities.Reddit
 
-local baseURL = "https://www.reddit.com"
-local Reddit = URL:new(baseURL)
+Reddit.class:include(SearchMixin)
 
 -- Default subreddit list: https://www.reddit.com/r/ListOfSubreddits/wiki/defaults#wiki_defaults
-local defaultSubreddits = {
+Reddit.paths = {
     "/r/AskReddit",
     "/r/announcements",
     "/r/funny",
@@ -67,50 +68,5 @@ local defaultSubreddits = {
     "/r/programming",
     "/r/entertainment",
 }
-
-function Reddit:search()
-    spoon.Ki.state:exitMode()
-
-    hs.timer.doAfter(0, function()
-        hs.focus()
-
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - Reddit", "Enter Reddit search query:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local success, encodedQuery, descriptor =
-                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-            if success then
-                self.open(baseURL.."/search?q="..encodedQuery)
-            else
-                self.notifyError("Ki - Reddit", descriptor.NSLocalizedDescription)
-            end
-        end
-    end)
-end
-
-function Reddit:removeDuplicatePaths()
-    local hash = {}
-    local deduped = {}
-
-    for _, path in ipairs(self.paths) do
-        if not hash[path] then
-            deduped[#deduped + 1] = path
-            hash[path] = true
-        end
-    end
-
-    self.paths = deduped
-end
-
-function Reddit:registerSubreddits(subredditList)
-    for _, subreddit in pairs(subredditList) do
-        table.insert(self.paths, baseURL..subreddit)
-    end
-    self:removeDuplicatePaths()
-end
-
-Reddit:registerSubreddits(defaultSubreddits)
 
 return Reddit

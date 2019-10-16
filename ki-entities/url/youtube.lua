@@ -1,10 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- YouTube URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local YouTube = DefaultUrlEntities.YouTube
 
-local baseURL = "https://www.youtube.com"
-local YouTube = URL:new(baseURL)
+YouTube.searchPath = "results"
+YouTube.queryParam = "search_query"
+YouTube.class:include(SearchMixin)
 
 YouTube.paths = {
     { name = "YouTube", path = "https://youtube.com" },
@@ -14,27 +17,5 @@ YouTube.paths = {
     { name = "History", path = "/feed/history" },
     { name = "Watch Later", path = "/playlist?list=WL" },
 }
-
-function YouTube:search()
-    spoon.Ki.state:exitMode()
-
-    hs.timer.doAfter(0, function()
-        hs.focus()
-
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - YouTube", "Enter YouTube search query:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local success, encodedQuery, descriptor =
-                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-            if success then
-                self.open(baseURL.."/results?search_query="..encodedQuery)
-            else
-                self.notifyError("Ki - YouTube", descriptor.NSLocalizedDescription)
-            end
-        end
-    end)
-end
 
 return YouTube

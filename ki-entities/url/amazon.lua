@@ -1,11 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- Amazon URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local Amazon = DefaultUrlEntities.Amazon
 
-local baseURL = "https://www.amazon.com"
-
-local Amazon = URL:new(baseURL)
+Amazon.searchPath = "s"
+Amazon.queryParam = "k"
+Amazon.class:include(SearchMixin)
 
 Amazon.paths = {
     { name = "Account", path = "/gp/css/homepage.html" },
@@ -13,27 +15,5 @@ Amazon.paths = {
     { name = "Cart", path = "/gp/cart/view.html" },
     { name = "Today's Deals", path = "/gp/goldbox" },
 }
-
-function Amazon:search()
-    spoon.Ki.state:exitMode()
-
-    hs.timer.doAfter(0, function()
-        hs.focus()
-
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - Amazon", "Enter Amazon search query:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local success, encodedQuery, descriptor =
-                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-            if success then
-                self.open(baseURL.."/s?k="..encodedQuery)
-            else
-                self.notifyError("Ki - Amazon", descriptor.NSLocalizedDescription)
-            end
-        end
-    end)
-end
 
 return Amazon

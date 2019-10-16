@@ -4,6 +4,7 @@
 local Ki = spoon.Ki
 local URL = spoon.Ki.URL
 local File = spoon.Ki.File
+local DefaultEntities = spoon.Ki.defaultEntities
 local Application = spoon.Ki.Application
 local WindowResizer = require("window-resizer")
 
@@ -30,7 +31,9 @@ local urls = {
     DuckDuckGo = requireEntity("url", "duckduckgo"),
     FacebookMessenger = requireEntity("url", "messenger"),
     Github = requireEntity("url", "github"),
+    Google = requireEntity("url", "google"),
     Hammerspoon = requireEntity("url", "hammerspoon"),
+    Netflix = requireEntity("url", "netflix"),
     Reddit = requireEntity("url", "reddit"),
     StackOverflow = requireEntity("url", "stackoverflow"),
     Twitch = URL:new("http://twitch.tv"),
@@ -70,6 +73,9 @@ local entities = {
     NotificationCenter = requireEntity("entity", "notification-center"),
     TablePlus = requireEntity("entity", "tableplus"),
     VLC = requireEntity("entity", "vlc"),
+
+    -- Remap default Ki application entities
+    TextEdit = DefaultEntities.TextEdit,
 
     -- Custom non-application entities
     BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
@@ -162,6 +168,7 @@ local entityWorkflowEvents = {
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
+    { { "cmd" }, "t", entities.TextEdit, { "Entities", "TextEdit" } },
     { { "ctrl" }, "n", entities.NotificationCenter, { "Entities", "Notification Center" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
     { { "shift" }, "d", entities.Discord, { "Entities", "Discord" } },
@@ -182,6 +189,7 @@ local selectEntityWorkflowEvents = {
     { nil, "e", entities.MicrosoftExcel, { "Select Events", "Select a Microsoft Excel window" } },
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
     { nil, "v", entities.VMWareFusion, { "Select Events", "VMware Fusion" } },
+    { { "cmd" }, "t", entities.TextEdit, { "Select Events", "Select a TextEdit window" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Select Events", "Select a Script Editor window" } },
     { { "shift" }, "i", entities.IINA, { "Select Events", "Select an IINA window" } },
     { { "shift" }, "p", entities.TablePlus, { "Select Events", "Select a Database Connection" } },
@@ -196,7 +204,9 @@ local urlWorkflowEvents = {
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
     { nil, "d", urls.DuckDuckGo, { "URL Events", "DuckDuckGo" } },
+    { nil, "g", urls.Google, { "URL Events", "DuckDuckGo" } },
     { nil, "m", urls.FacebookMessenger, { "URL Events", "Facebook Messenger" } },
+    { nil, "n", urls.Netflix, { "URL Events", "Netflix" } },
     { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
     { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
     { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
@@ -213,9 +223,11 @@ local urlWorkflowEvents = {
 local searchWorkflowEvents = {
     { nil, "a", urls.Amazon, { "Search Events", "Amazon" } },
     { nil, "d", urls.DuckDuckGo, { "Search Events", "DuckDuckGo" } },
+    { nil, "g", urls.Google, { "Search URL Events", "Google" } },
+    { nil, "n", urls.Netflix, { "Search Events", "Netflix" } },
     { nil, "r", urls.Reddit, { "Search Events", "Reddit" } },
-    { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
-    { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
+    { nil, "s", urls.StackOverflow, { "Search Events", "Stack Overflow" } },
+    { nil, "w", urls.Wikipedia, { "Search Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
     { { "shift" }, "g", urls.Github, { "Search Events", "Github" } },
     { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },

@@ -1,51 +1,37 @@
 ----------------------------------------------------------------------------------------------------
 -- Yelp URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local Yelp = DefaultUrlEntities.Yelp
 
-local baseURL = "https://www.yelp.com"
-local Yelp = URL:new(baseURL)
+Yelp.class:include(SearchMixin)
 
-function Yelp:search()
-    spoon.Ki.state:exitMode()
+function Yelp.handleSearch(mixin, self, searchQuery)
+    local mainQuery, locationQuery = searchQuery:match("(.*)|(.*)")
 
-    hs.timer.doAfter(0, function()
-        hs.focus()
+    if mainQuery and locationQuery then
+        local mainSuccess, encodedMainQuery, mainDescriptor = mixin.encodeSearchQuery(mainQuery)
+        local locationSuccess, encodedLocationQuery, locationDescriptor = mixin.encodeSearchQuery(locationQuery)
 
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - Yelp", "Enter search query for Yelp:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local mainQuery, locationQuery = searchQuery:match("(.*)|(.*)")
-
-            if mainQuery and locationQuery then
-                local success, encodedQueries, descriptor =
-                    hs.osascript.javascript([[
-                        [
-                            encodeURIComponent(`]]..mainQuery..[[`),
-                            encodeURIComponent(`]]..locationQuery..[[`),
-                        ]
-                    ]])
-
-                if success then
-                    local searchURL = baseURL.."/search?find_desc="..encodedQueries[1]
-                    searchURL = searchURL.."&find_loc="..encodedQueries[2]
-                    self.open(searchURL)
-                else
-                    self.notifyError("Ki - Yelp", descriptor.NSLocalizedDescription)
-                end
-            else
-                local success, encodedQuery, descriptor =
-                    hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-                if success then
-                    self.open(baseURL.."/search?find_desc="..encodedQuery)
-                else
-                    self.notifyError("Ki - Yelp", descriptor.NSLocalizedDescription)
-                end
-            end
+        if mainSuccess and locationSuccess then
+            local searchURL = self.url.."/search?find_desc="..encodedMainQuery
+            searchURL = searchURL.."&find_loc="..encodedLocationQuery
+            self.open(searchURL)
+        else
+            local description = mainDescriptor and mainDescriptor.NSLocalizedDescription
+                or locationDescriptor and locationDescriptor.NSLocalizedDescription
+            self.notifyError("Ki - Yelp", description)
         end
-    end)
+    else
+        local success, encodedQuery, descriptor = mixin.encodeSearchQuery(searchQuery)
+
+        if success then
+            self.open(self.url.."/search?find_desc="..encodedQuery)
+        else
+            self.notifyError("Ki - Yelp", descriptor.NSLocalizedDescription)
+        end
+    end
 end
 
 return Yelp

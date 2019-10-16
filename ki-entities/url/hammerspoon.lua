@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Hammerspoon.org URL entity
+-- Hammerspoon URL entity
 --
 local URL = spoon.Ki.URL
 

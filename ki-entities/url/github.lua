@@ -1,14 +1,15 @@
 ----------------------------------------------------------------------------------------------------
--- Github.com URL entity
+-- GitHub URL entity
 --
-local URL = spoon.Ki.URL
+local SearchMixin = require("ki-entities/search-mixin")
+local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
+local GitHub = DefaultUrlEntities.GitHub
 
-local baseURL = "https://github.com"
-local Github = URL:new(baseURL)
+GitHub.class:include(SearchMixin)
 
-Github.paths = {
+GitHub.paths = {
     -- Main routes
-    { name = "Github", path = baseURL },
+    { name = "GitHub", path = GitHub.url },
     { name = "Pull Requests", path = "/pulls" },
     { name = "Issues", path = "/issues" },
     { name = "Marketplace", path = "/marketplace" },
@@ -28,6 +29,7 @@ Github.paths = {
     { name = ".hammerspoon", path = "/andweeb/.hammerspoon" },
     { name = "dotfiles", path = "/andweeb/dotfiles" },
     { name = "courier", path = "/andweeb/courier" },
+    { name = "xciter", path = "/andweeb/xciter" },
     -- "Create New" Actions
     { name = "New repository", path = "/new" },
     { name = "Import repository", path = "/new/import" },
@@ -36,26 +38,4 @@ Github.paths = {
     { name = "New project", path = "/new/project" },
 }
 
-function Github:search()
-    spoon.Ki.state:exitMode()
-
-    hs.timer.doAfter(0, function()
-        hs.focus()
-
-        local choice, searchQuery =
-            hs.dialog.textPrompt("Ki - Github", "Enter Github search query:", "", "Search", "Cancel")
-
-        if choice == "Search" then
-            local success, encodedQuery, descriptor =
-                hs.osascript.javascript("encodeURIComponent(`"..searchQuery.."`)")
-
-            if success then
-                self.open(baseURL.."/search?q="..encodedQuery)
-            else
-                self.notifyError("Ki - Github", descriptor.NSLocalizedDescription)
-            end
-        end
-    end)
-end
-
-return Github
+return GitHub
