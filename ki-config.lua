@@ -71,6 +71,7 @@ local entities = {
     -- Externally defined application entities
     IINA = requireEntity("entity", "iina"),
     iTerm = requireEntity("entity", "iterm"),
+    Java = requireEntity("entity", "java"),
     Keyboard = requireEntity("entity", "keyboard"),
     MicrosoftExcel = requireEntity("entity", "microsoft-excel"),
     MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
@@ -166,6 +167,7 @@ end
 local entityWorkflowEvents = {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
+    { nil, "j", entities.Java, { "Entities", "Java" } },
     { nil, "k", entities.Keyboard, { "Entities", "Keyboard" } },
     { nil, "l", entities.BedroomLIFX, { "Entities", "Bedroom LIFX Light" } },
     { nil, "w", entities.MicrosoftWord, { "Entities", "Microsoft Word" } },
@@ -194,6 +196,7 @@ local entityWorkflowEvents = {
 -- Define select mode workflow events
 local selectEntityWorkflowEvents = {
     { nil, "e", entities.MicrosoftExcel, { "Select Events", "Select a Microsoft Excel window" } },
+    { nil, "j", entities.Java, { "Select Events", "Select a Java app" } },
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
     { nil, "v", entities.VMWareFusion, { "Select Events", "VMware Fusion" } },
     { { "cmd" }, "t", entities.TextEdit, { "Select Events", "Select a TextEdit window" } },
