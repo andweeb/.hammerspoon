@@ -23,11 +23,15 @@ end
 
 -- Create custom URL entities
 local urls = {
-    Airbnb = requireEntity("url", "airbnb"),
-    Amazon = requireEntity("url", "amazon"),
+    -- Basic inline URL entities
     BoA = URL:new("https://www.bankofamerica.com"),
     Chase = URL:new("https://www.chase.com"),
     Dropbox = URL:new("https://www.dropbox.com"),
+    Twitch = URL:new("http://twitch.tv"),
+
+    -- Externally defined URL entities
+    Airbnb = requireEntity("url", "airbnb"),
+    Amazon = requireEntity("url", "amazon"),
     DuckDuckGo = requireEntity("url", "duckduckgo"),
     FacebookMessenger = requireEntity("url", "messenger"),
     Github = requireEntity("url", "github"),
@@ -36,7 +40,6 @@ local urls = {
     Netflix = requireEntity("url", "netflix"),
     Reddit = requireEntity("url", "reddit"),
     StackOverflow = requireEntity("url", "stackoverflow"),
-    Twitch = URL:new("http://twitch.tv"),
     Wikipedia = requireEntity("url", "wikipedia"),
     Yelp = requireEntity("url", "yelp"),
     YouTube = requireEntity("url", "youtube"),
@@ -51,7 +54,7 @@ local files = {
 -- Create custom application entities
 local BedroomLIFX = requireEntity("entity", "lifx")
 local entities = {
-    -- Basic application entities
+    -- Basic inline application entities
     Alacritty = Application:new("Alacritty"),
     AppStore = Application:new("App Store"),
     Discord = Application:new("Discord"),
@@ -63,8 +66,9 @@ local entities = {
     MicrosoftWord = Application:new("Microsoft Word"),
     Postico = Application:new("Postico"),
     VMWareFusion = Application:new("VMware Fusion"),
+    VisualStudioCode = Application:new("Visual Studio Code"),
 
-    -- Require externally defined application entities
+    -- Externally defined application entities
     IINA = requireEntity("entity", "iina"),
     iTerm = requireEntity("entity", "iterm"),
     Keyboard = requireEntity("entity", "keyboard"),
@@ -76,6 +80,7 @@ local entities = {
 
     -- Remap default Ki application entities
     TextEdit = DefaultEntities.TextEdit,
+    FaceTime = DefaultEntities.FaceTime,
 
     -- Custom non-application entities
     BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
@@ -168,6 +173,7 @@ local entityWorkflowEvents = {
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
+    { { "cmd" }, "f", entities.FaceTime, { "Entities", "FaceTime" } },
     { { "cmd" }, "t", entities.TextEdit, { "Entities", "TextEdit" } },
     { { "ctrl" }, "n", entities.NotificationCenter, { "Entities", "Notification Center" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
@@ -182,6 +188,7 @@ local entityWorkflowEvents = {
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Entities", "Microsoft Outlook" } },
     { { "shift", "cmd" }, "p", entities.Postico, { "Entities", "Postico" } },
     { { "shift", "cmd" }, "s", entities.Slack, { "Entities", "Slack" } },
+    { { "shift", "cmd" }, "v", entities.VisualStudioCode, { "Entities", "Visual Studio Code" } },
 }
 
 -- Define select mode workflow events
