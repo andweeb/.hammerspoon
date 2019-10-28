@@ -103,6 +103,12 @@ function WindowResizer.maximizeWindow()
     win:setFrame(screenDimensions)
 end
 
+-- Toggle window fullscreen status
+function WindowResizer.fullScreenWindow()
+    local win = hs.window.focusedWindow()
+    win:toggleFullScreen()
+end
+
 -- Center window
 function WindowResizer.centerWindow()
     local win = hs.window.focusedWindow()

@@ -255,6 +255,7 @@ local fileWorkflowEvents = {
 local function moveWindowOneSpaceLeft() WindowResizer.moveWindowOneSpace("left") end
 local function moveWindowOneSpaceRight() WindowResizer.moveWindowOneSpace("right") end
 local windowWorkflowEvents = {
+    { nil, "f", WindowResizer.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
     { nil, "h", WindowResizer.moveWindowLeft, { "Window Mode", "Move Window Left" } },
     { nil, "j", WindowResizer.centerWindow, { "Window Mode", "Center Window" } },
     { nil, "k", WindowResizer.maximizeWindow, { "Window Mode", "Maximize Window" } },
