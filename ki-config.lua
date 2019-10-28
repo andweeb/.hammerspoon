@@ -24,6 +24,7 @@ end
 -- Create custom URL entities
 local urls = {
     -- Basic inline URL entities
+    APNews = URL:new("https://www.apnews.com"),
     BoA = URL:new("https://www.bankofamerica.com"),
     Chase = URL:new("https://www.chase.com"),
     Dropbox = URL:new("https://www.dropbox.com"),
@@ -32,12 +33,15 @@ local urls = {
     -- Externally defined URL entities
     Airbnb = requireEntity("url", "airbnb"),
     Amazon = requireEntity("url", "amazon"),
+    BBC = requireEntity("url", "bbc"),
     DuckDuckGo = requireEntity("url", "duckduckgo"),
     FacebookMessenger = requireEntity("url", "messenger"),
     Github = requireEntity("url", "github"),
     Google = requireEntity("url", "google"),
     Hammerspoon = requireEntity("url", "hammerspoon"),
     Netflix = requireEntity("url", "netflix"),
+    NPR = requireEntity("url", "npr"),
+    NYTimes = requireEntity("url", "nytimes"),
     Reddit = requireEntity("url", "reddit"),
     StackOverflow = requireEntity("url", "stackoverflow"),
     Wikipedia = requireEntity("url", "wikipedia"),
@@ -224,11 +228,15 @@ local urlWorkflowEvents = {
     { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
     { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "URL Events", "YouTube" } },
+    { { "cmd" }, "a", urls.APNews, { "URL Events", "APNews" } },
+    { { "cmd" }, "b", urls.BBC, { "URL Events", "BBC" } },
     { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
+    { { "cmd" }, "n", urls.NYTimes, { "URL Events", "NYTimes" } },
     { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
     { { "shift" }, "a", urls.Airbnb, { "URL Events", "Airbnb" } },
     { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
     { { "shift" }, "y", urls.Yelp, { "URL Events", "Yelp" } },
+    { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
 }
 
 -- Define search mode workflow events
@@ -241,8 +249,11 @@ local searchWorkflowEvents = {
     { nil, "s", urls.StackOverflow, { "Search Events", "Stack Overflow" } },
     { nil, "w", urls.Wikipedia, { "Search Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
+    { { "cmd" }, "b", urls.BBC, { "URL Events", "BBC" } },
+    { { "cmd" }, "n", urls.NYTimes, { "URL Events", "NYTimes" } },
     { { "shift" }, "g", urls.Github, { "Search Events", "Github" } },
     { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },
+    { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
 }
 
 -- Define file mode workflow events
