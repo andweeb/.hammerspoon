@@ -4,14 +4,9 @@
 local Application = spoon.Ki.Application
 local path = "~/.hammerspoon/scripts/microsoft-excel.applescript"
 local applescriptLocation = hs.fs.pathToAbsolute(path)
+local MicrosoftExcel = Application:new("Microsoft Excel")
 
-local actions = {
-    openRecent = Application.createMenuItemSelectionEvent({ "File", "Open Recent" }, {
-        focusAfter = true,
-    }),
-}
-
-function actions.fetchWorksheets()
+function MicrosoftExcel.fetchWorksheets()
     local script = Application.renderScriptTemplate(applescriptLocation, {
         operation = "fetch-worksheets",
     })
@@ -29,7 +24,7 @@ function actions.fetchWorksheets()
     return worksheets
 end
 
-function actions.activateWorksheet(name)
+function MicrosoftExcel.activateWorksheet(name)
     local script = Application.renderScriptTemplate(applescriptLocation, {
         operation = "activate-worksheet",
         targetWorksheet = name,
@@ -46,7 +41,7 @@ function actions.activateWorksheet(name)
     end
 end
 
-function actions.toggleFreezeTopRow()
+function MicrosoftExcel.toggleFreezeTopRow()
     local script = Application.renderScriptTemplate(applescriptLocation, {
         operation = "toggle-freeze-top-row",
     })
@@ -62,7 +57,7 @@ function actions.toggleFreezeTopRow()
     end
 end
 
-function actions.autofitAllColumns()
+function MicrosoftExcel.autofitAllColumns()
     local script = Application.renderScriptTemplate(applescriptLocation, {
         operation = "autofit-all-columns",
     })
@@ -78,7 +73,7 @@ function actions.autofitAllColumns()
     end
 end
 
-function actions.colorSelectedCells()
+function MicrosoftExcel.colorSelectedCells()
     local script = Application.renderScriptTemplate(applescriptLocation, {
         operation = "color-selected-cells",
         fillColor = "{255, 255, 153}",
@@ -95,7 +90,7 @@ function actions.colorSelectedCells()
     end
 end
 
-function actions.selectCell(app)
+function MicrosoftExcel.selectCell(app)
     hs.timer.doAfter(0, function()
         hs.focus()
 
@@ -125,32 +120,17 @@ function actions.selectCell(app)
     end)
 end
 
-function actions.focus(app, choice)
+function MicrosoftExcel.focus(app, choice)
     if choice then
-        actions.activateWorksheet(choice.text)
+        MicrosoftExcel.activateWorksheet(choice.text)
     end
 
     app:activate()
 end
 
-local shortcuts = {
-    { nil, nil, actions.focus, "Activate/Focus" },
-    { nil, "c", actions.colorSelectedCells, "Color Selected Cells" },
-    { nil, "s", actions.selectCell, "Select Cell" },
-    { { "cmd" }, "a", actions.autofitAllColumns, "Autofit All Columns" },
-    { { "shift" }, "f", actions.toggleFreezeTopRow, "Toggle Freeze Top Row" },
-    { { "shift" }, "o", actions.openRecent, "Open Recent" },
-}
-
-local MicrosoftExcel = Application:new("Microsoft Excel", shortcuts)
-
-for name, action in pairs(actions) do
-    MicrosoftExcel[name] = action
-end
-
-function MicrosoftExcel.getSelectionItems()
+function MicrosoftExcel:getSelectionItems()
     local choices = {}
-    local worksheets = actions.fetchWorksheets()
+    local worksheets = self.fetchWorksheets()
 
     for _, worksheet in pairs(worksheets) do
         table.insert(choices, { text = worksheet })
@@ -158,5 +138,20 @@ function MicrosoftExcel.getSelectionItems()
 
     return choices
 end
+
+MicrosoftExcel.openRecent = Application.createMenuItemSelectionEvent({ "File", "Open Recent" }, {
+    focusAfter = true,
+})
+
+local shortcuts = {
+    { nil, nil, MicrosoftExcel.focus, "Activate/Focus" },
+    { nil, "c", MicrosoftExcel.colorSelectedCells, "Color Selected Cells" },
+    { nil, "s", MicrosoftExcel.selectCell, "Select Cell" },
+    { { "cmd" }, "a", MicrosoftExcel.autofitAllColumns, "Autofit All Columns" },
+    { { "shift" }, "f", MicrosoftExcel.toggleFreezeTopRow, "Toggle Freeze Top Row" },
+    { { "shift" }, "o", MicrosoftExcel.openRecent, "Open Recent" },
+}
+
+MicrosoftExcel:initialize("Microsoft Excel", shortcuts)
 
 return MicrosoftExcel
