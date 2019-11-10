@@ -8,6 +8,8 @@ local DefaultEntities = spoon.Ki.defaultEntities
 local Application = spoon.Ki.Application
 local WindowResizer = require("window-resizer")
 
+URL.displaySelectionModalIcons = false
+
 -- Helper functions
 local function requireEntity(type, file)
     return require("ki-entities/"..type.."/"..file)
