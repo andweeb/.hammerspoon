@@ -4,6 +4,7 @@
 local Ki = spoon.Ki
 local URL = spoon.Ki.URL
 local File = spoon.Ki.File
+local Entity = spoon.Ki.Entity
 local DefaultEntities = spoon.Ki.defaultEntities
 local Application = spoon.Ki.Application
 local WindowResizer = require("window-resizer")
@@ -267,12 +268,44 @@ local fileWorkflowEvents = {
 -- Define window mode workflow events
 local function moveWindowOneSpaceLeft() WindowResizer.moveWindowOneSpace("left") end
 local function moveWindowOneSpaceRight() WindowResizer.moveWindowOneSpace("right") end
+local function selectWindow()
+    Ki.state:exitMode()
+
+    local choices = {}
+
+    for _, window in pairs(hs.window:allWindows()) do
+        local app = window:application()
+        local title = window:title()
+        local name = app and app:title() or title
+
+        table.insert(choices, {
+            text = name,
+            subText = title,
+            id = window:id(),
+        })
+    end
+
+    Entity.showSelectionModal(choices, function(choice)
+        if not choice or not choice.id then return end
+
+        local window = hs.window(choice.id)
+
+        if not window then
+            hs.notify.show("Ki", "Unable to focus window", "")
+            return
+        end
+
+        window:focus()
+    end)
+end
+
 local windowWorkflowEvents = {
     { nil, "f", WindowResizer.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
     { nil, "h", WindowResizer.moveWindowLeft, { "Window Mode", "Move Window Left" } },
     { nil, "j", WindowResizer.centerWindow, { "Window Mode", "Center Window" } },
     { nil, "k", WindowResizer.maximizeWindow, { "Window Mode", "Maximize Window" } },
     { nil, "l", WindowResizer.moveWindowRight, { "Window Mode", "Move Window Right" } },
+    { nil, "s", selectWindow, { "Window Mode", "Select Window" } },
     { nil, "space", WindowResizer.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
     { { "ctrl" }, "h", WindowResizer.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
     { { "ctrl" }, "l", WindowResizer.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
