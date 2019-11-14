@@ -1,6 +1,7 @@
 ----------------------------------------------------------------------------------------------------
 -- GitHub URL entity
 --
+local URL = spoon.Ki.URL
 local SearchMixin = require("ki-entities/search-mixin")
 local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
 local GitHub = DefaultUrlEntities.GitHub
@@ -36,6 +37,38 @@ GitHub.paths = {
     { name = "New gist", path = "https://gist.github.com/" },
     { name = "New organization", path = "/organizations/new" },
     { name = "New project", path = "/new/project" },
+    -- Watching projects
+    { name = "Hammerspoon", path = "/Hammerspoon/hammerspoon" },
+    { name = "TablePlus", path = "/TablePlus/TablePlus" },
+    { name = "Tridactyl", path = "/tridactyl/tridactyl" },
 }
+
+function GitHub:openRepositoryPathEvent(path)
+    return function(modal)
+        local selectedRow = modal:selectedRow()
+        local choice = modal:selectedRowContents(selectedRow)
+
+        modal:cancel()
+        self.open(choice.url.."/"..path)
+
+        return true
+    end
+end
+
+local customSelectionModalShortcuts = {
+    { { "cmd" }, "b", GitHub:openRepositoryPathEvent("branches") },
+    { { "cmd" }, "c", GitHub:openRepositoryPathEvent("commits/master") },
+    { { "cmd" }, "i", GitHub:openRepositoryPathEvent("issues") },
+    { { "cmd" }, "r", GitHub:openRepositoryPathEvent("releases") },
+    { { "cmd" }, "s", GitHub:openRepositoryPathEvent("settings") },
+    { { "cmd" }, "t", GitHub:openRepositoryPathEvent("graphs/traffic") },
+    { { "cmd" }, "w", GitHub:openRepositoryPathEvent("wiki") },
+}
+
+GitHub.selectionModalShortcuts = { table.unpack(URL.selectionModalShortcuts) }
+
+for _, shortcut in pairs(customSelectionModalShortcuts) do
+    table.insert(GitHub.selectionModalShortcuts, shortcut)
+end
 
 return GitHub
