@@ -51,7 +51,7 @@ function LIFX:createStateEvent(data)
 end
 
 function LIFX:selectColors(choices)
-    self.showSelectionModal(choices, function(choice)
+    self:showSelectionModal(choices, function(choice)
         if choice then
             self:createStateEvent({
                 duration = 2,

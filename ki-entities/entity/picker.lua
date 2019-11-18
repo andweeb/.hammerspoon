@@ -7,7 +7,7 @@ local Picker = Entity:subclass("Picker")
 function Picker:pick(list)
     -- Defer execution to avoid conflicts with any prior selection modal that just previously closed
     hs.timer.doAfter(0, function()
-        self.showSelectionModal(list or self.choices, function(choice)
+        self:showSelectionModal(list or self.choices, function(choice)
             if choice then
                 hs.pasteboard.setContents(choice.item)
             end
@@ -16,7 +16,7 @@ function Picker:pick(list)
 end
 
 function Picker:pickCategory()
-    self.showSelectionModal(self.categoryChoices, function(choice)
+    self:showSelectionModal(self.categoryChoices, function(choice)
         if choice then
             local list = {}
             local items = self.categories[choice.categoryName]
