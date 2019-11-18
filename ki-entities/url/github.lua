@@ -41,7 +41,14 @@ GitHub.paths = {
     { name = "Hammerspoon", path = "/Hammerspoon/hammerspoon" },
     { name = "TablePlus", path = "/TablePlus/TablePlus" },
     { name = "Tridactyl", path = "/tridactyl/tridactyl" },
+    { name = "fzf", path = "/junegunn/fzf" },
 }
+
+function GitHub:advancedSearch(query, language)
+    local searchURL = self.url.."/search?q="..query
+    searchURL = searchURL.."&l="..language.."&type=Code"
+    self.open(searchURL)
+end
 
 function GitHub:openRepositoryPathEvent(path)
     return function(modal)
