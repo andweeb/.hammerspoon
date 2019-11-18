@@ -3,6 +3,7 @@ std = {
         'hs',
         'spoon',
         'io',
+        'math',
         'os',
         'require',
         'print',
