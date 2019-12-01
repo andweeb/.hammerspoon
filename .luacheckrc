@@ -11,6 +11,8 @@ std = {
         'ipairs',
         'table',
         'setmetatable',
+        'string',
+        'tonumber',
         'tostring',
         'pcall',
     }

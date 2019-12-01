@@ -104,6 +104,7 @@ local entities = {
     ClipboardText = requireEntity("entity", "clipboard-text"),
     Emoji = requireEntity("entity", "emoji-picker"),
     Kaomoji = requireEntity("entity", "kaomoji-picker"),
+    FSVolume = requireEntity("entity", "volume"),
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -194,6 +195,7 @@ local entityWorkflowEvents = {
     { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
     { { "cmd" }, "k", entities.Kaomoji, { "Entities", "Kaomoji" } },
     { { "cmd" }, "t", entities.TextEdit, { "Entities", "TextEdit" } },
+    { { "cmd" }, "v", entities.FSVolume, { "Entities", "Filesystem Volume" } },
     { { "ctrl" }, "n", entities.NotificationCenter, { "Entities", "Notification Center" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Entities", "Script Editor" } },
     { { "shift" }, "d", entities.Discord, { "Entities", "Discord" } },
@@ -218,6 +220,7 @@ local selectEntityWorkflowEvents = {
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
     { nil, "v", entities.VMWareFusion, { "Select Events", "VMware Fusion" } },
     { { "cmd" }, "t", entities.TextEdit, { "Select Events", "Select a TextEdit window" } },
+    { { "cmd" }, "v", entities.FSVolume, { "Entities", "Filesystem Volume" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Select Events", "Select a Script Editor window" } },
     { { "shift" }, "i", entities.IINA, { "Select Events", "Select an IINA window" } },
     { { "shift" }, "p", entities.TablePlus, { "Select Events", "Select a Database Connection" } },
