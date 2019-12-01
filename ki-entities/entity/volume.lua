@@ -95,7 +95,7 @@ function Volume.writeContentsToFile(volumeName, volumePath)
 
     -- Begin task after ensuring the volume is mounted
     if hs.fs.attributes(volumePath) then
-        local writeTask = hs.task.new(tree, done, stream, { "--charset=ascii", volumePath })
+        local writeTask = hs.task.new(tree, done, stream, { "-h", "--charset=ascii", volumePath })
         writeTask:start()
     end
 end
@@ -159,7 +159,7 @@ Volume.shortcuts = {
     { nil, "e", Volume.ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
     { nil, "o", Volume.openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
     {
-        nil, "s",
+        nil, "w",
         Volume.writeSelectedVolumeContentsToFile,
         { "macOS Volume", "Write Selected Volume's Contents to File" },
     },
