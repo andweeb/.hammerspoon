@@ -18,13 +18,6 @@ local function getEnvironmentVariable(name)
     return variable:gsub("\n", "")
 end
 
-----------------------------------------------------------------------------------------------------
--- Configure some settings
---
-
--- Avoid setting selection modal icons for now
-URL.displaySelectionModalIcons = false
-
 -- Set custom status display
 Ki.statusDisplay = require("ki-menubar-item")
 
