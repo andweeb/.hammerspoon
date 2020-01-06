@@ -71,9 +71,20 @@ function Java.focus(_, choice)
     end
 end
 
+function Java.about(_, choice)
+    local apps = Java:getApps()
+    local index = choice and choice.index or 1
+    local app = apps[index]
+
+    if #apps > 0 then
+        local name = app:name() or Java:getName(app)
+        return Java.createMenuItemEvent("About "..name)(app)
+    end
+end
+
 local shortcuts = {
     { nil, nil, Java.focus, { "Java", "Activate/Focus Java App" } },
-    { nil, "a", function() print("bitch") end }
+    { nil, "a", Java.about, { "Java", "About Java Application" } },
 }
 
 Java:initialize("Java", shortcuts)
