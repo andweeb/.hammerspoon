@@ -25,6 +25,15 @@ function ClipboardText.updateTextCaseEvent(case)
     end
 end
 
+function ClipboardText.capitalizeWords()
+    local clipboardText = hs.pasteboard.getContents()
+    local capitalizedWords = string.gsub(" "..clipboardText, "%W%l", string.upper):sub(2)
+
+    hs.pasteboard.setContents(capitalizedWords)
+
+    ClipboardText.notify("Clipboard text capitalized")
+end
+
 function ClipboardText.convertBase64Event(translation)
     return function()
         local clipboardText = hs.pasteboard.getContents()
@@ -71,6 +80,7 @@ ClipboardText.encodeBase64Text = ClipboardText.convertBase64Event("encode")
 ClipboardText.decodeBase64Text = ClipboardText.convertBase64Event("decode")
 
 local shortcuts = {
+    { nil, "c", ClipboardText.capitalizeWords, { "Clipboard Text", "Capitalize Words" } },
     { nil, "d", ClipboardText.decodeBase64Text, { "Clipboard Text", "Decode Base64" } },
     { nil, "e", ClipboardText.encodeBase64Text, { "Clipboard Text", "Encode Base64" } },
     { nil, "j", ClipboardText.formatJSON, { "Clipboard Text", "Format JSON" } },
