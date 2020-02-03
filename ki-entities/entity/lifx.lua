@@ -62,6 +62,8 @@ function LIFX:selectColors(choices)
 end
 
 function LIFX:initialize(selector, token, shortcuts)
+    shortcuts = shortcuts or {}
+
     self.selector = selector
     self.token = token
     self.colors = {
@@ -113,9 +115,9 @@ function LIFX:initialize(selector, token, shortcuts)
         })
     end
 
-    local mergedShortcuts = self.mergeShortcuts(shortcuts, defaultShortcuts)
+    self.shortcuts = self.mergeShortcuts(shortcuts, defaultShortcuts)
 
-    Entity.initialize(self, "LIFX", mergedShortcuts, true)
+    Entity.initialize(self, "LIFX", self.shortcuts, true)
 end
 
 return LIFX

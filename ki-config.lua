@@ -60,8 +60,12 @@ local files = {
     Dropbox = File:new("~/Dropbox"),
 }
 
+-- Initialize LIFX light
+local LIFX = requireEntity("entity", "lifx")
+local lifxToken = getEnvironmentVariable("LIFX_TOKEN")
+local BedroomLIFX = LIFX:new("label:Bedroom", lifxToken)
+
 -- Create custom application entities
-local BedroomLIFX = requireEntity("entity", "lifx")
 local entities = {
     -- Basic inline application entities
     Alacritty = Application:new("Alacritty"),
@@ -93,7 +97,7 @@ local entities = {
     FaceTime = DefaultEntities.FaceTime,
 
     -- Custom non-application entities
-    BedroomLIFX = BedroomLIFX:new("label:Bedroom", getEnvironmentVariable("LIFX_TOKEN"), {}),
+    BedroomLIFX = BedroomLIFX,
     ClipboardText = requireEntity("entity", "clipboard-text"),
     Emoji = requireEntity("entity", "emoji-picker"),
     Kaomoji = requireEntity("entity", "kaomoji-picker"),
