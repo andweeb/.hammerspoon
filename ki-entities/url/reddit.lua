@@ -69,4 +69,8 @@ Reddit.paths = {
     "/r/entertainment",
 }
 
+function Reddit:advancedSearch(query, subreddit)
+    self.open(self.url.."/r/"..subreddit.."/search/?q="..query.."&restrict_sr=1")
+end
+
 return Reddit
