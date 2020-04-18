@@ -3,12 +3,12 @@
 --
 local File = spoon.Ki.File
 local Entity = spoon.Ki.Entity
-local Volume = Entity:new("Volume", {})
-Volume.txtWriteLocation = "~/Documents"
+local FSVolume = Entity:new("FSVolume", {})
+FSVolume.txtWriteLocation = "~/Documents"
 
-function Volume.selectVolumeEvent(eventHandler)
+function FSVolume.selectFSVolumeEvent(eventHandler)
     return function()
-        local choices = Volume:getSelectionItems()
+        local choices = FSVolume:getSelectionItems()
 
         if choices and #choices > 0 then
             local function onSelection(choice)
@@ -17,14 +17,14 @@ function Volume.selectVolumeEvent(eventHandler)
                 end
             end
 
-            Volume:showSelectionModal(choices, onSelection)
+            FSVolume:showSelectionModal(choices, onSelection)
         end
     end
 end
 
-Volume.behaviors = Volume.behaviors + {
+FSVolume.behaviors = FSVolume.behaviors + {
     select = function(_, eventHandler)
-        Volume.selectVolumeEvent(eventHandler)()
+        FSVolume.selectFSVolumeEvent(eventHandler)()
         return true
     end
 }
@@ -33,7 +33,7 @@ local function round(num, precision)
     return tonumber(string.format("%." .. (precision or 0) .. "f", num))
 end
 
-function Volume.bytesToSize(bytes)
+function FSVolume.bytesToSize(bytes)
     local precision = 2
     local kilobyte = 1024;
     local megabyte = kilobyte * 1024;
@@ -55,7 +55,7 @@ function Volume.bytesToSize(bytes)
     end
 end
 
-function Volume.writeContentsToFile(volumeName, volumePath)
+function FSVolume.writeContentsToFile(volumeName, volumePath)
     local tree = "/usr/local/bin/tree"
     local contents = ""
 
@@ -66,7 +66,7 @@ function Volume.writeContentsToFile(volumeName, volumePath)
             return hs.notify.show("Ki", message, stderr)
         end
 
-        local txtPath = Volume.txtWriteLocation.."/"..volumeName:lower()..".txt"
+        local txtPath = FSVolume.txtWriteLocation.."/"..volumeName:lower()..".txt"
         local absoluteTxtPath = hs.fs.pathToAbsolute(txtPath)
 
         if not absoluteTxtPath then
@@ -75,6 +75,7 @@ function Volume.writeContentsToFile(volumeName, volumePath)
         end
 
         local txtFile = io.open(absoluteTxtPath, "w+")
+        txtFile:write(os.date("Last updated %m/%d/%Y %I:%M %p\n\n"))
         txtFile:write(contents)
         txtFile:close()
 
@@ -100,7 +101,7 @@ function Volume.writeContentsToFile(volumeName, volumePath)
     end
 end
 
-function Volume:getSelectionItems()
+function FSVolume:getSelectionItems()
     local choices = {}
     local volumes = hs.fs.volume.allVolumes()
 
@@ -122,19 +123,19 @@ function Volume:getSelectionItems()
     return choices
 end
 
-Volume.openSelectedVolume = Volume.selectVolumeEvent(function(choice)
+FSVolume.openSelectedVolume = FSVolume.selectFSVolumeEvent(function(choice)
     File.open(choice.path)
 end)
 
-function Volume.open(choice)
+function FSVolume.open(choice)
     if choice then
         File.open(choice.path)
     else
-        Volume.openSelectedVolume()
+        FSVolume.openSelectedFSVolume()
     end
 end
 
-Volume.ejectSelectedVolume = Volume.selectVolumeEvent(function(choice)
+FSVolume.ejectSelectedVolume = FSVolume.selectFSVolumeEvent(function(choice)
     local path = choice.path
     local hasEjected, err = hs.fs.volume.eject(path)
 
@@ -148,21 +149,21 @@ Volume.ejectSelectedVolume = Volume.selectVolumeEvent(function(choice)
     hs.notify.show("Ki", "Successfully ejected "..choice.name, "")
 end)
 
-Volume.writeSelectedVolumeContentsToFile = Volume.selectVolumeEvent(function(choice)
+FSVolume.writeSelectedVolumeContentsToFile = FSVolume.selectFSVolumeEvent(function(choice)
     if choice.path ~= "/" then
-        Volume.writeContentsToFile(choice.name, choice.path)
+        FSVolume.writeContentsToFile(choice.name, choice.path)
     end
 end)
 
-Volume.shortcuts = {
-    { nil, nil, Volume.open, { "macOS Volume", "Open Selected Volume" } },
-    { nil, "e", Volume.ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
-    { nil, "o", Volume.openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
+FSVolume:registerShortcuts({
+    { nil, nil, FSVolume.open, { "macOS Volume", "Open Selected Volume" } },
+    { nil, "e", FSVolume.ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
+    { nil, "o", FSVolume.openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
     {
         nil, "w",
-        Volume.writeSelectedVolumeContentsToFile,
+        FSVolume.writeSelectedVolumeContentsToFile,
         { "macOS Volume", "Write Selected Volume's Contents to File" },
     },
-}
+})
 
-return Volume
+return FSVolume

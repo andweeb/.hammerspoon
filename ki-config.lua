@@ -99,7 +99,7 @@ local entities = {
     BedroomLIFX = BedroomLIFX,
     ClipboardText = requireEntity("entity", "clipboard-text"),
     EmojiPicker = requireEntity("entity", "emoji-picker"),
-    FSVolume = requireEntity("entity", "volume"),
+    FSVolume = requireEntity("entity", "fs-volume"),
     GlyphPicker = requireEntity("entity", "glyph-picker"),
     KaomojiPicker = requireEntity("entity", "kaomoji-picker"),
 
