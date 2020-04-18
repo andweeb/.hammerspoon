@@ -10,12 +10,10 @@ local StatusDisplay = {
 local smallMenlo = { name = "Menlo", size = 9 }
 local fadedColor = { red = 0.2, blue = 0.2, green = 0.2 }
 local fadedTextStyle = { color = fadedColor, font = smallMenlo }
-local defaultColor = { red = 0.8, blue = 0.8, green = 0.8 }
-local defaultTextStyle = { color = defaultColor, font = smallMenlo }
+local color = { red = 0.8, blue = 0.8, green = 0.8 }
+local textStyle = { color = color, font = smallMenlo }
 
-function StatusDisplay:show(status, _, textStyle)
-    textStyle = textStyle or defaultTextStyle
-
+function StatusDisplay:show(status)
     -- Interrupt fade-out timer if running
     if self.timer and self.timer:running() then
         self.timer:stop()
