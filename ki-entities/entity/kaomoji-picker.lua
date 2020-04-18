@@ -57,12 +57,12 @@ local function createTables()
         })
     end
 
-    return categories, choices, categoryChoices
+    return choices, categories, categoryChoices
 end
 local function codegen()
-    local categories, choices, categoryChoices = createTables()
-    print("local categories = "..hs.inspect(categories))
+    local choices, categories, categoryChoices = createTables()
     print("local choices = "..hs.inspect(choices))
+    print("local categories = "..hs.inspect(categories))
     print("local categoryChoices = "..hs.inspect(categoryChoices))
 end
 -- luacheck: pop
@@ -6544,4 +6544,4 @@ local categoryChoices = { {
   } }
 -- luacheck: pop
 
-return Picker:new(categories, choices, categoryChoices)
+return Picker:new(choices, categories, categoryChoices)

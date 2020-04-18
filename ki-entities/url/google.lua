@@ -2,8 +2,7 @@
 -- Google URL entity
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
-local Google = DefaultUrlEntities.Google
+local Google = spoon.Ki.defaultEntities.url.Google
 
 Google.class:include(SearchMixin)
 

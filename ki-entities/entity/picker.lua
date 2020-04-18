@@ -30,20 +30,23 @@ function Picker:pickCategory()
     end)
 end
 
-function Picker:initialize(categories, choices, categoryChoices)
+function Picker:initialize(choices, categories, categoryChoices)
     self.choices = choices
     self.categories = categories
     self.categoryChoices = categoryChoices
 
-    local actions = {
-        pick = function() self:pick() end,
-        pickCategory = function() self:pickCategory() end,
+    local shortcuts = {
+        { nil, nil, function() self:pick() end, { "Picker", "Pick Item" } },
     }
 
-    local shortcuts = {
-        { nil, nil, actions.pick, { "Picker", "Pick Item" } },
-        { { "cmd" }, "c", actions.pickCategory, { "Picker", "Pick Item Category" } },
-    }
+    -- Add category selection functionality if provided
+    if categories and categoryChoices then
+        local pickCategory = function()
+            self:pickCategory()
+        end
+
+        table.insert(shortcuts, { { "cmd" }, "c", pickCategory, { "Picker", "Pick Item Category" } } )
+    end
 
     Entity.initialize(self, "Picker", shortcuts, true)
 end

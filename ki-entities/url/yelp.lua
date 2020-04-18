@@ -2,8 +2,7 @@
 -- Yelp URL entity
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
-local Yelp = DefaultUrlEntities.Yelp
+local Yelp = spoon.Ki.defaultEntities.url.Yelp
 
 Yelp.class:include(SearchMixin)
 

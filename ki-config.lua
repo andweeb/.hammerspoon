@@ -1,12 +1,13 @@
 ----------------------------------------------------------------------------------------------------
--- Configure Ki
+-- Ki Config File
 --
 local Ki = spoon.Ki
 local URL = spoon.Ki.URL
 local File = spoon.Ki.File
 local Entity = spoon.Ki.Entity
-local DefaultEntities = spoon.Ki.defaultEntities
 local Application = spoon.Ki.Application
+local defaultEntities = spoon.Ki.defaultEntities.entity
+
 local WindowResizer = require("window-resizer")
 
 -- Helper functions
@@ -31,8 +32,8 @@ local urls = {
     APNews = URL:new("https://www.apnews.com"),
     BoA = URL:new("https://www.bankofamerica.com"),
     Chase = URL:new("https://www.chase.com"),
+    CapitalOne = URL:new("https://www.capitalone.com"),
     Dropbox = URL:new("https://www.dropbox.com"),
-    Twitch = URL:new("http://twitch.tv"),
 
     -- Externally defined URL entities
     Airbnb = requireEntity("url", "airbnb"),
@@ -67,21 +68,22 @@ local BedroomLIFX = LIFX:new("label:Bedroom", lifxToken)
 
 -- Create custom application entities
 local entities = {
-    -- Basic inline application entities
+    -- Initialize basic application entities inline
     Alacritty = Application:new("Alacritty"),
     AppStore = Application:new("App Store"),
     Discord = Application:new("Discord"),
     Firefox = Application:new("Firefox"),
     Hammerspoon = Application:new("Hammerspoon"),
+    MicrosoftWord = Application:new("Microsoft Word"),
+    Postico = Application:new("Postico"),
     Slack = Application:new("Slack"),
     ScriptEditor = Application:new("Script Editor"),
     Simulator = Application:new("Simulator"),
-    MicrosoftWord = Application:new("Microsoft Word"),
-    Postico = Application:new("Postico"),
     VMWareFusion = Application:new("VMware Fusion"),
     VisualStudioCode = Application:new("Visual Studio Code"),
 
-    -- Externally defined application entities
+    -- Require externally defined application entities
+    Fantastical = requireEntity("entity", "fantastical"),
     IINA = requireEntity("entity", "iina"),
     iTerm = requireEntity("entity", "iterm"),
     Java = requireEntity("entity", "java"),
@@ -89,27 +91,29 @@ local entities = {
     MicrosoftExcel = requireEntity("entity", "microsoft-excel"),
     MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
     NotificationCenter = requireEntity("entity", "notification-center"),
+    Soundboard = requireEntity("entity", "soundboard"),
     TablePlus = requireEntity("entity", "tableplus"),
     VLC = requireEntity("entity", "vlc"),
 
-    -- Remap default Ki application entities
-    TextEdit = DefaultEntities.TextEdit,
-    FaceTime = DefaultEntities.FaceTime,
-
-    -- Custom non-application entities
+    -- Require other (non-application) entities
     BedroomLIFX = BedroomLIFX,
     ClipboardText = requireEntity("entity", "clipboard-text"),
-    Emoji = requireEntity("entity", "emoji-picker"),
-    Kaomoji = requireEntity("entity", "kaomoji-picker"),
+    EmojiPicker = requireEntity("entity", "emoji-picker"),
     FSVolume = requireEntity("entity", "volume"),
+    GlyphPicker = requireEntity("entity", "glyph-picker"),
+    KaomojiPicker = requireEntity("entity", "kaomoji-picker"),
+
+    -- Add default Ki application entities that are to be configured
+    FaceTime = defaultEntities.FaceTime,
+    TextEdit = defaultEntities.TextEdit,
 }
 
 ----------------------------------------------------------------------------------------------------
--- Define state and transition events for custom modes
+-- Define state transitions and transition shortcuts for custom modes
 --
 
 -- Set custom state and transition events
-Ki.stateEvents = {
+local stateTransitions = {
     -- Window Mode
     { name = "enterWindowMode", from = "normal", to = "window" },
     { name = "enterWindowMode", from = "entity", to = "window" },
@@ -120,53 +124,34 @@ Ki.stateEvents = {
     { name = "enterSearchMode", from = "normal", to = "search" },
     { name = "exitMode", from = "search", to = "desktop" },
 }
-Ki.transitionEvents = {
-    normal = {
-        {
-            {"cmd"}, "w",
-            function() Ki.state:enterWindowMode() end,
-            { "Normal Mode", "Transition to Window Mode" },
-        },
-        {
-            {"shift", "cmd"}, "s",
-            function() Ki.state:enterSearchMode() end,
-            { "Normal Mode", "Transition to Search Mode" },
-        },
+local normalTransitionShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Normal Mode", "Transition to Window Mode" } },
+    {
+        {"shift", "cmd"}, "s",
+        function() Ki.state:enterSearchMode() end,
+        { "Normal Mode", "Transition to Search Mode" },
     },
-    search = {
-        {
-            nil, "escape",
-            function() Ki.state:exitMode() end,
-            { "Search Mode", "Exit to Desktop Mode" },
-        },
-    },
-    window = {
-        {
-            nil, "escape",
-            function() Ki.state:exitMode() end,
-            { "Window Mode", "Exit to Desktop Mode" },
-        },
-        {
-            {"cmd"}, "e",
-            function() Ki.state:enterEntityMode() end,
-            { "Window Mode", "Transition to Entity Mode" },
-        },
-    },
-    entity = {
-        {
-            {"cmd"}, "w",
-            function() Ki.state:enterWindowMode() end,
-            { "Entity Mode", "Transition to Window Mode" },
-        },
-    },
-    select = {
-        {
-            {"cmd"}, "w",
-            function() Ki.state:enterWindowMode() end,
-            { "Select Mode", "Transition to Window Mode" },
-        },
-    }
 }
+local searchTransitionShortcuts = {
+    { nil, "escape", function() Ki.state:exitMode() end, { "Search Mode", "Exit to Desktop Mode" } },
+}
+local windowTransitionShortcuts = {
+    { nil, "escape", function() Ki.state:exitMode() end, { "Window Mode", "Exit to Desktop Mode" } },
+    { {"cmd"}, "e", function() Ki.state:enterEntityMode() end, { "Window Mode", "Transition to Entity Mode" } },
+}
+local entityTransitionShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Entity Mode", "Transition to Window Mode" } },
+}
+local selectTransitionShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Select Mode", "Transition to Window Mode" } },
+}
+Ki:registerModes(stateTransitions, {
+    normal = normalTransitionShortcuts,
+    search = searchTransitionShortcuts,
+    window = windowTransitionShortcuts,
+    entity = entityTransitionShortcuts,
+    select = selectTransitionShortcuts
+})
 
 -- Add URL entity behavior for search mode to invoke
 -- a `search` method implemented on searchable URL entities
@@ -175,12 +160,13 @@ URL.behaviors.search = function(self)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Define custom workflow events for various modes
+-- Define custom shortcuts for various modes
 --
 
--- Define entity mode workflow events
-local entityWorkflowEvents = {
+-- Define entity mode shortcuts
+local entityShortcuts = {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
+    { nil, "c", entities.Fantastical, { "Entities", "Fantastical" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
     { nil, "j", entities.Java, { "Entities", "Java" } },
     { nil, "k", entities.Keyboard, { "Entities", "Keyboard" } },
@@ -189,8 +175,9 @@ local entityWorkflowEvents = {
     { nil, "v", entities.VMWareFusion, { "Entities", "VMware Fusion" } },
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
-    { { "cmd" }, "e", entities.Emoji, { "Entities", "Emoji" } },
-    { { "cmd" }, "k", entities.Kaomoji, { "Entities", "Kaomoji" } },
+    { { "cmd" }, "e", entities.EmojiPicker, { "Entities", "Emoji Picker" } },
+    { { "cmd" }, "g", entities.GlyphPicker, { "Entities", "Glyph Picker" } },
+    { { "cmd" }, "k", entities.KaomojiPicker, { "Entities", "Kaomoji Picker" } },
     { { "cmd" }, "t", entities.TextEdit, { "Entities", "TextEdit" } },
     { { "cmd" }, "v", entities.FSVolume, { "Entities", "Filesystem Volume" } },
     { { "ctrl" }, "n", entities.NotificationCenter, { "Entities", "Notification Center" } },
@@ -210,14 +197,14 @@ local entityWorkflowEvents = {
     { { "shift", "cmd" }, "v", entities.VisualStudioCode, { "Entities", "Visual Studio Code" } },
 }
 
--- Define select mode workflow events
-local selectEntityWorkflowEvents = {
+-- Define select mode shortcuts
+local selectEntityShortcuts = {
     { nil, "e", entities.MicrosoftExcel, { "Select Events", "Select a Microsoft Excel window" } },
     { nil, "j", entities.Java, { "Select Events", "Select a Java app" } },
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
-    { nil, "v", entities.VMWareFusion, { "Select Events", "VMware Fusion" } },
+    { nil, "v", entities.VMWareFusion, { "Select Events", "Select VMware Fusion window" } },
     { { "cmd" }, "t", entities.TextEdit, { "Select Events", "Select a TextEdit window" } },
-    { { "cmd" }, "v", entities.FSVolume, { "Entities", "Filesystem Volume" } },
+    { { "cmd" }, "v", entities.FSVolume, { "Entities", "Select a filesystem volume" } },
     { { "ctrl" }, "s", entities.ScriptEditor, { "Select Events", "Select a Script Editor window" } },
     { { "shift" }, "i", entities.IINA, { "Select Events", "Select an IINA window" } },
     { { "shift" }, "p", entities.TablePlus, { "Select Events", "Select a Database Connection" } },
@@ -226,8 +213,8 @@ local selectEntityWorkflowEvents = {
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Select Events", "Select a Microsoft Outlook window" } },
 }
 
--- Define URL mode workflow events
-local urlWorkflowEvents = {
+-- Define URL mode shortcuts
+local urlShortcuts = {
     { nil, "a", urls.Amazon, { "URL Events", "Amazon" } },
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
@@ -237,7 +224,6 @@ local urlWorkflowEvents = {
     { nil, "n", urls.Netflix, { "URL Events", "Netflix" } },
     { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
     { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
-    { nil, "t", urls.Twitch, { "URL Events", "Twitch" } },
     { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
     { nil, "y", urls.YouTube, { "URL Events", "YouTube" } },
     { { "cmd" }, "a", urls.APNews, { "URL Events", "APNews" } },
@@ -245,6 +231,7 @@ local urlWorkflowEvents = {
     { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
     { { "cmd" }, "n", urls.NYTimes, { "URL Events", "NYTimes" } },
     { { "shift" }, "a", urls.Airbnb, { "URL Events", "Airbnb" } },
+    { { "shift" }, "c", urls.CapitalOne, { "URL Events", "Capital One" } },
     { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
     { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
     { { "shift" }, "m", urls.GoogleMaps, { "URL Events", "Google Maps" } },
@@ -252,31 +239,31 @@ local urlWorkflowEvents = {
     { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
 }
 
--- Define search mode workflow events
-local searchWorkflowEvents = {
-    { nil, "a", urls.Amazon, { "Search Events", "Amazon" } },
-    { nil, "d", urls.DuckDuckGo, { "Search Events", "DuckDuckGo" } },
+-- Define search mode shortcuts
+local searchShortcuts = {
+    { nil, "a", urls.Amazon, { "Search URL Events", "Amazon" } },
+    { nil, "d", urls.DuckDuckGo, { "Search URL Events", "DuckDuckGo" } },
     { nil, "g", urls.Google, { "Search URL Events", "Google" } },
-    { nil, "n", urls.Netflix, { "Search Events", "Netflix" } },
-    { nil, "r", urls.Reddit, { "Search Events", "Reddit" } },
-    { nil, "s", urls.StackOverflow, { "Search Events", "Stack Overflow" } },
-    { nil, "w", urls.Wikipedia, { "Search Events", "Wikipedia" } },
-    { nil, "y", urls.YouTube, { "Search Events", "YouTube" } },
-    { { "cmd" }, "b", urls.BBC, { "URL Events", "BBC" } },
-    { { "cmd" }, "n", urls.NYTimes, { "URL Events", "NYTimes" } },
-    { { "shift" }, "g", urls.Github, { "Search Events", "Github" } },
+    { nil, "n", urls.Netflix, { "Search URL Events", "Netflix" } },
+    { nil, "r", urls.Reddit, { "Search URL Events", "Reddit" } },
+    { nil, "s", urls.StackOverflow, { "Search URL Events", "Stack Overflow" } },
+    { nil, "w", urls.Wikipedia, { "Search URL Events", "Wikipedia" } },
+    { nil, "y", urls.YouTube, { "Search URL Events", "YouTube" } },
+    { { "cmd" }, "b", urls.BBC, { "Search URL Events", "BBC" } },
+    { { "cmd" }, "n", urls.NYTimes, { "Search URL Events", "NYTimes" } },
+    { { "shift" }, "g", urls.Github, { "Search URL Events", "Github" } },
     { { "shift" }, "m", urls.GoogleMaps, { "Search URL Events", "Google Maps" } },
-    { { "shift" }, "y", urls.Yelp, { "Search Events", "Yelp" } },
-    { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
+    { { "shift" }, "y", urls.Yelp, { "Search URL Events", "Yelp" } },
+    { { "shift", "cmd" }, "n", urls.NPR, { "Search URL Events", "NPR" } },
 }
 
--- Define file mode workflow events
-local fileWorkflowEvents = {
+-- Define file mode shortcuts
+local fileShortcuts = {
     { nil, "c", files.Code, { "Files", "Code" } },
     { { "alt" }, "d", files.Dropbox, { "Files", "Dropbox" } },
 }
 
--- Define window mode workflow events
+-- Define window mode shortcuts
 local function moveWindowOneSpaceLeft() WindowResizer.moveWindowOneSpace("left") end
 local function moveWindowOneSpaceRight() WindowResizer.moveWindowOneSpace("right") end
 local function selectWindow()
@@ -309,21 +296,47 @@ local function selectWindow()
         window:focus()
     end)
 end
+local function minimizeWindow() hs.window.focusedWindow():minimize() end
+local function unminimizeRecentWindow()
+    local minimizedWindows = hs.window.minimizedWindows()
+    if minimizedWindows and #minimizedWindows > 0 then
+        minimizedWindows[1]:unminimize()
+    end
+end
 
-local windowWorkflowEvents = {
+local windowShortcuts = {
     { nil, "f", WindowResizer.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
     { nil, "h", WindowResizer.moveWindowLeft, { "Window Mode", "Move Window Left" } },
     { nil, "j", WindowResizer.centerWindow, { "Window Mode", "Center Window" } },
     { nil, "k", WindowResizer.maximizeWindow, { "Window Mode", "Maximize Window" } },
     { nil, "l", WindowResizer.moveWindowRight, { "Window Mode", "Move Window Right" } },
+    { nil, "m", minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
     { nil, "s", selectWindow, { "Window Mode", "Select Window" } },
     { nil, "space", WindowResizer.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
     { { "ctrl" }, "h", WindowResizer.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
     { { "ctrl" }, "l", WindowResizer.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
     { { "shift" }, "h", WindowResizer.moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
-    { { "shift" }, "l", WindowResizer.moveWindowUpperRight,{ "Window Mode", "Move Window Upper Right" } },
+    { { "shift" }, "l", WindowResizer.moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
+    { { "shift" }, "m", unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
     { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
     { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
+}
+
+-- Default style
+hs.alert.defaultStyle.radius = 7
+hs.alert.defaultStyle.textSize = 20
+hs.alert.defaultStyle.atScreenEdge = 1
+hs.alert.defaultStyle.strokeColor = { black = 0, alpha = 0 }
+hs.alert.defaultStyle.strokeWidth = 0
+hs.alert.defaultStyle.textStyle = { paragraphStyle = { alignment = 'center' } }
+
+local function showDateTime()
+    local dateTime = os.date("%I:%M %p %A, %B %d, %Y")
+    hs.alert.show(dateTime, hs.alert.defaultStyle)
+    Ki.state:exitMode()
+end
+local normalShortcuts = {
+    { nil, "d", showDateTime, { "Normal Mode", "Show Current Date-Time" } },
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -335,12 +348,13 @@ Ki.customEntities = entities
 Ki.customFiles = files
 Ki.customURLs = urls
 
--- Set custom workflow shortcuts
-Ki.workflowEvents = {
-    entity = entityWorkflowEvents,
-    select = selectEntityWorkflowEvents,
-    url = urlWorkflowEvents,
-    file = fileWorkflowEvents,
-    window = windowWorkflowEvents,
-    search = searchWorkflowEvents,
-}
+-- Register configured shortcuts
+Ki:registerShortcuts({
+    entity = entityShortcuts,
+    select = selectEntityShortcuts,
+    url = urlShortcuts,
+    file = fileShortcuts,
+    window = windowShortcuts,
+    search = searchShortcuts,
+    normal = normalShortcuts,
+})

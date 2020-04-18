@@ -6,7 +6,10 @@
 require("hs.ipc")
 
 -- Reload Hammerspoon hotkey
-hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function() hs.reload() end)
+hs.hotkey.bind({ "alt", "cmd", "shift" }, "r", function()
+    hs.console.clearConsole()
+    hs.reload()
+end)
 
 -- Disable window animation
 hs.window.animationDuration = 0
@@ -16,13 +19,16 @@ hs.window.animationDuration = 0
 --
 hs.loadSpoon("Ki")
 
+-- Use default config
+spoon.Ki:useDefaultConfig()
+
 -- Configure ki
 require("ki-config")
 
 -- Use local config if it exists
-local loadedOk, err = pcall(function() require("local-ki-config") end)
-if not loadedOk then
-    print("Unable to load local ki config, received error: "..err)
+local _, err = pcall(function() require("local-ki-config") end)
+if err and not err:find("module '.*' not found") then
+    print("Error loading local ki config: "..err)
 end
 
 -- Start Ki

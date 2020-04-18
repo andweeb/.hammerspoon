@@ -1,13 +1,37 @@
 ----------------------------------------------------------------------------------------------------
 -- Custom Window Resizer
 --
-local WindowResizer = {}
+local WindowResizer = {
+    frames = {},
+}
+
+function WindowResizer:cloneTable(input)
+    local copy
+
+    if type(input) ~= "table" then
+        return input
+    end
+
+    copy = {}
+
+    for key, value in next, input, nil do
+        copy[self:cloneTable(key)] = self:cloneTable(value)
+    end
+
+    setmetatable(copy, self:cloneTable(getmetatable(input)))
+
+    return copy
+end
 
 -- Move window to the left half
 function WindowResizer.moveWindowLeft()
     local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x
     windowFrame.y = screenDimensions.y
@@ -22,6 +46,10 @@ function WindowResizer.moveWindowRight()
     local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
     windowFrame.y = screenDimensions.y
@@ -31,76 +59,132 @@ function WindowResizer.moveWindowRight()
     window:setFrame(windowFrame)
 end
 
+-- Move window to the top half
+function WindowResizer.moveWindowTopHalf()
+    local window = hs.window.focusedWindow()
+    local screenDimensions = WindowResizer.getScreenDimensions()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
+
+    windowFrame.x = screenDimensions.x
+    windowFrame.y = screenDimensions.y
+    windowFrame.w = screenDimensions.w
+    windowFrame.h = screenDimensions.h / 2
+
+    window:setFrame(windowFrame)
+end
+
+-- Move window to the bottom half
+function WindowResizer.moveWindowBottomHalf()
+    local window = hs.window.focusedWindow()
+    local screenDimensions = WindowResizer.getScreenDimensions()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
+
+    windowFrame.x = screenDimensions.x
+    windowFrame.y = screenDimensions.y + (screenDimensions.h / 2)
+    windowFrame.w = screenDimensions.w
+    windowFrame.h = screenDimensions.h / 2
+
+    window:setFrame(windowFrame)
+end
+
 -- Move window to the upper left
 function WindowResizer.moveWindowUpperLeft()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
-    local windowFrame = win:frame()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x
     windowFrame.y = screenDimensions.y
     windowFrame.w = screenWidth / 2
     windowFrame.h = (screenHeight / 2) - 25
 
-    win:setFrame(windowFrame)
+    window:setFrame(windowFrame)
 end
 
 -- Move window to the upper right
 function WindowResizer.moveWindowUpperRight()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
-    local windowFrame = win:frame()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
     windowFrame.y = screenDimensions.y
     windowFrame.w = screenWidth / 2
     windowFrame.h = (screenHeight / 2) - 25
 
-    win:setFrame(windowFrame)
+    window:setFrame(windowFrame)
 end
 
 -- Move window to the bottom left
 function WindowResizer.moveWindowBottomLeft()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
-    local windowFrame = win:frame()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x
     windowFrame.y = screenDimensions.y + (screenHeight / 2) - 50
     windowFrame.w = screenWidth / 2
     windowFrame.h = (screenHeight / 2) + 50
 
-    win:setFrame(windowFrame)
+    window:setFrame(windowFrame)
 end
 
 -- Move window to the bottom right
 function WindowResizer.moveWindowBottomRight()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
-    local windowFrame = win:frame()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x + (screenWidth / 2)
     windowFrame.y = screenDimensions.y + (screenHeight / 2) - 50
     windowFrame.w = screenWidth / 2
     windowFrame.h = (screenHeight / 2) + 50
 
-    win:setFrame(windowFrame)
+    window:setFrame(windowFrame)
 end
 
 -- Maximize window
 function WindowResizer.maximizeWindow()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(window:frame())
+    end
 
-    win:setFrame(screenDimensions)
+    window:setFrame(screenDimensions)
 end
 
 -- Toggle window fullscreen status
@@ -111,16 +195,20 @@ end
 
 -- Center window
 function WindowResizer.centerWindow()
-    local win = hs.window.focusedWindow()
+    local window = hs.window.focusedWindow()
     local screenDimensions = WindowResizer.getScreenDimensions()
-    local windowFrame = win:frame()
+    local windowFrame = window:frame()
+    local previousFrame = WindowResizer.frames[window:id()]
+    if not previousFrame then
+        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+    end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w * 0.25)
     windowFrame.y = screenDimensions.y + (screenDimensions.h * 0.25)
     windowFrame.w = screenDimensions.w * 0.5
     windowFrame.h = screenDimensions.h * 0.5
 
-    win:setFrame(windowFrame)
+    window:setFrame(windowFrame)
 end
 
 -- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219)
@@ -177,6 +265,17 @@ end
 -- Screen dimensions utility function
 function WindowResizer.getScreenDimensions()
     return hs.window.focusedWindow():screen():frame()
+end
+
+-- Restore previous window frame state
+function WindowResizer.restorePreviousWindowSize()
+    local window = hs.window.frontmostWindow()
+    local previousWindowFrame = WindowResizer.frames[window:id()]
+
+    if previousWindowFrame then
+        window:setFrame(previousWindowFrame)
+        WindowResizer.frames[window:id()] = nil
+    end
 end
 
 return WindowResizer

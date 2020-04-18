@@ -2,8 +2,7 @@
 -- Reddit URL entity
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local DefaultUrlEntities = spoon.Ki.defaultUrlEntities
-local Reddit = DefaultUrlEntities.Reddit
+local Reddit = spoon.Ki.defaultEntities.url.Reddit
 
 Reddit.class:include(SearchMixin)
 

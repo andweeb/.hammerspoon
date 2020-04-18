@@ -10,11 +10,15 @@ std = {
         'pairs',
         'ipairs',
         'table',
+        'next',
+        'getmetatable',
         'setmetatable',
         'string',
         'tonumber',
         'tostring',
         'pcall',
+        'assert',
+        'type',
     }
 }
 
