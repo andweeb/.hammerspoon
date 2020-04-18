@@ -4,44 +4,67 @@
 local Entity = spoon.Ki.Entity
 local ClipboardText = Entity:new("Clipboard Text")
 
-function ClipboardText.notify(message, isError)
-    local title = "Ki - Clipboard Text Entity"
-    local details = isError and "Unable to manipulate text in clipboard" or hs.pasteboard.getContents()
-    return hs.notify.show(title, message, details)
-end
+-- General text transform functions
+local function capitalize(text) return text:gsub('^%l', string.upper) end
+local function camelCase(text) return text:gsub('%W+(%w+)', capitalize) end
+local function kebabCase(text) return text:gsub('%W+', '-') end
+local function snakeCase(text) return text:gsub('%W+', '_') end
+local function normalCase(text) return text:gsub('%W+', ' ') end
 
-function ClipboardText.dottedCaseToNormal()
-    local clipboardText = hs.pasteboard.getContents()
-    local convertedText = clipboardText:gsub("%.", " ")
-    hs.pasteboard.setContents(convertedText)
-    ClipboardText.notify("Clipboard text in normal case")
-end
-
-function ClipboardText.updateTextCaseEvent(case)
+-- Helper method to create events that transform text that exists in the clipboard
+function ClipboardText.transformTextEvent(message, transformFn)
     return function()
         local clipboardText = hs.pasteboard.getContents()
-        hs.pasteboard.setContents(clipboardText[case](clipboardText))
-        ClipboardText.notify("Clipboard text in "..case.."case")
+
+        local convertedText, errorMessage = transformFn(clipboardText)
+        if not convertedText then
+            ClipboardText.notify("Unable to transform text in clipboard", errorMessage)
+            return
+        end
+
+        local success = hs.pasteboard.setContents(convertedText)
+        if not success then
+            ClipboardText.notify("Unable to set contents to clipboard:", convertedText)
+            return
+        end
+
+        ClipboardText.notify(message..":", convertedText)
     end
 end
 
-function ClipboardText.capitalizeWords()
-    local clipboardText = hs.pasteboard.getContents()
-    local capitalizedWords = string.gsub(" "..clipboardText, "%W%l", string.upper):sub(2)
+-- Various clipboard text transformation events
+ClipboardText.encodeBase64 = ClipboardText.transformTextEvent("Encoded text in base64", hs.base64.encode)
+ClipboardText.decodeBase64 = ClipboardText.transformTextEvent("Decoded text in base64", hs.base64.decode)
+ClipboardText.lowercase = ClipboardText.transformTextEvent("Lowercased text", string.lower)
+ClipboardText.uppercase = ClipboardText.transformTextEvent("Uppercased text", string.upper)
+ClipboardText.normalcase = ClipboardText.transformTextEvent("Converted text to normal case", normalCase)
+ClipboardText.camelcase = ClipboardText.transformTextEvent("Converted text to camel case", camelCase)
+ClipboardText.kebabcase = ClipboardText.transformTextEvent("Converted text to kebab case", kebabCase)
+ClipboardText.snakecase = ClipboardText.transformTextEvent("Converted text to snake case", snakeCase)
+ClipboardText.formatJSON = ClipboardText.transformTextEvent("Formatted JSON text", function(text)
+    return hs.json.encode(hs.json.decode(text), true)
+end)
+ClipboardText.capitalizeWords = ClipboardText.transformTextEvent("Capitalized words in text", function(text)
+    return (" "..text:lower()):gsub("%W%l", string.upper):sub(2)
+end)
 
-    hs.pasteboard.setContents(capitalizedWords)
+-- Use minified sql-formatter package
+local sqlFormatterPath = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/sql-formatter.min.js")
+local sqlFormatterFile = assert(io.open(sqlFormatterPath, "rb"))
+local sqlFormatterScript = sqlFormatterFile:read("*all")
+sqlFormatterFile:close()
 
-    ClipboardText.notify("Clipboard text capitalized")
-end
+-- Create sql format text transform event
+ClipboardText.formatSQL = ClipboardText.transformTextEvent("Formatted SQL", function(text)
+    -- The method call needs to be invoked in javascript due to osascript limitations
+    local sqlFormatter = sqlFormatterScript..[[
+        sqlFormatter.format(`]]..text:gsub("%`", "\\`")..[[`, { indent: '    ' })
+    ]]
+    local _, formattedSQL, descriptor = hs.osascript.javascript(sqlFormatter)
+    return formattedSQL, type(descriptor) == "table" and descriptor.NSLocalizedDescription or ""
+end)
 
-function ClipboardText.convertBase64Event(translation)
-    return function()
-        local clipboardText = hs.pasteboard.getContents()
-        hs.pasteboard.setContents(hs.base64[translation](clipboardText))
-        ClipboardText.notify("Clipboard text "..translation.."d in Base64")
-    end
-end
-
+-- Convert Rich Text Format (RTF) to plain text
 function ClipboardText.convertRtfToPlainText()
     local text = hs.execute([[
         osascript -e 'the clipboard as «class RTF »' | \
@@ -49,50 +72,46 @@ function ClipboardText.convertRtfToPlainText()
             textutil -stdin -stdout -convert txt
     ]])
     hs.pasteboard.setContents(text)
-    ClipboardText.notify("Clipboard RTF text converted to plain text")
+    ClipboardText.notify("Clipboard RTF text converted to plain text:", text)
 end
 
+-- Format XML with four-space indentation
 function ClipboardText.formatXML()
-    -- Format XML with four-space indentation
     hs.execute("pbpaste | XMLLINT_INDENT='    ' xmllint --format - | pbcopy")
     ClipboardText.notify("Formatted XML text in clipboard")
 end
 
-function ClipboardText.formatJSON()
-    local clipboardText = hs.pasteboard.getContents()
-    hs.pasteboard.setContents(hs.json.encode(hs.json.decode(clipboardText), true))
-    ClipboardText.notify("Formatted JSON text in clipboard")
-end
-
-function ClipboardText.formatSQL()
-    hs.execute("pbpaste | format-sql -p console_monochrome | pbcopy")
-    ClipboardText.notify("Formatted SQL text in clipboard")
-end
-
+-- Open a URL copied in the clipboard
 function ClipboardText.openURL()
-    local copiedURL = hs.pasteboard.getContents()
-    hs.urlevent.openURL(copiedURL)
+    local text = hs.pasteboard.getContents()
+    local success = hs.urlevent.openURL(text)
+
+    if not success then
+        ClipboardText.notify("Unable to open URL in clipboard:", text)
+    end
 end
 
-ClipboardText.lowercase = ClipboardText.updateTextCaseEvent("lower")
-ClipboardText.uppercase = ClipboardText.updateTextCaseEvent("upper")
-ClipboardText.encodeBase64Text = ClipboardText.convertBase64Event("encode")
-ClipboardText.decodeBase64Text = ClipboardText.convertBase64Event("decode")
+-- Helper method for notifying on completion of clipboard text events
+function ClipboardText.notify(message, details)
+    details = details or ""
+    return hs.notify.show("Ki - Clipboard Text Entity", message, details)
+end
 
-local shortcuts = {
-    { nil, "c", ClipboardText.capitalizeWords, { "Clipboard Text", "Capitalize Words" } },
-    { nil, "d", ClipboardText.decodeBase64Text, { "Clipboard Text", "Decode Base64" } },
-    { nil, "e", ClipboardText.encodeBase64Text, { "Clipboard Text", "Encode Base64" } },
+ClipboardText:registerShortcuts({
+    { nil, "c", ClipboardText.capitalizeWords, { "Clipboard Text", "Capitalize Words in Text" } },
+    { nil, "d", ClipboardText.decodeBase64, { "Clipboard Text", "Decode Base64" } },
+    { nil, "e", ClipboardText.encodeBase64, { "Clipboard Text", "Encode Base64" } },
     { nil, "j", ClipboardText.formatJSON, { "Clipboard Text", "Format JSON" } },
+    { nil, "k", ClipboardText.kebabcase, { "Clipboard Text", "Convert Text to Kebabcase" } },
     { nil, "l", ClipboardText.lowercase, { "Clipboard Text", "Convert Text to Lowercase" } },
+    { nil, "n", ClipboardText.normalcase, { "Clipboard Text", "Convert Text to Normal" } },
     { nil, "r", ClipboardText.convertRtfToPlainText, { "Clipboard Text", "Convert RTF Text to Plain Text" } },
     { nil, "s", ClipboardText.formatSQL, { "Clipboard Text", "Format SQL" } },
     { nil, "u", ClipboardText.uppercase, { "Clipboard Text", "Convert Text to Uppercase" } },
     { nil, "x", ClipboardText.formatXML, { "Clipboard Text", "Format XML" } },
     { nil, "space", ClipboardText.openURL, { "Clipboard Text", "Open Copied URL" } },
-    { { "shift" }, "d", ClipboardText.dottedCaseToNormal, { "Clipboard Text", "Convert Dotted Text Case to Normal" } },
-}
-
-ClipboardText:initialize("Clipboard Text", shortcuts, true)
+    { { "shift" }, "c", ClipboardText.camelcase, { "Clipboard Text", "Convert Text to Camelcase" } },
+    { { "shift" }, "s", ClipboardText.snakecase, { "Clipboard Text", "Convert Text to Snakecase" } },
+})
 
 return ClipboardText
