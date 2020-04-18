@@ -16,10 +16,8 @@ function NotificationCenter.dismissNotifications()
     end
 end
 
-local shortcuts = {
+NotificationCenter:registerShortcuts({
     { nil, "delete", NotificationCenter.dismissNotifications, { "Notification Center", "Dismiss Notifications" } }
-}
-
-NotificationCenter:initialize("Notification Center", shortcuts)
+})
 
 return NotificationCenter

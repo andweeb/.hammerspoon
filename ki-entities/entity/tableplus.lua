@@ -47,22 +47,18 @@ function TablePlus.open(app, choice)
     app:activate()
 
     if choice then
-        local isOk, _, rawTable = hs.execute([[
-            open "tableplus://?id=]]..choice.id..[["
-        ]])
+        local isOk = hs.urlevent.openURL("tableplus://?id="..choice.id)
 
         if not isOk then
-            Application.notifyError("Error opening the connection", rawTable.NSLocalizedFailureReason)
+            Application.notifyError("Error opening the connection")
         end
     end
 end
 
-local shortcuts = {
-    { nil, nil, TablePlus.open, { "TablePlus", "Open Application or Database Connection" } },
-}
-
 -- Initialize TablePlus
 TablePlus.connections = TablePlus:readPlist("Connections")
-TablePlus.shortcuts = TablePlus.mergeShortcuts(shortcuts, TablePlus.shortcuts)
+TablePlus:registerShortcuts({
+    { nil, nil, TablePlus.open, { "TablePlus", "Open Application or Database Connection" } },
+})
 
 return TablePlus

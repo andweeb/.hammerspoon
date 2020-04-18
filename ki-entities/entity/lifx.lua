@@ -61,63 +61,53 @@ function LIFX:selectColors(choices)
     end)
 end
 
+LIFX.colors = {
+    "white",
+    "red",
+    "orange",
+    "yellow",
+    "cyan",
+    "green",
+    "blue",
+    "purple",
+    "pink",
+}
+
+-- Initialize color choices
+local colorChoices = {}
+for _, color in pairs(LIFX.colors) do
+    table.insert(colorChoices, {
+        color = color,
+        text = color,
+        subText = "Set LIFX light color to "..color,
+    })
+end
+
 function LIFX:initialize(selector, token, shortcuts)
     shortcuts = shortcuts or {}
 
     self.selector = selector
     self.token = token
-    self.colors = {
-        "white",
-        "red",
-        "orange",
-        "yellow",
-        "cyan",
-        "green",
-        "blue",
-        "purple",
-        "pink",
-    }
-
-    -- Initialize color choices
-    local colorChoices = {}
-    for _, color in pairs(self.colors) do
-        table.insert(colorChoices, {
-            color = color,
-            text = color,
-            subText = "Set LIFX light color to "..color,
-        })
-    end
-
-    local actions = {
-        noop = function() return true end,
-        togglePower = function() return self:togglePower() end,
-        selectColors = function() self:selectColors(colorChoices) end,
-        powerOn = self:createStateEvent({ power = "on" }),
-        powerOff = self:createStateEvent({ power = "off" }),
-    }
 
     local defaultShortcuts = {
-        { nil, nil, actions.noop, { "LIFX", "No-op" } },
-        { nil, "c", actions.selectColors, { "LIFX", "Select and Set a Color" } },
-        { nil, "o", actions.powerOn, { "LIFX", "Power On" } },
-        { nil, "delete", actions.powerOff, { "LIFX", "Power Off" } },
-        { nil, "space", actions.togglePower, { "Power", "Toggle Light On/Off" } },
+        { nil, nil, function() return true end, { "LIFX", "No-op" } },
+        { nil, "c", function() self:selectColors(colorChoices) end, { "LIFX", "Select and Set a Color" } },
+        { nil, "delete", self:createStateEvent({ power = "off" }), { "LIFX", "Power Off" } },
+        { nil, "return", self:createStateEvent({ power = "on" }), { "LIFX", "Power On" } },
+        { nil, "space", function() return self:togglePower() end, { "Power", "Toggle Light On/Off" } },
     }
 
     -- Initialize events to set brightness levels
     for number = 0, 9 do
         local percent = number / 9
-        table.insert(defaultShortcuts, {
-            nil,
-            tostring(number),
-            self:createStateEvent({ brightness = percent }),
-            { "LIFX", "Set Brightness to "..tostring(math.floor(percent)).."%" },
-        })
+        local setBrightnessEvent = self:createStateEvent({ brightness = percent })
+        local eventDescription = "Set Brightness to "..tostring(math.floor(percent * 100)).."%"
+        local shortcut = { nil, tostring(number), setBrightnessEvent, { "LIFX", eventDescription } }
+
+        table.insert(defaultShortcuts, shortcut)
     end
 
-    self.shortcuts = self.mergeShortcuts(shortcuts, defaultShortcuts)
-
-    Entity.initialize(self, "LIFX", self.shortcuts, true)
+    Entity.initialize(self, "LIFX", self.mergeShortcuts(shortcuts, defaultShortcuts), true)
 end
 
 return LIFX

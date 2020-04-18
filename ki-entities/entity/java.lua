@@ -82,11 +82,9 @@ function Java.about(_, choice)
     end
 end
 
-local shortcuts = {
+Java:registerShortcuts({
     { nil, nil, Java.focus, { "Java", "Activate/Focus Java App" } },
     { nil, "a", Java.about, { "Java", "About Java Application" } },
-}
-
-Java:initialize("Java", shortcuts)
+})
 
 return Java

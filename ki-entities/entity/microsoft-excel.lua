@@ -2,9 +2,10 @@
 -- Microsoft Excel application
 --
 local Application = spoon.Ki.Application
-local path = "~/.hammerspoon/scripts/microsoft-excel.applescript"
-local applescriptLocation = hs.fs.pathToAbsolute(path)
 local MicrosoftExcel = Application:new("Microsoft Excel")
+
+local scriptPath = "~/.hammerspoon/scripts/microsoft-excel.applescript"
+local applescriptLocation = hs.fs.pathToAbsolute(scriptPath)
 
 function MicrosoftExcel.fetchWorksheets()
     local script = Application.renderScriptTemplate(applescriptLocation, {
@@ -143,15 +144,13 @@ MicrosoftExcel.openRecent = Application.createMenuItemSelectionEvent({ "File", "
     focusAfter = true,
 })
 
-local shortcuts = {
+MicrosoftExcel:registerShortcuts({
     { nil, nil, MicrosoftExcel.focus, "Activate/Focus" },
     { nil, "c", MicrosoftExcel.colorSelectedCells, "Color Selected Cells" },
     { nil, "s", MicrosoftExcel.selectCell, "Select Cell" },
     { { "cmd" }, "a", MicrosoftExcel.autofitAllColumns, "Autofit All Columns" },
     { { "shift" }, "f", MicrosoftExcel.toggleFreezeTopRow, "Toggle Freeze Top Row" },
     { { "shift" }, "o", MicrosoftExcel.openRecent, "Open Recent" },
-}
-
-MicrosoftExcel:initialize("Microsoft Excel", shortcuts)
+})
 
 return MicrosoftExcel

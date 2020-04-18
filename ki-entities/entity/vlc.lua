@@ -2,6 +2,7 @@
 -- VLC application
 --
 local Application = spoon.Ki.Application
+local VLC = Application:new("VLC")
 
 local function executeApplescriptEvent(script)
     return function()
@@ -9,16 +10,14 @@ local function executeApplescriptEvent(script)
     end
 end
 
-local actions = {
-    openFile = Application.createMenuItemEvent("Open File..."),
-    playPause = executeApplescriptEvent([[ tell application "VLC" to play ]]),
-    stop = executeApplescriptEvent([[ tell application "VLC" to stop ]]),
-}
+VLC.openFile = Application.createMenuItemEvent("Open File...")
+VLC.playPause = executeApplescriptEvent([[ tell application "VLC" to play ]])
+VLC.stop = executeApplescriptEvent([[ tell application "VLC" to stop ]])
 
-local shortcuts = {
-    { nil, "space", actions.playPause, { "Playback", "Toggle Play" } },
-    { nil, "o", actions.openFile, { "File", "Open File" } },
-    { nil, "s", actions.stop, { "Playback", "Stop" } },
-}
+VLC:registerShortcuts({
+    { nil, "space", VLC.playPause, { "Playback", "Toggle Play" } },
+    { nil, "o", VLC.openFile, { "File", "Open File" } },
+    { nil, "s", VLC.stop, { "Playback", "Stop" } },
+})
 
-return Application:new("VLC", shortcuts)
+return VLC
