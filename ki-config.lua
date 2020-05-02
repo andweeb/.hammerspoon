@@ -113,7 +113,7 @@ local entities = {
 --
 
 -- Set custom state and transition events
-local stateTransitions = {
+local modeTransitionEvents = {
     -- Window Mode
     { name = "enterWindowMode", from = "normal", to = "window" },
     { name = "enterWindowMode", from = "entity", to = "window" },
@@ -145,7 +145,7 @@ local entityTransitionShortcuts = {
 local selectTransitionShortcuts = {
     { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Select Mode", "Transition to Window Mode" } },
 }
-Ki:registerModes(stateTransitions, {
+Ki:registerModes(modeTransitionEvents, {
     normal = normalTransitionShortcuts,
     search = searchTransitionShortcuts,
     window = windowTransitionShortcuts,
@@ -330,15 +330,6 @@ hs.alert.defaultStyle.strokeColor = { black = 0, alpha = 0 }
 hs.alert.defaultStyle.strokeWidth = 0
 hs.alert.defaultStyle.textStyle = { paragraphStyle = { alignment = 'center' } }
 
-local function showDateTime()
-    local dateTime = os.date("%I:%M %p %A, %B %d, %Y")
-    hs.alert.show(dateTime, hs.alert.defaultStyle)
-    Ki.state:exitMode()
-end
-local normalShortcuts = {
-    { nil, "d", showDateTime, { "Normal Mode", "Show Current Date-Time" } },
-}
-
 ----------------------------------------------------------------------------------------------------
 -- Finish up and finally set custom shortcuts
 --
@@ -356,5 +347,4 @@ Ki:registerShortcuts({
     file = fileShortcuts,
     window = windowShortcuts,
     search = searchShortcuts,
-    normal = normalShortcuts,
 })
