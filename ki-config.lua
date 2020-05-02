@@ -74,6 +74,8 @@ local entities = {
     Discord = Application:new("Discord"),
     Firefox = Application:new("Firefox"),
     Hammerspoon = Application:new("Hammerspoon"),
+    LINE = Application:new("LINE"),
+    Messenger = Application:new("Messenger"),
     MicrosoftWord = Application:new("Microsoft Word"),
     Postico = Application:new("Postico"),
     Slack = Application:new("Slack"),
@@ -81,6 +83,7 @@ local entities = {
     Simulator = Application:new("Simulator"),
     VMWareFusion = Application:new("VMware Fusion"),
     VisualStudioCode = Application:new("Visual Studio Code"),
+    Zoom = Application:new("zoom.us"),
 
     -- Require externally defined application entities
     Fantastical = requireEntity("entity", "fantastical"),
@@ -173,6 +176,7 @@ local entityShortcuts = {
     { nil, "l", entities.BedroomLIFX, { "Entities", "Bedroom LIFX Light" } },
     { nil, "w", entities.MicrosoftWord, { "Entities", "Microsoft Word" } },
     { nil, "v", entities.VMWareFusion, { "Entities", "VMware Fusion" } },
+    { nil, "z", entities.Zoom, { "Entities", "Zoom" } },
     { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
     { { "cmd" }, "e", entities.EmojiPicker, { "Entities", "Emoji Picker" } },
@@ -186,6 +190,8 @@ local entityShortcuts = {
     { { "shift" }, "f", entities.Firefox, { "Entities", "Firefox" } },
     { { "shift" }, "i", entities.IINA, { "Entities", "IINA" } },
     { { "shift" }, "h", entities.Hammerspoon, { "Entities", "Hammerspoon" } },
+    { { "shift" }, "l", entities.LINE, { "Entities", "LINE" } },
+    { { "shift" }, "m", entities.Messenger, { "Entities", "Messenger" } },
     { { "shift" }, "p", entities.TablePlus, { "Entities", "TablePlus" } },
     { { "shift" }, "t", entities.iTerm, { "Entities", "iTerm" } },
     { { "shift" }, "v", entities.VLC, { "Entities", "VLC" } },
