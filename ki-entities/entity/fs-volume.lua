@@ -131,7 +131,7 @@ function FSVolume.open(choice)
     if choice then
         File.open(choice.path)
     else
-        FSVolume.openSelectedFSVolume()
+        FSVolume.openSelectedVolume()
     end
 end
 
