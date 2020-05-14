@@ -19,9 +19,6 @@ local function getEnvironmentVariable(name)
     return variable:gsub("\n", "")
 end
 
--- Set custom status display
-Ki.statusDisplay = require("ki-menubar-item")
-
 ----------------------------------------------------------------------------------------------------
 -- Create custom ki entities
 --
@@ -84,7 +81,6 @@ local entities = {
     Simulator = Application:new("Simulator"),
     VMWareFusion = Application:new("VMware Fusion"),
     VisualStudioCode = Application:new("Visual Studio Code"),
-    Zoom = Application:new("zoom.us"),
 
     -- Require externally defined application entities
     Fantastical = requireEntity("entity", "fantastical"),
@@ -98,6 +94,7 @@ local entities = {
     Soundboard = requireEntity("entity", "soundboard"),
     TablePlus = requireEntity("entity", "tableplus"),
     VLC = requireEntity("entity", "vlc"),
+    Zoom = requireEntity("entity", "zoom"),
 
     -- Require other (non-application) entities
     BedroomLIFX = BedroomLIFX,
@@ -128,33 +125,33 @@ local modeTransitionEvents = {
     { name = "enterSearchMode", from = "normal", to = "search" },
     { name = "exitMode", from = "search", to = "desktop" },
 }
-local normalTransitionShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Normal Mode", "Transition to Window Mode" } },
+local normalModeShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Normal Mode", "Enter Window Mode" } },
     {
         {"shift", "cmd"}, "s",
         function() Ki.state:enterSearchMode() end,
-        { "Normal Mode", "Transition to Search Mode" },
+        { "Normal Mode", "Enter Search Mode" },
     },
 }
-local searchTransitionShortcuts = {
+local searchModeShortcuts = {
     { nil, "escape", function() Ki.state:exitMode() end, { "Search Mode", "Exit to Desktop Mode" } },
 }
-local windowTransitionShortcuts = {
+local windowModeShortcuts = {
     { nil, "escape", function() Ki.state:exitMode() end, { "Window Mode", "Exit to Desktop Mode" } },
-    { {"cmd"}, "e", function() Ki.state:enterEntityMode() end, { "Window Mode", "Transition to Entity Mode" } },
+    { {"cmd"}, "e", function() Ki.state:enterEntityMode() end, { "Window Mode", "Enter Entity Mode" } },
 }
-local entityTransitionShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Entity Mode", "Transition to Window Mode" } },
+local entityModeShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Entity Mode", "Enter Window Mode" } },
 }
-local selectTransitionShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Select Mode", "Transition to Window Mode" } },
+local selectModeShortcuts = {
+    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Select Mode", "Enter Window Mode" } },
 }
 Ki:registerModes(modeTransitionEvents, {
-    normal = normalTransitionShortcuts,
-    search = searchTransitionShortcuts,
-    window = windowTransitionShortcuts,
-    entity = entityTransitionShortcuts,
-    select = selectTransitionShortcuts
+    normal = normalModeShortcuts,
+    search = searchModeShortcuts,
+    window = windowModeShortcuts,
+    entity = entityModeShortcuts,
+    select = selectModeShortcuts
 })
 
 -- Add URL entity behavior for search mode to invoke
