@@ -4,11 +4,10 @@
 local Ki = spoon.Ki
 local URL = spoon.Ki.URL
 local File = spoon.Ki.File
-local Entity = spoon.Ki.Entity
 local Application = spoon.Ki.Application
 local defaultEntities = spoon.Ki.defaultEntities.entity
 
-local WindowResizer = require("window-resizer")
+require("window-mode")
 
 -- Helper functions
 local function requireEntity(type, file)
@@ -110,62 +109,11 @@ local entities = {
 }
 
 ----------------------------------------------------------------------------------------------------
--- Define state transitions and transition shortcuts for custom modes
+-- Register custom shortcuts for various modes
 --
 
--- Set custom state and transition events
-local modeTransitionEvents = {
-    -- Window Mode
-    { name = "enterWindowMode", from = "normal", to = "window" },
-    { name = "enterWindowMode", from = "entity", to = "window" },
-    { name = "enterWindowMode", from = "select", to = "window" },
-    { name = "enterSelectMode", from = "window", to = "select" },
-    { name = "exitMode", from = "window", to = "desktop" },
-    -- Search Mode
-    { name = "enterSearchMode", from = "normal", to = "search" },
-    { name = "exitMode", from = "search", to = "desktop" },
-}
-local normalModeShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Normal Mode", "Enter Window Mode" } },
-    {
-        {"shift", "cmd"}, "s",
-        function() Ki.state:enterSearchMode() end,
-        { "Normal Mode", "Enter Search Mode" },
-    },
-}
-local searchModeShortcuts = {
-    { nil, "escape", function() Ki.state:exitMode() end, { "Search Mode", "Exit to Desktop Mode" } },
-}
-local windowModeShortcuts = {
-    { nil, "escape", function() Ki.state:exitMode() end, { "Window Mode", "Exit to Desktop Mode" } },
-    { {"cmd"}, "e", function() Ki.state:enterEntityMode() end, { "Window Mode", "Enter Entity Mode" } },
-}
-local entityModeShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Entity Mode", "Enter Window Mode" } },
-}
-local selectModeShortcuts = {
-    { {"cmd"}, "w", function() Ki.state:enterWindowMode() end, { "Select Mode", "Enter Window Mode" } },
-}
-Ki:registerModes(modeTransitionEvents, {
-    normal = normalModeShortcuts,
-    search = searchModeShortcuts,
-    window = windowModeShortcuts,
-    entity = entityModeShortcuts,
-    select = selectModeShortcuts
-})
-
--- Add URL entity behavior for search mode to invoke
--- a `search` method implemented on searchable URL entities
-URL.behaviors.search = function(self)
-    self:search()
-end
-
-----------------------------------------------------------------------------------------------------
--- Define custom shortcuts for various modes
---
-
--- Define entity mode shortcuts
-local entityShortcuts = {
+-- Register entity mode shortcuts
+Ki:registerModeShortcuts("entity", {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
     { nil, "c", entities.Fantastical, { "Entities", "Fantastical" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
@@ -199,10 +147,10 @@ local entityShortcuts = {
     { { "shift", "cmd" }, "p", entities.Postico, { "Entities", "Postico" } },
     { { "shift", "cmd" }, "s", entities.Slack, { "Entities", "Slack" } },
     { { "shift", "cmd" }, "v", entities.VisualStudioCode, { "Entities", "Visual Studio Code" } },
-}
+})
 
--- Define select mode shortcuts
-local selectEntityShortcuts = {
+-- Register select mode shortcuts
+Ki:registerModeShortcuts("select", {
     { nil, "e", entities.MicrosoftExcel, { "Select Events", "Select a Microsoft Excel window" } },
     { nil, "j", entities.Java, { "Select Events", "Select a Java app" } },
     { nil, "w", entities.MicrosoftWord, { "Select Events", "Select a Microsoft Word window" } },
@@ -215,10 +163,10 @@ local selectEntityShortcuts = {
     { { "shift" }, "t", entities.iTerm, { "Select Events", "Select an iTerm window" } },
     { { "shift" }, "v", entities.VLC, { "Select Events", "Select a VLC window" } },
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Select Events", "Select a Microsoft Outlook window" } },
-}
+})
 
--- Define URL mode shortcuts
-local urlShortcuts = {
+-- Register URL mode shortcuts
+Ki:registerModeShortcuts("url", {
     { nil, "a", urls.Amazon, { "URL Events", "Amazon" } },
     { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
     { nil, "c", urls.Chase, { "URL Events", "Chase" } },
@@ -242,10 +190,21 @@ local urlShortcuts = {
     { { "shift" }, "m", urls.GoogleMaps, { "URL Events", "Google Maps" } },
     { { "shift" }, "y", urls.Yelp, { "URL Events", "Yelp" } },
     { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
-}
+})
 
--- Define search mode shortcuts
-local searchShortcuts = {
+-- Register file mode shortcuts
+Ki:registerModeShortcuts("file", {
+    { nil, "c", files.Code, { "Files", "Code" } },
+    { { "alt" }, "d", files.Dropbox, { "Files", "Dropbox" } },
+})
+
+----------------------------------------------------------------------------------------------------
+-- Register a custom search mode and register its shortcuts for searchable entities
+--
+local enterSearchModeShortcut = {
+    {"shift", "cmd"}, "s", nil, { "Normal Mode", "Enter Search Mode" },
+}
+Ki:registerMode("search", enterSearchModeShortcut, {
     { nil, "a", urls.Amazon, { "Search URL Events", "Amazon" } },
     { nil, "d", urls.DuckDuckGo, { "Search URL Events", "DuckDuckGo" } },
     { nil, "g", urls.Google, { "Search URL Events", "Google" } },
@@ -260,96 +219,15 @@ local searchShortcuts = {
     { { "shift" }, "m", urls.GoogleMaps, { "Search URL Events", "Google Maps" } },
     { { "shift" }, "y", urls.Yelp, { "Search URL Events", "Yelp" } },
     { { "shift", "cmd" }, "n", urls.NPR, { "Search URL Events", "NPR" } },
-}
+})
 
--- Define file mode shortcuts
-local fileShortcuts = {
-    { nil, "c", files.Code, { "Files", "Code" } },
-    { { "alt" }, "d", files.Dropbox, { "Files", "Dropbox" } },
-}
-
--- Define window mode shortcuts
-local function moveWindowOneSpaceLeft() WindowResizer.moveWindowOneSpace("left") end
-local function moveWindowOneSpaceRight() WindowResizer.moveWindowOneSpace("right") end
-local function selectWindow()
-    Ki.state:exitMode()
-
-    local choices = {}
-
-    for _, window in pairs(hs.window:allWindows()) do
-        local app = window:application()
-        local title = window:title()
-        local name = app and app:title() or title
-
-        table.insert(choices, {
-            text = name,
-            subText = title,
-            id = window:id(),
-        })
-    end
-
-    Entity.showSelectionModal(choices, function(choice)
-        if not choice or not choice.id then return end
-
-        local window = hs.window(choice.id)
-
-        if not window then
-            hs.notify.show("Ki", "Unable to focus window", "")
-            return
-        end
-
-        window:focus()
-    end)
-end
-local function minimizeWindow() hs.window.focusedWindow():minimize() end
-local function unminimizeRecentWindow()
-    local minimizedWindows = hs.window.minimizedWindows()
-    if minimizedWindows and #minimizedWindows > 0 then
-        minimizedWindows[1]:unminimize()
-    end
-end
-
-local windowShortcuts = {
-    { nil, "f", WindowResizer.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
-    { nil, "h", WindowResizer.moveWindowLeft, { "Window Mode", "Move Window Left" } },
-    { nil, "j", WindowResizer.centerWindow, { "Window Mode", "Center Window" } },
-    { nil, "k", WindowResizer.maximizeWindow, { "Window Mode", "Maximize Window" } },
-    { nil, "l", WindowResizer.moveWindowRight, { "Window Mode", "Move Window Right" } },
-    { nil, "m", minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
-    { nil, "s", selectWindow, { "Window Mode", "Select Window" } },
-    { nil, "space", WindowResizer.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
-    { { "ctrl" }, "h", WindowResizer.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
-    { { "ctrl" }, "l", WindowResizer.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
-    { { "shift" }, "h", WindowResizer.moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
-    { { "shift" }, "l", WindowResizer.moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
-    { { "shift" }, "m", unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
-    { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
-    { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
-}
-
--- Default style
-hs.alert.defaultStyle.radius = 7
-hs.alert.defaultStyle.textSize = 20
-hs.alert.defaultStyle.atScreenEdge = 1
-hs.alert.defaultStyle.strokeColor = { black = 0, alpha = 0 }
-hs.alert.defaultStyle.strokeWidth = 0
-hs.alert.defaultStyle.textStyle = { paragraphStyle = { alignment = 'center' } }
+-- Add URL entity behavior for search mode to invoke
+-- a `search` method implemented on searchable URL entities
+URL.behaviors.search = function(self) self:search() end
 
 ----------------------------------------------------------------------------------------------------
--- Finish up and finally set custom shortcuts
---
-
 -- Save custom entities to reference in local configs
+--
 Ki.customEntities = entities
 Ki.customFiles = files
 Ki.customURLs = urls
-
--- Register configured shortcuts
-Ki:registerShortcuts({
-    entity = entityShortcuts,
-    select = selectEntityShortcuts,
-    url = urlShortcuts,
-    file = fileShortcuts,
-    window = windowShortcuts,
-    search = searchShortcuts,
-})

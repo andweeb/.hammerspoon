@@ -107,7 +107,7 @@ function LIFX:initialize(selector, token, shortcuts)
         table.insert(defaultShortcuts, shortcut)
     end
 
-    Entity.initialize(self, "LIFX", self.mergeShortcuts(shortcuts, defaultShortcuts), true)
+    Entity.initialize(self, "LIFX", self:mergeShortcuts(shortcuts, defaultShortcuts), true)
 end
 
 return LIFX

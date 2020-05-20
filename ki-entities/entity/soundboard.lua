@@ -41,7 +41,7 @@ end
 
 function Soundboard:initialize(audioFileLocation, shortcuts)
     self.audioFileLocation = hs.fs.pathToAbsolute(audioFileLocation)
-    Entity.initialize(self, "Soundboard", self.mergeShortcuts(shortcuts or {}, {
+    Entity.initialize(self, "Soundboard", self:mergeShortcuts(shortcuts or {}, {
         { nil, "space", function() self:selectSound() end, { "Soundboard", "Select Sound" } },
     }))
 end

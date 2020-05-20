@@ -1,36 +1,35 @@
 ----------------------------------------------------------------------------------------------------
--- Custom Window Resizer
+-- Window Mode
 --
-local WindowResizer = {
+local Ki = spoon.Ki
+local Entity = spoon.Ki.Entity
+local Window = {
     frames = {},
 }
 
-function WindowResizer:cloneTable(input)
-    local copy
+-- Clone utility function
+local function cloneTable(input)
+    if type(input) ~= "table" then return input end
 
-    if type(input) ~= "table" then
-        return input
-    end
-
-    copy = {}
+    local copy = {}
 
     for key, value in next, input, nil do
-        copy[self:cloneTable(key)] = self:cloneTable(value)
+        copy[cloneTable(key)] = cloneTable(value)
     end
 
-    setmetatable(copy, self:cloneTable(getmetatable(input)))
+    setmetatable(copy, cloneTable(getmetatable(input)))
 
     return copy
 end
 
 -- Move window to the left half
-function WindowResizer.moveWindowLeft()
+function Window.moveWindowLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -42,13 +41,13 @@ function WindowResizer.moveWindowLeft()
 end
 
 -- Move window to the right half
-function WindowResizer.moveWindowRight()
+function Window.moveWindowRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
@@ -60,13 +59,13 @@ function WindowResizer.moveWindowRight()
 end
 
 -- Move window to the top half
-function WindowResizer.moveWindowTopHalf()
+function Window.moveWindowTopHalf()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -78,13 +77,13 @@ function WindowResizer.moveWindowTopHalf()
 end
 
 -- Move window to the bottom half
-function WindowResizer.moveWindowBottomHalf()
+function Window.moveWindowBottomHalf()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -96,15 +95,15 @@ function WindowResizer.moveWindowBottomHalf()
 end
 
 -- Move window to the upper left
-function WindowResizer.moveWindowUpperLeft()
+function Window.moveWindowUpperLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -116,15 +115,15 @@ function WindowResizer.moveWindowUpperLeft()
 end
 
 -- Move window to the upper right
-function WindowResizer.moveWindowUpperRight()
+function Window.moveWindowUpperRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
@@ -136,15 +135,15 @@ function WindowResizer.moveWindowUpperRight()
 end
 
 -- Move window to the bottom left
-function WindowResizer.moveWindowBottomLeft()
+function Window.moveWindowBottomLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -156,15 +155,15 @@ function WindowResizer.moveWindowBottomLeft()
 end
 
 -- Move window to the bottom right
-function WindowResizer.moveWindowBottomRight()
+function Window.moveWindowBottomRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenWidth / 2)
@@ -176,31 +175,31 @@ function WindowResizer.moveWindowBottomRight()
 end
 
 -- Maximize window
-function WindowResizer.maximizeWindow()
+function Window.maximizeWindow()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local screenDimensions = Window.getScreenDimensions()
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(window:frame())
+        Window.frames[window:id()] = cloneTable(window:frame())
     end
 
     window:setFrame(screenDimensions)
 end
 
 -- Toggle window fullscreen status
-function WindowResizer.fullScreenWindow()
+function Window.fullScreenWindow()
     local win = hs.window.focusedWindow()
     win:toggleFullScreen()
 end
 
 -- Center window
-function WindowResizer.centerWindow()
+function Window.centerWindow()
     local window = hs.window.focusedWindow()
-    local screenDimensions = WindowResizer.getScreenDimensions()
+    local screenDimensions = Window.getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = WindowResizer.frames[window:id()]
+    local previousFrame = Window.frames[window:id()]
     if not previousFrame then
-        WindowResizer.frames[window:id()] = WindowResizer:cloneTable(windowFrame)
+        Window.frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w * 0.25)
@@ -212,7 +211,7 @@ function WindowResizer.centerWindow()
 end
 
 -- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219)
-function WindowResizer.moveWindowOneSpace(direction)
+function Window.moveWindowOneSpace(direction)
     local mouseOrigin = hs.mouse.getAbsolutePosition()
     local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
@@ -248,7 +247,7 @@ function WindowResizer.moveWindowOneSpace(direction)
 end
 
 -- Move window to the next monitor
-function WindowResizer.moveWindowToNextMonitor()
+function Window.moveWindowToNextMonitor()
     local win = hs.window.focusedWindow()
     local screenFrame = win:screen():frame()
     local nextScreenFrame = win:screen():next():frame()
@@ -263,19 +262,88 @@ function WindowResizer.moveWindowToNextMonitor()
 end
 
 -- Screen dimensions utility function
-function WindowResizer.getScreenDimensions()
+function Window.getScreenDimensions()
     return hs.window.focusedWindow():screen():frame()
 end
 
 -- Restore previous window frame state
-function WindowResizer.restorePreviousWindowSize()
+function Window.restorePreviousWindowSize()
     local window = hs.window.frontmostWindow()
-    local previousWindowFrame = WindowResizer.frames[window:id()]
+    local previousWindowFrame = Window.frames[window:id()]
 
     if previousWindowFrame then
         window:setFrame(previousWindowFrame)
-        WindowResizer.frames[window:id()] = nil
+        Window.frames[window:id()] = nil
     end
 end
 
-return WindowResizer
+-- Define window mode shortcuts
+function Window.moveWindowOneSpaceLeft() Window.moveWindowOneSpace("left") end
+function Window.moveWindowOneSpaceRight() Window.moveWindowOneSpace("right") end
+
+-- Select a window
+function Window.select()
+    Ki.state:exitMode()
+
+    local choices = {}
+
+    for _, window in pairs(hs.window:allWindows()) do
+        local app = window:application()
+        local title = window:title()
+        local name = app and app:title() or title
+
+        table.insert(choices, {
+            text = name,
+            subText = title,
+            id = window:id(),
+        })
+    end
+
+    Entity.showSelectionModal(choices, function(choice)
+        if not choice or not choice.id then return end
+
+        local window = hs.window(choice.id)
+
+        if not window then
+            hs.notify.show("Ki", "Unable to focus window", "")
+            return
+        end
+
+        window:focus()
+    end)
+end
+
+-- Minimize window
+function Window.minimizeWindow()
+    hs.window.focusedWindow():minimize()
+end
+
+-- Unminimize the last minimized window
+function Window.unminimizeRecentWindow()
+    local minimizedWindows = hs.window.minimizedWindows()
+    if minimizedWindows and #minimizedWindows > 0 then
+        minimizedWindows[1]:unminimize()
+    end
+end
+
+local enterWindowModeShortcut = {
+    {"cmd"}, "w", nil, { "Normal Mode", "Enter Window Mode" },
+}
+
+Ki:registerMode("window", enterWindowModeShortcut, {
+    { nil, "f", Window.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
+    { nil, "h", Window.moveWindowLeft, { "Window Mode", "Move Window Left" } },
+    { nil, "j", Window.centerWindow, { "Window Mode", "Center Window" } },
+    { nil, "k", Window.maximizeWindow, { "Window Mode", "Maximize Window" } },
+    { nil, "l", Window.moveWindowRight, { "Window Mode", "Move Window Right" } },
+    { nil, "m", Window.minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
+    { nil, "s", Window.select, { "Window Mode", "Select Window" } },
+    { nil, "space", Window.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
+    { { "ctrl" }, "h", Window.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
+    { { "ctrl" }, "l", Window.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
+    { { "shift" }, "h", Window.moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
+    { { "shift" }, "l", Window.moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
+    { { "shift" }, "m", Window.unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
+    { { "cmd" }, "h", Window.moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
+    { { "cmd" }, "l", Window.moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
+})
