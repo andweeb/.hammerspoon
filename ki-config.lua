@@ -7,6 +7,7 @@ local File = spoon.Ki.File
 local Application = spoon.Ki.Application
 local defaultEntities = spoon.Ki.defaultEntities.entity
 
+require("mouse-mode")
 require("window-mode")
 
 -- Helper functions
