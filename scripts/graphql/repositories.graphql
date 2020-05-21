@@ -1,0 +1,18 @@
+query repositories($orderBy: RepositoryOrder!) {
+  viewer {
+    name
+    repositories(first: 100, orderBy: $orderBy) {
+      results: nodes {
+        ... on Repository {
+          name
+          owner {
+            name: login
+          }
+          url
+          description
+          imageURL: openGraphImageUrl
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,18 @@
+query starredRepositories($orderBy: StarOrder!) {
+  viewer {
+    name
+    starredRepositories(orderBy: $orderBy) {
+      results: nodes {
+        ... on Repository {
+          name
+          owner {
+            name: login
+          }
+          url
+          description
+          imageURL: openGraphImageUrl
+        }
+      }
+    }
+  }
+}

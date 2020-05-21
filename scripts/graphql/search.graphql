@@ -1,0 +1,22 @@
+query search($type: SearchType!, $query: String!) {
+  search(type: $type, query: $query, first: 25) {
+    results: nodes {
+      ... on Repository {
+        name
+        owner {
+          name: login
+        }
+        url
+        description
+        imageURL: openGraphImageUrl
+      }
+      ... on User {
+        name
+        url
+        login
+        bio
+        imageURL: avatarUrl
+      }
+    }
+  }
+}

@@ -53,6 +53,9 @@ local urls = {
     YouTube = requireEntity("url", "youtube"),
 }
 
+-- Set Github API token to entity instance
+urls.Github.token = getEnvironmentVariable("GITHUB_TOKEN")
+
 -- Create custom file entities
 local files = {
     Code = File:new("~/Code"),
