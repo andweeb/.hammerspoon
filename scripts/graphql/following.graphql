@@ -1,6 +1,5 @@
 {
   viewer {
-    name
     following(first: 100) {
       results: nodes {
         ... on User {

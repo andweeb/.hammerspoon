@@ -1,6 +1,5 @@
 query watchingRepositories($orderBy: RepositoryOrder!) {
   viewer {
-    name
     watching(first: 100, orderBy: $orderBy) {
       results: nodes {
         ... on Repository {

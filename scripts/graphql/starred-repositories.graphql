@@ -1,6 +1,5 @@
 query starredRepositories($orderBy: StarOrder!) {
   viewer {
-    name
     starredRepositories(orderBy: $orderBy) {
       results: nodes {
         ... on Repository {

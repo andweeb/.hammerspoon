@@ -1,0 +1,17 @@
+{
+  viewer {
+    repositories(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+      results: nodes {
+        name
+        imageURL: openGraphImageUrl
+        projects(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+          results: nodes {
+            name
+            url
+            body
+          }
+        }
+      }
+    }
+  }
+}

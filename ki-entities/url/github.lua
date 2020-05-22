@@ -20,6 +20,9 @@ local customPaths = {
     { name = "TablePlus", path = "/TablePlus/TablePlus" },
     { name = "Tridactyl", path = "/tridactyl/tridactyl" },
     { name = "fzf", path = "/junegunn/fzf" },
+    -- GitHub API Docs
+    { name = "GraphQL API v4", path = "https://developer.github.com/v4/" },
+    { name = "GraphQL API Explorer", path = "https://developer.github.com/v4/explorer/" },
 }
 
 for _, path in pairs(customPaths) do
@@ -30,18 +33,6 @@ function GitHub:advancedSearch(query, language)
     local searchURL = self.url.."/search?q="..query
     searchURL = searchURL.."&l="..language.."&type=Code"
     self.open(searchURL)
-end
-
-function GitHub:openRepositoryPathEvent(path)
-    return function(modal)
-        local selectedRow = modal:selectedRow()
-        local choice = modal:selectedRowContents(selectedRow)
-
-        modal:cancel()
-        self.open(choice.url.."/"..path)
-
-        return true
-    end
 end
 
 -- Create choice objects for each repository result with the following fragment:
@@ -277,12 +268,55 @@ function GitHub:showGists()
     end)
 end
 
+-- Create an action to show a selection modal of user connection items on the viewer
+function GitHub:showProjects()
+    self:fetch(self.readGraphQL("repository-projects"), nil, function(response)
+        local repositories = response.data.viewer.repositories.results
+        local choices = {}
+
+        for i = 1, #repositories do
+            local repository = repositories[i]
+            local projects = repository.projects.results
+
+            for j = 1, #projects do
+                local project = projects[j]
+
+                hs.image.imageFromURL(repository.imageURL, function(image)
+                    if not self.selectionModal then
+                        return
+                    end
+
+                    if choices[j] then
+                        choices[j].image = image
+                        self.selectionModal:choices(choices)
+                    end
+                end)
+
+                table.insert(choices, {
+                    url = project.url,
+                    text = repository.name.." | "..project.name,
+                    subText = project.body,
+                })
+            end
+        end
+
+        local options = { placeholderText = "Repository Projects" }
+
+        self:showSelectionModal(choices, function(choice)
+            if choice then
+                return self.open(choice.url)
+            end
+        end, options)
+    end)
+end
+
 GitHub.searchRepositories = function() GitHub:search("REPOSITORY", GitHub.createRepositoryChoices) end
 GitHub.searchUsers = function() GitHub:search("USER", GitHub.createUserChoices) end
 
 GitHub:registerShortcuts({
     { nil, "f", GitHub.showFollowers, { "GitHub", "Show GitHub Followers" } },
     { nil, "g", function() GitHub:showGists() end, { "GitHub", "Show GitHub Gists" } },
+    { nil, "p", function() GitHub:showProjects() end, { "GitHub", "Show Projects" } },
     { nil, "r", GitHub.showRepositories, { "GitHub", "Show Repositories" } },
     { nil, "s", GitHub.searchRepositories, { "GitHub", "Search GitHub Repositories" } },
     { nil, "u", GitHub.searchUsers, { "GitHub", "Search GitHub Users" } },
@@ -291,15 +325,30 @@ GitHub:registerShortcuts({
     { { "shift" }, "s", function() GitHub:showStarredRepositories() end, { "GitHub", "Show Starred Repositories" } },
 })
 
+function GitHub:openRepositoryPathEvent(path)
+    return function(modal)
+        local selectedRow = modal:selectedRow()
+        local choice = modal:selectedRowContents(selectedRow)
+
+        modal:cancel()
+        self.open(choice.url.."/"..path)
+
+        return true
+    end
+end
+
 GitHub:registerSelectionModalShortcuts({
+    { { "cmd" }, "a", GitHub:openRepositoryPathEvent("actions") },
     { { "cmd" }, "b", GitHub:openRepositoryPathEvent("branches") },
     { { "cmd" }, "c", GitHub:openRepositoryPathEvent("commits/master") },
+    { { "cmd" }, "g", GitHub:openRepositoryPathEvent("graphs") },
     { { "cmd" }, "i", GitHub:openRepositoryPathEvent("issues") },
     { { "cmd" }, "p", GitHub:openRepositoryPathEvent("projects") },
     { { "cmd" }, "r", GitHub:openRepositoryPathEvent("releases") },
     { { "cmd" }, "s", GitHub:openRepositoryPathEvent("settings") },
     { { "cmd" }, "t", GitHub:openRepositoryPathEvent("graphs/traffic") },
     { { "cmd" }, "w", GitHub:openRepositoryPathEvent("wiki") },
+    { { "cmd", "shift" }, "i", GitHub:openRepositoryPathEvent("pulse") },
 })
 
 return GitHub

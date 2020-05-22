@@ -1,6 +1,5 @@
 {
   viewer {
-    name
     gists(first: 100, orderBy: { field: UPDATED_AT, direction: DESC }) {
       results: nodes {
         ... on Gist {
