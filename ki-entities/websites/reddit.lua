@@ -1,13 +1,13 @@
 ----------------------------------------------------------------------------------------------------
--- Reddit URL entity
+-- Reddit website config
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local Reddit = spoon.Ki.defaultEntities.url.Reddit
+local Reddit = spoon.Ki.defaultEntities.website.Reddit
 
 Reddit.class:include(SearchMixin)
 
 -- Default subreddit list: https://www.reddit.com/r/ListOfSubreddits/wiki/defaults#wiki_defaults
-Reddit.paths = {
+Reddit.links = {
     "/r/AskReddit",
     "/r/announcements",
     "/r/funny",

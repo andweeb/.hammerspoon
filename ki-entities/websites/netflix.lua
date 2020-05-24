@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- Google URL entity
+-- Netflix website config
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local Google = spoon.Ki.defaultEntities.url.Google
+local Netflix = spoon.Ki.defaultEntities.website.Netflix
 
-Google.class:include(SearchMixin)
+Netflix.class:include(SearchMixin)
 
-return Google
+return Netflix

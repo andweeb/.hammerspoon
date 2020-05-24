@@ -1,32 +1,39 @@
 ----------------------------------------------------------------------------------------------------
--- GitHub URL entity
+-- GitHub website config
 --
 local SearchMixin = require("ki-entities/search-mixin")
 local scriptPath = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/graphql")
-local GitHub = spoon.Ki.defaultEntities.url.GitHub
+local GitHub = spoon.Ki.defaultEntities.website.GitHub
 
 GitHub.class:include(SearchMixin)
 GitHub.API_ENDPOINT = "https://api.github.com/graphql"
 
-local customPaths = {
+local customLinks = {
+    -- Profile
+    { name = "Profile", link = "/andweeb" },
+    { name = "Repositories", link = "/andweeb?tab=repositories" },
+    { name = "Projects", link = "/andweeb?tab=projects" },
+    { name = "Stars", link = "/andweeb?tab=stars" },
+    { name = "Followers", link = "/andweeb?tab=followers" },
+    { name = "Following", link = "/andweeb?tab=following" },
     -- Projects
-    { name = "ki", path = "/andweeb/ki" },
-    { name = ".hammerspoon", path = "/andweeb/.hammerspoon" },
-    { name = "dotfiles", path = "/andweeb/dotfiles" },
-    { name = "courier", path = "/andweeb/courier" },
-    { name = "xciter", path = "/andweeb/xciter" },
+    { name = "ki", link = "/andweeb/ki" },
+    { name = ".hammerspoon", link = "/andweeb/.hammerspoon" },
+    { name = "dotfiles", link = "/andweeb/dotfiles" },
+    { name = "courier", link = "/andweeb/courier" },
+    { name = "xciter", link = "/andweeb/xciter" },
     -- Watching projects
-    { name = "Hammerspoon", path = "/Hammerspoon/hammerspoon" },
-    { name = "TablePlus", path = "/TablePlus/TablePlus" },
-    { name = "Tridactyl", path = "/tridactyl/tridactyl" },
-    { name = "fzf", path = "/junegunn/fzf" },
+    { name = "Hammerspoon", link = "/Hammerspoon/hammerspoon" },
+    { name = "TablePlus", link = "/TablePlus/TablePlus" },
+    { name = "Tridactyl", link = "/tridactyl/tridactyl" },
+    { name = "fzf", link = "/junegunn/fzf" },
     -- GitHub API Docs
-    { name = "GraphQL API v4", path = "https://developer.github.com/v4/" },
-    { name = "GraphQL API Explorer", path = "https://developer.github.com/v4/explorer/" },
+    { name = "GraphQL API v4", link = "https://developer.github.com/v4/" },
+    { name = "GraphQL API Explorer", link = "https://developer.github.com/v4/explorer/" },
 }
 
-for _, path in pairs(customPaths) do
-    table.insert(GitHub.paths, path)
+for _, path in pairs(customLinks) do
+    table.insert(GitHub.links, path)
 end
 
 function GitHub:advancedSearch(query, language)
@@ -325,7 +332,7 @@ GitHub:registerShortcuts({
     { { "shift" }, "s", function() GitHub:showStarredRepositories() end, { "GitHub", "Show Starred Repositories" } },
 })
 
-function GitHub:openRepositoryPathEvent(path)
+function GitHub:openRepositoryPage(path)
     return function(modal)
         local selectedRow = modal:selectedRow()
         local choice = modal:selectedRowContents(selectedRow)
@@ -338,17 +345,17 @@ function GitHub:openRepositoryPathEvent(path)
 end
 
 GitHub:registerSelectionModalShortcuts({
-    { { "cmd" }, "a", GitHub:openRepositoryPathEvent("actions") },
-    { { "cmd" }, "b", GitHub:openRepositoryPathEvent("branches") },
-    { { "cmd" }, "c", GitHub:openRepositoryPathEvent("commits/master") },
-    { { "cmd" }, "g", GitHub:openRepositoryPathEvent("graphs") },
-    { { "cmd" }, "i", GitHub:openRepositoryPathEvent("issues") },
-    { { "cmd" }, "p", GitHub:openRepositoryPathEvent("projects") },
-    { { "cmd" }, "r", GitHub:openRepositoryPathEvent("releases") },
-    { { "cmd" }, "s", GitHub:openRepositoryPathEvent("settings") },
-    { { "cmd" }, "t", GitHub:openRepositoryPathEvent("graphs/traffic") },
-    { { "cmd" }, "w", GitHub:openRepositoryPathEvent("wiki") },
-    { { "cmd", "shift" }, "i", GitHub:openRepositoryPathEvent("pulse") },
+    { { "cmd" }, "a", GitHub:openRepositoryPage("actions") },
+    { { "cmd" }, "b", GitHub:openRepositoryPage("branches") },
+    { { "cmd" }, "c", GitHub:openRepositoryPage("commits/master") },
+    { { "cmd" }, "g", GitHub:openRepositoryPage("graphs") },
+    { { "cmd" }, "i", GitHub:openRepositoryPage("issues") },
+    { { "cmd" }, "p", GitHub:openRepositoryPage("projects") },
+    { { "cmd" }, "r", GitHub:openRepositoryPage("releases") },
+    { { "cmd" }, "s", GitHub:openRepositoryPage("settings") },
+    { { "cmd" }, "t", GitHub:openRepositoryPage("graphs/traffic") },
+    { { "cmd" }, "w", GitHub:openRepositoryPage("wiki") },
+    { { "cmd", "shift" }, "i", GitHub:openRepositoryPage("pulse") },
 })
 
 return GitHub

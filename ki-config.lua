@@ -2,7 +2,7 @@
 -- Ki Config File
 --
 local Ki = spoon.Ki
-local URL = spoon.Ki.URL
+local Website = spoon.Ki.Website
 local File = spoon.Ki.File
 local Application = spoon.Ki.Application
 local defaultEntities = spoon.Ki.defaultEntities.entity
@@ -12,7 +12,8 @@ require("window-mode")
 
 -- Helper functions
 local function requireEntity(type, file)
-    return require("ki-entities/"..type.."/"..file)
+    local directory = type == "entity" and "entities" or type.."s"
+    return require("ki-entities/"..directory.."/"..file)
 end
 local function getEnvironmentVariable(name)
     local variable = hs.execute("printenv "..name, true)
@@ -23,38 +24,38 @@ end
 -- Create custom ki entities
 --
 
--- Create custom URL entities
-local urls = {
-    -- Basic inline URL entities
-    APNews = URL:new("https://www.apnews.com"),
-    BoA = URL:new("https://www.bankofamerica.com"),
-    Chase = URL:new("https://www.chase.com"),
-    CapitalOne = URL:new("https://www.capitalone.com"),
-    Dropbox = URL:new("https://www.dropbox.com"),
+-- Create custom Website entities
+local websites = {
+    -- Basic inline Website entities
+    APNews = Website:new("AP News", "https://www.apnews.com"),
+    BoA = Website:new("Bank of America", "https://www.bankofamerica.com"),
+    Chase = Website:new("Chase", "https://www.chase.com"),
+    CapitalOne = Website:new("Capital One", "https://www.capitalone.com"),
+    Dropbox = Website:new("Dropbox", "https://www.dropbox.com"),
 
-    -- Externally defined URL entities
-    Airbnb = requireEntity("url", "airbnb"),
-    Amazon = requireEntity("url", "amazon"),
-    BBC = requireEntity("url", "bbc"),
-    DuckDuckGo = requireEntity("url", "duckduckgo"),
-    FacebookMessenger = requireEntity("url", "messenger"),
-    Github = requireEntity("url", "github"),
-    Google = requireEntity("url", "google"),
-    GoogleMaps = requireEntity("url", "google-maps"),
-    Hammerspoon = requireEntity("url", "hammerspoon"),
-    LearnXInYMinutes = requireEntity("url", "learnxinyminutes"),
-    Netflix = requireEntity("url", "netflix"),
-    NPR = requireEntity("url", "npr"),
-    NYTimes = requireEntity("url", "nytimes"),
-    Reddit = requireEntity("url", "reddit"),
-    StackOverflow = requireEntity("url", "stackoverflow"),
-    Wikipedia = requireEntity("url", "wikipedia"),
-    Yelp = requireEntity("url", "yelp"),
-    YouTube = requireEntity("url", "youtube"),
+    -- Externally defined Website entities
+    Airbnb = requireEntity("website", "airbnb"),
+    Amazon = requireEntity("website", "amazon"),
+    BBC = requireEntity("website", "bbc"),
+    DuckDuckGo = requireEntity("website", "duckduckgo"),
+    FacebookMessenger = requireEntity("website", "messenger"),
+    Github = requireEntity("website", "github"),
+    Google = requireEntity("website", "google"),
+    GoogleMaps = requireEntity("website", "google-maps"),
+    Hammerspoon = requireEntity("website", "hammerspoon"),
+    LearnXInYMinutes = requireEntity("website", "learnxinyminutes"),
+    Netflix = requireEntity("website", "netflix"),
+    NPR = requireEntity("website", "npr"),
+    NYTimes = requireEntity("website", "nytimes"),
+    Reddit = requireEntity("website", "reddit"),
+    StackOverflow = requireEntity("website", "stackoverflow"),
+    Wikipedia = requireEntity("website", "wikipedia"),
+    Yelp = requireEntity("website", "yelp"),
+    YouTube = requireEntity("website", "youtube"),
 }
 
 -- Set Github API token to entity instance
-urls.Github.token = getEnvironmentVariable("GITHUB_TOKEN")
+websites.Github.token = getEnvironmentVariable("GITHUB_TOKEN")
 
 -- Create custom file entities
 local files = {
@@ -169,31 +170,31 @@ Ki:registerModeShortcuts("select", {
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Select Events", "Select a Microsoft Outlook window" } },
 })
 
--- Register URL mode shortcuts
-Ki:registerModeShortcuts("url", {
-    { nil, "a", urls.Amazon, { "URL Events", "Amazon" } },
-    { nil, "b", urls.BoA, { "URL Events", "Bank Of America" } },
-    { nil, "c", urls.Chase, { "URL Events", "Chase" } },
-    { nil, "d", urls.DuckDuckGo, { "URL Events", "DuckDuckGo" } },
-    { nil, "g", urls.Google, { "URL Events", "Google" } },
-    { nil, "m", urls.FacebookMessenger, { "URL Events", "Facebook Messenger" } },
-    { nil, "n", urls.Netflix, { "URL Events", "Netflix" } },
-    { nil, "r", urls.Reddit, { "URL Events", "Reddit" } },
-    { nil, "s", urls.StackOverflow, { "URL Events", "Stack Overflow" } },
-    { nil, "w", urls.Wikipedia, { "URL Events", "Wikipedia" } },
-    { nil, "y", urls.YouTube, { "URL Events", "YouTube" } },
-    { { "cmd" }, "a", urls.APNews, { "URL Events", "APNews" } },
-    { { "cmd" }, "b", urls.BBC, { "URL Events", "BBC" } },
-    { { "cmd" }, "h", urls.Hammerspoon, { "URL Events", "Hammerspoon" } },
-    { { "cmd" }, "n", urls.NYTimes, { "URL Events", "NYTimes" } },
-    { { "shift" }, "a", urls.Airbnb, { "URL Events", "Airbnb" } },
-    { { "shift" }, "c", urls.CapitalOne, { "URL Events", "Capital One" } },
-    { { "shift" }, "d", urls.Dropbox, { "URL Events", "Dropbox" } },
-    { { "shift" }, "g", urls.Github, { "URL Events", "Github" } },
-    { { "shift" }, "l", urls.LearnXInYMinutes, { "URL Events", "Learn X In Y Minutes" } },
-    { { "shift" }, "m", urls.GoogleMaps, { "URL Events", "Google Maps" } },
-    { { "shift" }, "y", urls.Yelp, { "URL Events", "Yelp" } },
-    { { "shift", "cmd" }, "n", urls.NPR, { "URL Events", "NPR" } },
+-- Register Website mode shortcuts
+Ki:registerModeShortcuts("website", {
+    { nil, "a", websites.Amazon, { "Websites", "Amazon" } },
+    { nil, "b", websites.BoA, { "Websites", "Bank Of America" } },
+    { nil, "c", websites.Chase, { "Websites", "Chase" } },
+    { nil, "d", websites.DuckDuckGo, { "Websites", "DuckDuckGo" } },
+    { nil, "g", websites.Google, { "Websites", "Google" } },
+    { nil, "m", websites.FacebookMessenger, { "Websites", "Facebook Messenger" } },
+    { nil, "n", websites.Netflix, { "Websites", "Netflix" } },
+    { nil, "r", websites.Reddit, { "Websites", "Reddit" } },
+    { nil, "s", websites.StackOverflow, { "Websites", "Stack Overflow" } },
+    { nil, "w", websites.Wikipedia, { "Websites", "Wikipedia" } },
+    { nil, "y", websites.YouTube, { "Websites", "YouTube" } },
+    { { "cmd" }, "a", websites.APNews, { "Websites", "APNews" } },
+    { { "cmd" }, "b", websites.BBC, { "Websites", "BBC" } },
+    { { "cmd" }, "h", websites.Hammerspoon, { "Websites", "Hammerspoon" } },
+    { { "cmd" }, "n", websites.NYTimes, { "Websites", "NYTimes" } },
+    { { "shift" }, "a", websites.Airbnb, { "Websites", "Airbnb" } },
+    { { "shift" }, "c", websites.CapitalOne, { "Websites", "Capital One" } },
+    { { "shift" }, "d", websites.Dropbox, { "Websites", "Dropbox" } },
+    { { "shift" }, "g", websites.Github, { "Websites", "Github" } },
+    { { "shift" }, "l", websites.LearnXInYMinutes, { "Websites", "Learn X In Y Minutes" } },
+    { { "shift" }, "m", websites.GoogleMaps, { "Websites", "Google Maps" } },
+    { { "shift" }, "y", websites.Yelp, { "Websites", "Yelp" } },
+    { { "shift", "cmd" }, "n", websites.NPR, { "Websites", "NPR" } },
 })
 
 -- Register file mode shortcuts
@@ -209,29 +210,29 @@ local enterSearchModeShortcut = {
     {"shift", "cmd"}, "s", nil, { "Normal Mode", "Enter Search Mode" },
 }
 Ki:registerMode("search", enterSearchModeShortcut, {
-    { nil, "a", urls.Amazon, { "Search URL Events", "Amazon" } },
-    { nil, "d", urls.DuckDuckGo, { "Search URL Events", "DuckDuckGo" } },
-    { nil, "g", urls.Google, { "Search URL Events", "Google" } },
-    { nil, "n", urls.Netflix, { "Search URL Events", "Netflix" } },
-    { nil, "r", urls.Reddit, { "Search URL Events", "Reddit" } },
-    { nil, "s", urls.StackOverflow, { "Search URL Events", "Stack Overflow" } },
-    { nil, "w", urls.Wikipedia, { "Search URL Events", "Wikipedia" } },
-    { nil, "y", urls.YouTube, { "Search URL Events", "YouTube" } },
-    { { "cmd" }, "b", urls.BBC, { "Search URL Events", "BBC" } },
-    { { "cmd" }, "n", urls.NYTimes, { "Search URL Events", "NYTimes" } },
-    { { "shift" }, "g", urls.Github, { "Search URL Events", "Github" } },
-    { { "shift" }, "m", urls.GoogleMaps, { "Search URL Events", "Google Maps" } },
-    { { "shift" }, "y", urls.Yelp, { "Search URL Events", "Yelp" } },
-    { { "shift", "cmd" }, "n", urls.NPR, { "Search URL Events", "NPR" } },
+    { nil, "a", websites.Amazon, { "Searchable Websites", "Amazon" } },
+    { nil, "d", websites.DuckDuckGo, { "Searchable Websites", "DuckDuckGo" } },
+    { nil, "g", websites.Google, { "Searchable Websites", "Google" } },
+    { nil, "n", websites.Netflix, { "Searchable Websites", "Netflix" } },
+    { nil, "r", websites.Reddit, { "Searchable Websites", "Reddit" } },
+    { nil, "s", websites.StackOverflow, { "Searchable Websites", "Stack Overflow" } },
+    { nil, "w", websites.Wikipedia, { "Searchable Websites", "Wikipedia" } },
+    { nil, "y", websites.YouTube, { "Searchable Websites", "YouTube" } },
+    { { "cmd" }, "b", websites.BBC, { "Searchable Websites", "BBC" } },
+    { { "cmd" }, "n", websites.NYTimes, { "Searchable Websites", "NYTimes" } },
+    { { "shift" }, "g", websites.Github, { "Searchable Websites", "Github" } },
+    { { "shift" }, "m", websites.GoogleMaps, { "Searchable Websites", "Google Maps" } },
+    { { "shift" }, "y", websites.Yelp, { "Searchable Websites", "Yelp" } },
+    { { "shift", "cmd" }, "n", websites.NPR, { "Searchable Websites", "NPR" } },
 })
 
--- Add URL entity behavior for search mode to invoke
--- a `search` method implemented on searchable URL entities
-URL.behaviors.search = function(self) self:search() end
+-- Add Website entity behavior for search mode to invoke
+-- a `search` method implemented on searchable Website entities
+Website.behaviors.search = function(self) self:search() end
 
 ----------------------------------------------------------------------------------------------------
 -- Save custom entities to reference in local configs
 --
 Ki.customEntities = entities
 Ki.customFiles = files
-Ki.customURLs = urls
+Ki.customWebsites = websites

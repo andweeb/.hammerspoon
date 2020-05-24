@@ -1,11 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- BBC URL entity
+-- BBC website config
 --
+local Website = spoon.Ki.Website
+local BBC = Website:new("BBC", "https://www.bbc.com")
 local SearchMixin = require("ki-entities/search-mixin")
-local URL = spoon.Ki.URL
-
-local baseURL = "https://www.bbc.com"
-local BBC = URL:new(baseURL)
 
 BBC.class:include(SearchMixin)
 

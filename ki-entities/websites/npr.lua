@@ -1,11 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- NPR URL entity
+-- NPR Website entity
 --
+local Website = spoon.Ki.Website
+local NPR = Website:new("NPR", "https://www.npr.org")
 local SearchMixin = require("ki-entities/search-mixin")
-local URL = spoon.Ki.URL
-
-local baseURL = "https://www.npr.org"
-local NPR = URL:new(baseURL)
 
 NPR.queryParam = "query"
 NPR.class:include(SearchMixin)

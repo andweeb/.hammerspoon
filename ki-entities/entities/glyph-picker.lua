@@ -1,7 +1,7 @@
 ----------------------------------------------------------------------------------------------------
 -- Emoji Picker entity
 --
-local Picker = require("ki-entities/entity/picker")
+local Picker = require("ki-entities/entities/picker")
 
 -- Codegen functions used to initialize the hardcoded glyph choices table below:
 -- luacheck: push ignore 211

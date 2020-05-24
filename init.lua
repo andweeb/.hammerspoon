@@ -22,6 +22,19 @@ hs.loadSpoon("Ki")
 -- Use default config
 spoon.Ki:useDefaultConfig()
 
+-- Remap Website Mode transition shortcuts
+spoon.Ki:remapShortcuts({
+    ["Normal Mode"] = {
+        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Normal Mode", "Enter Website Mode" } }
+    },
+    ["Entity Mode"] = {
+        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Entity Mode", "Enter Website Mode" } }
+    },
+    ["Select Mode"] = {
+        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Select Mode", "Enter Website Mode" } }
+    },
+})
+
 -- Configure ki
 require("ki-config")
 

@@ -1,14 +1,14 @@
 local SearchMixin = {}
-local URL = spoon.Ki.URL
+local Website = spoon.Ki.Website
 
--- Following default values can be overriden on URL entity:
+-- Following default values can be overriden on Website entity:
 SearchMixin.url = ""
 SearchMixin.searchPath = "search"
 SearchMixin.queryParam = "q"
 SearchMixin.queryDelimiter = "|"
 
 function SearchMixin:title()
-    return "Ki - Search "..(URL.getDomain(self.url) or self.url)
+    return "Ki - Search "..(Website.getDomain(self.url) or self.url)
 end
 
 function SearchMixin.encodeSearchQuery(primaryQuery, secondaryQuery)

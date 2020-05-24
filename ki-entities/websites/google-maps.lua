@@ -1,10 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- Google Maps URL entity
+-- Google Maps website config
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local GoogleMaps = spoon.Ki.defaultEntities.url.GoogleMaps
+local GoogleMaps = spoon.Ki.defaultEntities.website.GoogleMaps
 
-GoogleMaps.url = "https://www.google.com/maps"
 GoogleMaps.class:include(SearchMixin)
 
 -- Basic address search

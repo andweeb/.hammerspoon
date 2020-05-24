@@ -1,8 +1,7 @@
 ----------------------------------------------------------------------------------------------------
--- Facebook Messenger URL entity
+-- Facebook Messenger website config
 --
-local URL = spoon.Ki.URL
-
+local Website = spoon.Ki.Website
 local messengerURL = "https://www.messenger.com"
 local htmlParserLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts")
 local applescriptLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/messenger-conversations.applescript")
@@ -21,14 +20,14 @@ local function findMessengerTab()
         application = defaultBrowser,
     }
 
-    local script = URL.renderScriptTemplate("application-tab-titles", viewModel)
+    local script = Website.renderScriptTemplate("application-tab-titles", viewModel)
     if not script then
-        URL.notifyError("Error fetching application tab titles", "Unable to render script template")
+        Website.notifyError("Error fetching application tab titles", "Unable to render script template")
     end
 
     local isOk, tabList, rawTable = hs.osascript.applescript(script)
     if not isOk then
-        URL.notifyError("Error fetching "..defaultBrowser.." tab information", rawTable.NSLocalizedFailureReason)
+        Website.notifyError("Error fetching "..defaultBrowser.." tab information", rawTable.NSLocalizedFailureReason)
         return
     end
 
@@ -57,18 +56,18 @@ local function openConversation(_, choice)
             conversationLink = choice.link,
         }
 
-        local script = URL.renderScriptTemplate(applescriptLocation, viewModel)
+        local script = Website.renderScriptTemplate(applescriptLocation, viewModel)
         if not script then
-            URL.notifyError("Error selecting messenger conversation", "Unable to render script template")
+            Website.notifyError("Error selecting messenger conversation", "Unable to render script template")
         end
 
         local isOk, _, rawTable = hs.osascript.applescript(script)
         if not isOk then
-            URL.notifyError("Error selecting messenger conversation", rawTable.NSLocalizedFailureReason)
+            Website.notifyError("Error selecting messenger conversation", rawTable.NSLocalizedFailureReason)
             return
         end
     else
-        URL.open(messengerURL)
+        Website.open(messengerURL)
     end
 end
 
@@ -84,20 +83,20 @@ local function openConversationInfoPane(_, choice)
         targetTabIndex = targetTabIndex,
     }
 
-    local script = URL.renderScriptTemplate(applescriptLocation, viewModel)
+    local script = Website.renderScriptTemplate(applescriptLocation, viewModel)
     if not script then
-        URL.notifyError("Error opening messenger conversation info pane", "Unable to render script template")
+        Website.notifyError("Error opening messenger conversation info pane", "Unable to render script template")
     end
 
     local isOk, _, rawTable = hs.osascript.applescript(script)
     if not isOk then
-        URL.notifyError("Error opening messenger conversation info pane", rawTable.NSLocalizedFailureReason)
+        Website.notifyError("Error opening messenger conversation info pane", rawTable.NSLocalizedFailureReason)
     end
 
     return true
 end
 
-local Messenger = URL:new(messengerURL, {
+local Messenger = Website:new("Facebook Messenger", messengerURL, {
     { nil, nil, openConversation, { "Messenger.com", "Open Messenger or Messenger Conversation" } },
     { nil, "i", openConversationInfoPane, { "Messenger.com", "Open Conversation Info Pane" } },
 })
@@ -110,14 +109,14 @@ function Messenger.getSelectionItems()
         targetURL = "https://www.messenger.com",
         scriptPath = htmlParserLocation,
     }
-    local script = URL.renderScriptTemplate(applescriptLocation, viewModel)
+    local script = Website.renderScriptTemplate(applescriptLocation, viewModel)
     if not script then
-        URL.notifyError("Unable to render script template", "")
+        Website.notifyError("Unable to render script template", "")
     end
 
     local isOk, result, rawTable = hs.osascript.applescript(script)
     if not isOk then
-        URL.notifyError("Error fetching messenger conversation items", rawTable.NSLocalizedFailureReason)
+        Website.notifyError("Error fetching messenger conversation items", rawTable.NSLocalizedFailureReason)
         return
     end
 

@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------------------------------------
--- Amazon URL entity
+-- Amazon website config
 --
 local SearchMixin = require("ki-entities/search-mixin")
-local Amazon = spoon.Ki.defaultEntities.url.Amazon
+local Amazon = spoon.Ki.defaultEntities.website.Amazon
 
 Amazon.searchPath = "s"
 Amazon.queryParam = "k"
