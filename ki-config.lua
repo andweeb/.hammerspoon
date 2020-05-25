@@ -32,6 +32,7 @@ local websites = {
     Chase = Website:new("Chase", "https://www.chase.com"),
     CapitalOne = Website:new("Capital One", "https://www.capitalone.com"),
     Dropbox = Website:new("Dropbox", "https://www.dropbox.com"),
+    TempMail = Website:new("Temp Mail", "https://temp-mail.org/en/"),
 
     -- Externally defined Website entities
     Airbnb = requireEntity("website", "airbnb"),
@@ -193,6 +194,7 @@ Ki:registerModeShortcuts("website", {
     { { "shift" }, "g", websites.Github, { "Websites", "Github" } },
     { { "shift" }, "l", websites.LearnXInYMinutes, { "Websites", "Learn X In Y Minutes" } },
     { { "shift" }, "m", websites.GoogleMaps, { "Websites", "Google Maps" } },
+    { { "shift" }, "t", websites.TempMail, { "Websites", "Temp Mail" } },
     { { "shift" }, "y", websites.Yelp, { "Websites", "Yelp" } },
     { { "shift", "cmd" }, "n", websites.NPR, { "Websites", "NPR" } },
 })
