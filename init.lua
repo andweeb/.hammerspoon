@@ -33,6 +33,9 @@ spoon.Ki:remapShortcuts({
     ["Select Mode"] = {
         ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Select Mode", "Enter Website Mode" } }
     },
+    ["Entities"] = {
+        ["App Store"] = { { "cmd" }, "a", nil, { "Entities", "App Store" } },
+    },
 })
 
 -- Configure ki

@@ -73,7 +73,6 @@ local BedroomLIFX = LIFX:new("label:Bedroom", lifxToken)
 local entities = {
     -- Initialize basic application entities inline
     Alacritty = Application:new("Alacritty"),
-    AppStore = Application:new("App Store"),
     Discord = Application:new("Discord"),
     Firefox = Application:new("Firefox"),
     Hammerspoon = Application:new("Hammerspoon"),
@@ -88,26 +87,26 @@ local entities = {
     VisualStudioCode = Application:new("Visual Studio Code"),
 
     -- Require externally defined application entities
-    Fantastical = requireEntity("entity", "fantastical"),
-    IINA = requireEntity("entity", "iina"),
-    iTerm = requireEntity("entity", "iterm"),
-    Java = requireEntity("entity", "java"),
-    Keyboard = requireEntity("entity", "keyboard"),
-    MicrosoftExcel = requireEntity("entity", "microsoft-excel"),
-    MicrosoftOutlook = requireEntity("entity", "microsoft-outlook"),
-    NotificationCenter = requireEntity("entity", "notification-center"),
-    Soundboard = requireEntity("entity", "soundboard"),
-    TablePlus = requireEntity("entity", "tableplus"),
-    VLC = requireEntity("entity", "vlc"),
-    Zoom = requireEntity("entity", "zoom"),
+    Fantastical = requireEntity("application", "fantastical"),
+    IINA = requireEntity("application", "iina"),
+    iTerm = requireEntity("application", "iterm"),
+    Java = requireEntity("application", "java"),
+    MicrosoftExcel = requireEntity("application", "microsoft-excel"),
+    MicrosoftOutlook = requireEntity("application", "microsoft-outlook"),
+    TablePlus = requireEntity("application", "tableplus"),
+    VLC = requireEntity("application", "vlc"),
+    Zoom = requireEntity("application", "zoom"),
 
-    -- Require other (non-application) entities
+    -- Require other (non-entity) entities
     BedroomLIFX = BedroomLIFX,
     ClipboardText = requireEntity("entity", "clipboard-text"),
     EmojiPicker = requireEntity("entity", "emoji-picker"),
     FSVolume = requireEntity("entity", "fs-volume"),
     GlyphPicker = requireEntity("entity", "glyph-picker"),
     KaomojiPicker = requireEntity("entity", "kaomoji-picker"),
+    Keyboard = requireEntity("entity", "keyboard"),
+    NotificationCenter = requireEntity("entity", "notification-center"),
+    Soundboard = requireEntity("entity", "soundboard"),
 
     -- Add default Ki application entities that are to be configured
     FaceTime = defaultEntities.FaceTime,
@@ -129,7 +128,6 @@ Ki:registerModeShortcuts("entity", {
     { nil, "w", entities.MicrosoftWord, { "Entities", "Microsoft Word" } },
     { nil, "v", entities.VMWareFusion, { "Entities", "VMware Fusion" } },
     { nil, "z", entities.Zoom, { "Entities", "Zoom" } },
-    { { "cmd" }, "a", entities.AppStore, { "Entities", "App Store" } },
     { { "cmd" }, "c", entities.ClipboardText, { "Entities", "Clipboard Text" } },
     { { "cmd" }, "e", entities.EmojiPicker, { "Entities", "Emoji Picker" } },
     { { "cmd" }, "g", entities.GlyphPicker, { "Entities", "Glyph Picker" } },
