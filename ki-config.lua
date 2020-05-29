@@ -81,7 +81,6 @@ local entities = {
     Obsidian = Application:new("Obsidian"),
     Postico = Application:new("Postico"),
     Slack = Application:new("Slack"),
-    Simulator = Application:new("Simulator"),
     VisualStudioCode = Application:new("Visual Studio Code"),
 
     -- Require externally defined application entities
@@ -93,6 +92,7 @@ local entities = {
     MicrosoftOutlook = requireEntity("application", "microsoft-outlook"),
     MicrosoftWord = requireEntity("application", "microsoft-word"),
     ScriptEditor = requireEntity("application", "script-editor"),
+    Steam = requireEntity("application", "steam"),
     TablePlus = requireEntity("application", "tableplus"),
     VMWareFusion = requireEntity("application", "vmware-fusion"),
     VLC = requireEntity("application", "vlc"),
@@ -147,7 +147,7 @@ Ki:registerModeShortcuts("entity", {
     { { "shift" }, "p", entities.TablePlus, { "Entities", "TablePlus" } },
     { { "shift" }, "t", entities.iTerm, { "Entities", "iTerm" } },
     { { "shift" }, "v", entities.VLC, { "Entities", "VLC" } },
-    { { "alt", "cmd" }, "s", entities.Simulator, { "Entities", "Simulator" } },
+    { { "alt", "cmd" }, "s", entities.Steam, { "Entities", "Steam" } },
     { { "shift", "cmd" }, "f", entities.FaceTime, { "Entities", "FaceTime" } },
     { { "shift", "cmd" }, "m", entities.MicrosoftOutlook, { "Entities", "Microsoft Outlook" } },
     { { "shift", "cmd" }, "p", entities.Postico, { "Entities", "Postico" } },
