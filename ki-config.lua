@@ -78,12 +78,9 @@ local entities = {
     Hammerspoon = Application:new("Hammerspoon"),
     LINE = Application:new("LINE"),
     Messenger = Application:new("Messenger"),
-    MicrosoftWord = Application:new("Microsoft Word"),
     Postico = Application:new("Postico"),
     Slack = Application:new("Slack"),
-    ScriptEditor = Application:new("Script Editor"),
     Simulator = Application:new("Simulator"),
-    VMWareFusion = Application:new("VMware Fusion"),
     VisualStudioCode = Application:new("Visual Studio Code"),
 
     -- Require externally defined application entities
@@ -93,7 +90,10 @@ local entities = {
     Java = requireEntity("application", "java"),
     MicrosoftExcel = requireEntity("application", "microsoft-excel"),
     MicrosoftOutlook = requireEntity("application", "microsoft-outlook"),
+    MicrosoftWord = requireEntity("application", "microsoft-word"),
+    ScriptEditor = requireEntity("application", "script-editor"),
     TablePlus = requireEntity("application", "tableplus"),
+    VMWareFusion = requireEntity("application", "vmware-fusion"),
     VLC = requireEntity("application", "vlc"),
     Zoom = requireEntity("application", "zoom"),
 

@@ -1,29 +1,29 @@
 -- AppleScript template for Microsoft Excel
--- `operation` - the operation name
+-- `action` - the action name
 --
--- For the `color-selected-cells` operation:
+-- For the `color-selected-cells` action:
 -- `fillColor` - the RGB color (i.e., {255, 255, 153} for yellow)
--- For the `activate-worksheet` operation:
+-- For the `activate-worksheet` action:
 -- `targetWorksheet` - the target worksheet name
-set operation to "{{operation}}"
+set action to "{{action}}"
 
-if operation is "fetch-worksheets" then
+if action is "fetch-worksheets" then
 
     tell application "Microsoft Excel"
         return name of every sheet of active workbook
     end tell
 
-else if operation is "activate-worksheet" then
+else if action is "activate-worksheet" then
 
     set targetWorksheet to "{{targetWorksheet}}"
     tell application "Microsoft Excel" to activate object worksheet targetWorksheet
 
-else if operation is "select-cell" then
+else if action is "select-cell" then
 
     set targetCell to "{{targetCell}}"
     tell application "Microsoft Excel" to select cell targetCell
 
-else if operation is "color-selected-cells" then
+else if action is "color-selected-cells" then
 
     tell application "Microsoft Excel"
         set fillColor to {255, 255, 255}
@@ -39,7 +39,7 @@ else if operation is "color-selected-cells" then
         end if
     end tell
 
-else if operation is "toggle-freeze-top-row" then
+else if action is "toggle-freeze-top-row" then
 
     tell application "Microsoft Excel"
         select row 2 of active sheet
@@ -47,7 +47,7 @@ else if operation is "toggle-freeze-top-row" then
         set freeze panes of active window to not frozenState
     end tell
 
-else if operation is "autofit-all-columns" then
+else if action is "autofit-all-columns" then
 
     tell application "Microsoft Excel"
         tell active sheet to select used range

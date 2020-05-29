@@ -64,7 +64,7 @@ ZoomUs.zoomMeeting = Application.createMenuItemEvent({ "Window", "Zoom Meeting" 
 ZoomUs:registerShortcuts({
     -- Meeting
     { nil, "i", ZoomUs.invite, { "Meeting", "Invite" } },
-    { { "shift" }, "a", ZoomUs.muteAudio, { "Meeting", "Mute or Umute Audio" } },
+    { nil, "m", ZoomUs.muteAudio, { "Meeting", "Mute or Umute Audio" } },
     { { "shift" }, "f", ZoomUs.enterFullScreen, { "Meeting", "Enter Full Screen" } },
     { { "shift" }, "m", ZoomUs.enterMinimalView, { "Meeting", "Enter or Exit Minimal View" } },
     { { "shift" }, "n", ZoomUs.switchCamera, { "Meeting", "Switch Camera" } },
@@ -90,13 +90,13 @@ ZoomUs:registerShortcuts({
     -- Window
     { nil, "`", ZoomUs.moveFocusToNextWindow, { "Window", "Move Focus to Next Window" } },
     { nil, "l", ZoomUs.togglePortraitLandscape, { "Window", "Toggle Portrait/Landscape" } },
-    { nil, "m", ZoomUs.minimize, { "Window", "Minimize" } },
     { nil, "w", ZoomUs.close, { "Window", "Close" } },
     { { "alt" }, "m", ZoomUs.minimizeAll, { "Window", "Minimize All" } },
     { { "alt" }, "w", ZoomUs.closeAll, { "Window", "Close All" } },
     { { "ctrl" }, "\\", ZoomUs.alwaysShowMeetingControls, { "Window", "Always Show Meeting Controls" } },
     { { "ctrl" }, "t", ZoomUs.switchToNextTab, { "Window", "Switch to Next Tab" } },
     { { "ctrl" }, "w", ZoomUs.closeCurrentChatSession, { "Window", "Close Current Chat Session" } },
+    { { "shift" }, "m", ZoomUs.minimize, { "Window", "Minimize" } },
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", ZoomUs.arrangeInFront, { "Window", "Arrange in Front" } },
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", ZoomUs.bringAllToFront, { "Window", "Bring All to Front" } },
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", ZoomUs.zoomAll, { "Window", "Zoom All" } },

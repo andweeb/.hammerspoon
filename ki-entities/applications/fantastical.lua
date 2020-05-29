@@ -75,17 +75,17 @@ Fantastical.undo = Application.createMenuItemEvent({ "Edit", "Undo" })
 Fantastical.zoom = Application.createMenuItemEvent({ "Window", "Zoom" })
 Fantastical.zoomAll = Application.createMenuItemEvent({ "Window", "Zoom All" })
 
-function Fantastical.createUrlEvent(url)
+-- Add helper method to create URL handler actions
+-- https://flexibits.com/fantastical/help/integration-with-other-apps
+function Fantastical.createURLHandlerActions(url)
     return function() hs.urlevent.openURL("x-fantastical3://"..url) end
 end
 
-Fantastical.openMiniCalendar = Fantastical.createUrlEvent("show/mini")
-Fantastical.openCalendar = Fantastical.createUrlEvent("show/calendar")
-
 Fantastical:registerShortcuts({
+    -- URL handler actions
+    { nil, nil, Fantastical.createURLHandlerActions("show/mini"), { "Fantastical", "Open Mini Window" } },
+    { nil, "c", Fantastical.createURLHandlerActions("show/calendar"), { "Fantastical", "Open Calendar" } },
     -- File
-    { nil, nil, Fantastical.openMiniCalendar, { "Fantastical", "Open Mini Window" } },
-    { nil, "c", Fantastical.openCalendar, { "Fantastical", "Open Calendar" } },
     { nil, "n", Fantastical.newItem, { "File", "New Item" } },
     { nil, "p", Fantastical.print, { "File", "Print…" } },
     { nil, "w", Fantastical.close, { "File", "Close" } },
@@ -97,7 +97,6 @@ Fantastical:registerShortcuts({
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", Fantastical.newCalendar, { "File", "New Calendar" } },
     -- Edit
     { nil, "a", Fantastical.selectAll, { "Edit", "Select All" } },
-    { nil, "c", Fantastical.copy, { "Edit", "Copy" } },
     { nil, "d", Fantastical.duplicate, { "Edit", "Duplicate" } },
     { nil, "f", Fantastical.find, { "Edit", "Find" } },
     { nil, "i", Fantastical.getInfo, { "Edit", "Get Info" } },
