@@ -44,6 +44,7 @@ local websites = {
     Google = requireEntity("website", "google"),
     GoogleMaps = requireEntity("website", "google-maps"),
     Hammerspoon = requireEntity("website", "hammerspoon"),
+    HammerspoonDocs = requireEntity("website", "hammerspoon-docs"),
     LearnXInYMinutes = requireEntity("website", "learnxinyminutes"),
     Netflix = requireEntity("website", "netflix"),
     NPR = requireEntity("website", "npr"),
@@ -196,6 +197,7 @@ Ki:registerModeShortcuts("website", {
     { { "shift" }, "m", websites.GoogleMaps, { "Websites", "Google Maps" } },
     { { "shift" }, "t", websites.TempMail, { "Websites", "Temp Mail" } },
     { { "shift" }, "y", websites.Yelp, { "Websites", "Yelp" } },
+    { { "shift", "cmd" }, "h", websites.HammerspoonDocs, { "Websites", "Hammerspoon Docs" } },
     { { "shift", "cmd" }, "n", websites.NPR, { "Websites", "NPR" } },
 })
 
