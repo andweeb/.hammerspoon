@@ -145,7 +145,7 @@ function GitHub:fetch(graphql, variables, callback)
 end
 
 -- Search GitHub repositories
-function GitHub:search(type, createChoices)
+function GitHub:apiSearch(type, createChoices)
     local graphql = self.readGraphQL("search")
 
     local lastMs = 0
@@ -317,8 +317,8 @@ function GitHub:showProjects()
     end)
 end
 
-GitHub.searchRepositories = function() GitHub:search("REPOSITORY", GitHub.createRepositoryChoices) end
-GitHub.searchUsers = function() GitHub:search("USER", GitHub.createUserChoices) end
+GitHub.searchRepositories = function() GitHub:apiSearch("REPOSITORY", GitHub.createRepositoryChoices) end
+GitHub.searchUsers = function() GitHub:apiSearch("USER", GitHub.createUserChoices) end
 
 GitHub:registerShortcuts({
     { nil, "f", GitHub.showFollowers, { "GitHub", "Show GitHub Followers" } },
