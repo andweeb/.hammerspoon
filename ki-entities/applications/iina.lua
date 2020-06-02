@@ -148,7 +148,7 @@ IINA:registerShortcuts({
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.saveCurrentPlaylist, { "File", "Save Current Playlist…" } },
     { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.share, { "File", "Share" } },
     -- Playback
-    { nil, "space", IINA.playPause, { "Playback", "Pause" } },
+    { nil, "space", IINA.playPause, { "Playback", "Play/Pause" } },
     { nil, ".", IINA.stopAndClearPlaylists, { "Playback", "Stop and Clear Playlists" } },
     { nil, "[", IINA.speedDownBy05x, { "Playback", "Speed Down by 0.5x" } },
     { nil, "\\", IINA.resetSpeed, { "Playback", "Reset Speed" } },
