@@ -1,12 +1,16 @@
 ----------------------------------------------------------------------------------------------------
 -- GitHub website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
-local scriptPath = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/graphql")
 local GitHub = spoon.Ki.defaultEntities.website.GitHub
+local SearchMixin = require("ki-entities/search-mixin")
+local GraphQLClient = require("lib/graphql-client")
+local apiToken = GraphQLClient.getEnvironmentVariable("GITHUB_TOKEN")
 
+-- Initialize website instance with search mixin and GraphQL Client
 GitHub.class:include(SearchMixin)
-GitHub.API_ENDPOINT = "https://api.github.com/graphql"
+GitHub.graphqlClient = GraphQLClient("https://api.github.com/graphql", {
+    Authorization = "Bearer "..apiToken,
+})
 
 local customLinks = {
     -- Profile
@@ -32,10 +36,11 @@ local customLinks = {
     { name = "GraphQL API Explorer", link = "https://developer.github.com/v4/explorer/" },
 }
 
-for _, path in pairs(customLinks) do
-    table.insert(GitHub.links, path)
+for i = 1, #customLinks do
+    table.insert(GitHub.links, customLinks[i])
 end
 
+-- Parameter-based advanced search using the search mixin
 function GitHub:advancedSearch(query, language)
     local searchURL = self.url.."/search?q="..query
     searchURL = searchURL.."&l="..language.."&type=Code"
@@ -112,45 +117,14 @@ function GitHub:createUserChoices(users)
     return choices
 end
 
--- Read the GraphQL file
-function GitHub.readGraphQL(name)
-    local file = io.open(scriptPath.."/"..name..".graphql", "rb")
-    local graphql = file:read("*all")
-
-    file:close()
-
-    return graphql
-end
-
--- Fetch the GitHub GraphQL API v4
-function GitHub:fetch(graphql, variables, callback)
-    local headers = { Authorization = "Bearer "..self.token }
-    local requestBody = { query = graphql }
-
-    if variables then
-        requestBody.variables = variables
-    end
-
-    hs.http.asyncPost(self.API_ENDPOINT, hs.json.encode(requestBody), headers, function(status, rawResponse)
-        local success, response = pcall(function() return hs.json.decode(rawResponse) end)
-        local acceptedRequest = tostring(status):sub(1, 1) == "2"
-
-        if acceptedRequest and success and response and not response.errors then
-            callback(response)
-        else
-            local message = "Error communicating with Github (status "..tostring(status)..")"
-            self.notifyError(message, hs.inspect(response))
-        end
-    end)
-end
-
--- Search GitHub repositories
+-- Search on GitHub with debounced input for some SearchType enum (repository, user, etc.):
+-- https://developer.github.com/v4/enum/searchtype/
 function GitHub:apiSearch(type, createChoices)
-    local graphql = self.readGraphQL("search")
+    local graphql = self.graphqlClient:readGraphQLDocument("github/search")
 
     local lastMs = 0
     local elapsedMs = 0
-    local debounceMs = 1000
+    local debounceMs = 500
     local debounceSeconds = debounceMs / 1000
     local debounceTimer = hs.timer.doEvery(0.001, function() elapsedMs = elapsedMs + 1 end)
     local lagTimer = nil
@@ -164,11 +138,12 @@ function GitHub:apiSearch(type, createChoices)
     end
 
     local function search(query)
-        self:fetch(graphql, { type = type, query = query }, function(response)
+        local variables = { type = type, query = query }
+        self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
             local results = response.data.search.results
             local choices = createChoices(self, results)
             self.selectionModal:choices(choices)
-        end)
+        end))
     end
 
     self:showSelectionModal({}, onChoice, {
@@ -191,10 +166,26 @@ function GitHub:apiSearch(type, createChoices)
     end)
 end
 
+-- Wrapper function to either notify on error or invoke a callback on a successful response
+function GitHub:createResponseHandler(callback)
+    return function(status, rawResponse)
+        local success, response = pcall(function() return hs.json.decode(rawResponse) end)
+        local acceptedRequest = tostring(status):sub(1, 1) == "2"
+
+        if acceptedRequest and success and response and not response.errors then
+            callback(response)
+        else
+            local message = "Error communicating with Github (status "..tostring(status)..")"
+            self.notifyError(message, hs.inspect(response))
+        end
+    end
+end
+
 -- Create an action to show a selection modal of user connection items on the viewer
 function GitHub:createViewerRepositorySelection(queryName, field, variables, placeholderText)
     return function()
-        self:fetch(self.readGraphQL(queryName), variables, function(response)
+        -- Create response handler to display the viewer's repository results in a selection modal
+        local handleResponse = self:createResponseHandler(function(response)
             local repositories = response.data.viewer[field].results
             local choices = self:createRepositoryChoices(repositories)
             local options = { placeholderText = placeholderText }
@@ -205,10 +196,14 @@ function GitHub:createViewerRepositorySelection(queryName, field, variables, pla
                 end
             end, options)
         end)
+
+        local graphql = self.graphqlClient:readGraphQLDocument("github/"..queryName)
+
+        self.graphqlClient:query(graphql, variables, nil, handleResponse)
     end
 end
 
--- Show repository actions
+-- Initialize show viewer repository actions
 GitHub.showRepositories = GitHub:createViewerRepositorySelection("repositories", "repositories", {
     orderBy = {
         field = "CREATED_AT",
@@ -229,10 +224,11 @@ GitHub.showWatchingRepositories = GitHub:createViewerRepositorySelection("watchi
 }, "Watched repositories")
 
 -- Create an action to show a selection modal of user connection items on the viewer
-function GitHub:createViewerUserSelectionAction(field)
+function GitHub:createViewerConnectionSelectionAction(queryName)
     return function()
-        self:fetch(self.readGraphQL(field), nil, function(response)
-            local following = response.data.viewer[field].results
+        -- Create response handler to display user connection results in a selection modal
+        local handleResponse = self:createResponseHandler(function(response)
+            local following = response.data.viewer[queryName].results
             local choices = self:createUserChoices(following)
             local function onChoice(choice)
                 if choice then
@@ -241,18 +237,23 @@ function GitHub:createViewerUserSelectionAction(field)
             end
 
             self:showSelectionModal(choices, onChoice, {
-                placeholderText = "Your "..field:gsub('^%l', string.upper)
+                placeholderText = "Your "..queryName:gsub('^%l', string.upper)
             })
         end)
+
+        local graphql = self.graphqlClient:readGraphQLDocument("github/"..queryName)
+
+        self.graphqlClient:query(graphql, nil, nil, handleResponse)
     end
 end
 
-GitHub.showFollowers = GitHub:createViewerUserSelectionAction("followers")
-GitHub.showFollowing = GitHub:createViewerUserSelectionAction("following")
+GitHub.showFollowers = GitHub:createViewerConnectionSelectionAction("followers")
+GitHub.showFollowing = GitHub:createViewerConnectionSelectionAction("following")
 
 -- Create an action to show a selection modal of user connection items on the viewer
 function GitHub:showGists()
-    self:fetch(self.readGraphQL("gists"), nil, function(response)
+    -- Create response handler to display gist results in a selection modal
+    local handleResponse = self:createResponseHandler(function(response)
         local gists = response.data.viewer.gists.results
         local choices = {}
 
@@ -260,24 +261,29 @@ function GitHub:showGists()
             local gist = gists[i]
             table.insert(choices, {
                 url = gist.url,
-                text = gist.name,
-                subText = gist.description,
+                text = gist.description,
+                subText = gist.name,
             })
         end
 
-        local options = { placeholderText = "Gists" }
-
-        self:showSelectionModal(choices, function(choice)
+        local function onChoice(choice)
             if choice then
                 return self.open(choice.url)
             end
-        end, options)
+        end
+
+        self:showSelectionModal(choices, onChoice, { placeholderText = "Gists" })
     end)
+
+    local graphql = self.graphqlClient:readGraphQLDocument("github/gists")
+
+    self.graphqlClient:query(graphql, nil, nil, handleResponse)
 end
 
 -- Create an action to show a selection modal of user connection items on the viewer
 function GitHub:showProjects()
-    self:fetch(self.readGraphQL("repository-projects"), nil, function(response)
+    -- Create repsonse handler to show project results in a selection modal
+    local handleResponse = self:createResponseHandler(function(response)
         local repositories = response.data.viewer.repositories.results
         local choices = {}
 
@@ -289,9 +295,7 @@ function GitHub:showProjects()
                 local project = projects[j]
 
                 hs.image.imageFromURL(repository.imageURL, function(image)
-                    if not self.selectionModal then
-                        return
-                    end
+                    if not self.selectionModal then return end
 
                     if choices[j] then
                         choices[j].image = image
@@ -307,14 +311,18 @@ function GitHub:showProjects()
             end
         end
 
-        local options = { placeholderText = "Repository Projects" }
-
-        self:showSelectionModal(choices, function(choice)
+        local function onChoice(choice)
             if choice then
                 return self.open(choice.url)
             end
-        end, options)
+        end
+
+        self:showSelectionModal(choices, onChoice, { placeholderText = "Repository Projects" })
     end)
+
+    local graphql = self.graphqlClient:readGraphQLDocument("github/repository-projects")
+
+    self.graphqlClient:query(graphql, nil, nil, handleResponse)
 end
 
 GitHub.searchRepositories = function() GitHub:apiSearch("REPOSITORY", GitHub.createRepositoryChoices) end
@@ -345,7 +353,7 @@ function GitHub:openRepositoryPage(path)
 end
 
 GitHub:registerSelectionModalShortcuts({
-    { { "cmd" }, "a", GitHub:openRepositoryPage("actions") },
+    { { "cmd", "shift" }, "a", GitHub:openRepositoryPage("actions") },
     { { "cmd" }, "b", GitHub:openRepositoryPage("branches") },
     { { "cmd" }, "c", GitHub:openRepositoryPage("commits/master") },
     { { "cmd" }, "g", GitHub:openRepositoryPage("graphs") },
