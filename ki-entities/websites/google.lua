@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- Google website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local Google = spoon.Ki.defaultEntities.website.Google
 
-Google.class:include(SearchMixin)
+Google.class:include(URLSearchMixin)
 
 return Google

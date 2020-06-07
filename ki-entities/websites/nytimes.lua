@@ -9,7 +9,7 @@
 --     )
 -- );
 local Website = spoon.Ki.Website
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local NYTimes = Website:new("The New York Times", "https://www.nytimes.com", {
     { name = "World", link = "/section/world" },
     { name = "U.S.", link = "/section/us" },
@@ -32,7 +32,7 @@ local NYTimes = Website:new("The New York Times", "https://www.nytimes.com", {
     { name = "Video", link = "/video" },
 })
 
-NYTimes.queryParam = "query"
-NYTimes.class:include(SearchMixin)
+NYTimes.class:include(URLSearchMixin)
+NYTimes:initURLSearch(nil, "query")
 
 return NYTimes

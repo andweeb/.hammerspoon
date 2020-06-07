@@ -1,18 +1,18 @@
 ----------------------------------------------------------------------------------------------------
 -- Google Maps website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local GoogleMaps = spoon.Ki.defaultEntities.website.GoogleMaps
 
-GoogleMaps.class:include(SearchMixin)
+GoogleMaps.class:include(URLSearchMixin)
 
 -- Basic address search
-function GoogleMaps:basicSearch(encodedQuery)
+function GoogleMaps:basicURLSearch(encodedQuery)
     self.open(self.url.."/search/"..encodedQuery)
 end
 
 -- Driving directions search
-function GoogleMaps:advancedSearch(origin, destination)
+function GoogleMaps:advancedURLSearch(origin, destination)
     local searchURL = self.url.."/dir/"..origin
     searchURL = searchURL.."/"..destination
     self.open(searchURL)

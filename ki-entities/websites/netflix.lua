@@ -1,9 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- Netflix website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local Netflix = spoon.Ki.defaultEntities.website.Netflix
 
-Netflix.class:include(SearchMixin)
+Netflix.class:include(URLSearchMixin)
 
 return Netflix

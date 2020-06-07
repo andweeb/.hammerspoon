@@ -3,8 +3,8 @@
 --
 local Website = spoon.Ki.Website
 local StackOverflow = Website:new("Stack Overflow", "https://stackoverflow.com")
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 
-StackOverflow.class:include(SearchMixin)
+StackOverflow.class:include(URLSearchMixin)
 
 return StackOverflow

@@ -1,12 +1,12 @@
 ----------------------------------------------------------------------------------------------------
 -- Yelp website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local Yelp = spoon.Ki.defaultEntities.website.Yelp
 
-Yelp.class:include(SearchMixin)
+Yelp.class:include(URLSearchMixin)
 
-function Yelp:advancedSearch(query, location)
+function Yelp:advancedURLSearch(query, location)
     local searchURL = self.url.."/search?find_desc="..query
     searchURL = searchURL.."&find_loc="..location
     self.open(searchURL)

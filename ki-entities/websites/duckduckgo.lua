@@ -3,9 +3,9 @@
 --
 local Website = spoon.Ki.Website
 local DuckDuckGo = Website:new("DuckDuckGo", "https://duckduckgo.com")
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 
-DuckDuckGo.searchPath = ""
-DuckDuckGo.class:include(SearchMixin)
+DuckDuckGo.class:include(URLSearchMixin)
+DuckDuckGo:initURLSearch("")
 
 return DuckDuckGo

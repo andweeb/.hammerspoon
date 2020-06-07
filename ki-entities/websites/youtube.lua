@@ -1,11 +1,10 @@
 ----------------------------------------------------------------------------------------------------
 -- YouTube website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local YouTube = spoon.Ki.defaultEntities.website.YouTube
 
-YouTube.searchPath = "results"
-YouTube.queryParam = "search_query"
-YouTube.class:include(SearchMixin)
+YouTube.class:include(URLSearchMixin)
+YouTube:initURLSearch("results", "search_query")
 
 return YouTube

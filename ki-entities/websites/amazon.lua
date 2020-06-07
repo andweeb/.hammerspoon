@@ -1,11 +1,10 @@
 ----------------------------------------------------------------------------------------------------
 -- Amazon website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local SearchMixin = require("ki-entities/url-search")
 local Amazon = spoon.Ki.defaultEntities.website.Amazon
 
-Amazon.searchPath = "s"
-Amazon.queryParam = "k"
 Amazon.class:include(SearchMixin)
+Amazon:initURLSearch("s", "field-keywords")
 
 return Amazon

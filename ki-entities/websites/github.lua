@@ -2,12 +2,12 @@
 -- GitHub website config
 --
 local GitHub = spoon.Ki.defaultEntities.website.GitHub
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local GraphQLClient = require("lib/graphql-client")
 local apiToken = GraphQLClient.getEnvironmentVariable("GITHUB_TOKEN")
 
 -- Initialize website instance with search mixin and GraphQL Client
-GitHub.class:include(SearchMixin)
+GitHub.class:include(URLSearchMixin)
 GitHub.graphqlClient = GraphQLClient("https://api.github.com/graphql", {
     Authorization = "Bearer "..apiToken,
 })
@@ -41,7 +41,7 @@ for i = 1, #customLinks do
 end
 
 -- Parameter-based advanced search using the search mixin
-function GitHub:advancedSearch(query, language)
+function GitHub:advancedURLSearch(query, language)
     local searchURL = self.url.."/search?q="..query
     searchURL = searchURL.."&l="..language.."&type=Code"
     self.open(searchURL)

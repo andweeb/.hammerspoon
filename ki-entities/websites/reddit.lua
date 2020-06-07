@@ -1,10 +1,10 @@
 ----------------------------------------------------------------------------------------------------
 -- Reddit website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local Reddit = spoon.Ki.defaultEntities.website.Reddit
 
-Reddit.class:include(SearchMixin)
+Reddit.class:include(URLSearchMixin)
 
 -- Default subreddit list: https://www.reddit.com/r/ListOfSubreddits/wiki/defaults#wiki_defaults
 Reddit.links = {
@@ -68,7 +68,7 @@ Reddit.links = {
     "/r/entertainment",
 }
 
-function Reddit:advancedSearch(query, subreddit)
+function Reddit:advancedURLSearch(query, subreddit)
     self.open(self.url.."/r/"..subreddit.."/search/?q="..query.."&restrict_sr=1")
 end
 

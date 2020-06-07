@@ -3,9 +3,9 @@
 --
 local Website = spoon.Ki.Website
 local NPR = Website:new("NPR", "https://www.npr.org")
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 
-NPR.queryParam = "query"
-NPR.class:include(SearchMixin)
+NPR.class:include(URLSearchMixin)
+NPR:initURLSearch(nil, "query")
 
 return NPR

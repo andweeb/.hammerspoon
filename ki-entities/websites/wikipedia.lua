@@ -1,11 +1,10 @@
 ----------------------------------------------------------------------------------------------------
 -- Wikipedia website config
 --
-local SearchMixin = require("ki-entities/search-mixin")
+local URLSearchMixin = require("ki-entities/url-search")
 local Wikipedia = spoon.Ki.defaultEntities.website.Wikipedia
 
-Wikipedia.searchPath = "w/index.php"
-Wikipedia.queryParam = "search"
-Wikipedia.class:include(SearchMixin)
+Wikipedia.class:include(URLSearchMixin)
+Wikipedia:initURLSearch("w/index.php", "search")
 
 return Wikipedia
