@@ -1,0 +1,18 @@
+query issues($orderBy: IssueOrder!) {
+  viewer {
+    issues(first: 100, orderBy: $orderBy) {
+      results: nodes {
+        ... on Issue {
+          repository {
+            nameWithOwner
+            imageURL: openGraphImageUrl
+          }
+          title
+          url
+          state
+        }
+      }
+    }
+  }
+}
+

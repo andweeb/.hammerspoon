@@ -2,16 +2,21 @@
 -- GitHub website config
 --
 local GitHub = spoon.Ki.defaultEntities.website.GitHub
+local APISearchMixin = require("ki-entities/api-search")
 local URLSearchMixin = require("ki-entities/url-search")
-local GraphQLClient = require("lib/graphql-client")
+local GraphQLClient = require("lib/graphql/client")
 local apiToken = GraphQLClient.getEnvironmentVariable("GITHUB_TOKEN")
 
--- Initialize website instance with search mixin and GraphQL Client
+-- Initialize website instance with search mixins
+GitHub.class:include(APISearchMixin)
 GitHub.class:include(URLSearchMixin)
+
+-- Attach GraphQL Client instance initialized with auth header
 GitHub.graphqlClient = GraphQLClient("https://api.github.com/graphql", {
     Authorization = "Bearer "..apiToken,
 })
 
+-- Add some custom GitHub links
 local customLinks = {
     -- Profile
     { name = "Profile", link = "/andweeb" },
@@ -35,17 +40,43 @@ local customLinks = {
     { name = "GraphQL API v4", link = "https://developer.github.com/v4/" },
     { name = "GraphQL API Explorer", link = "https://developer.github.com/v4/explorer/" },
 }
-
 for i = 1, #customLinks do
     table.insert(GitHub.links, customLinks[i])
 end
 
--- Parameter-based advanced search using the search mixin
+-- Parameter-based advanced search using the URL search mixin
 function GitHub:advancedURLSearch(query, language)
     local searchURL = self.url.."/search?q="..query
     searchURL = searchURL.."&l="..language.."&type=Code"
     self.open(searchURL)
 end
+
+-- Create repository page actions
+function GitHub:createRepositoryPageAction(path)
+    return function(modal)
+        local selectedRow = modal:selectedRow()
+        local choice = modal:selectedRowContents(selectedRow)
+
+        modal:cancel()
+        self.open(choice.url.."/"..path)
+
+        return true
+    end
+end
+
+GitHub:registerSelectionModalShortcuts({
+    { { "cmd", "shift" }, "a", GitHub:createRepositoryPageAction("actions") },
+    { { "cmd" }, "b", GitHub:createRepositoryPageAction("branches") },
+    { { "cmd" }, "c", GitHub:createRepositoryPageAction("commits/master") },
+    { { "cmd" }, "g", GitHub:createRepositoryPageAction("graphs") },
+    { { "cmd" }, "i", GitHub:createRepositoryPageAction("issues") },
+    { { "cmd" }, "p", GitHub:createRepositoryPageAction("projects") },
+    { { "cmd" }, "r", GitHub:createRepositoryPageAction("releases") },
+    { { "cmd" }, "s", GitHub:createRepositoryPageAction("settings") },
+    { { "cmd" }, "t", GitHub:createRepositoryPageAction("graphs/traffic") },
+    { { "cmd" }, "w", GitHub:createRepositoryPageAction("wiki") },
+    { { "cmd", "shift" }, "i", GitHub:createRepositoryPageAction("pulse") },
+})
 
 -- Create choice objects for each repository result with the following fragment:
 -- ... on Repository {
@@ -76,6 +107,40 @@ function GitHub:createRepositoryChoices(repositories)
             url = repository.url,
             text = repository.owner.name.." / "..repository.name,
             subText = repository.description,
+        })
+    end
+
+    return choices
+end
+
+-- Create choice objects for each issue result with the following fragment:
+-- ... on Issue {
+--     repository {
+--         name
+--         imageURL: openGraphImageUrl
+--     }
+--     title
+--     url
+-- }
+function GitHub:createIssueChoices(issues)
+    local choices = {}
+
+    for index, issue in pairs(issues) do
+        hs.image.imageFromURL(issue.repository.imageURL, function(image)
+            if not self.selectionModal then
+                return
+            end
+
+            if choices[index] then
+                choices[index].image = image
+                self.selectionModal:choices(choices)
+            end
+        end)
+
+        table.insert(choices, {
+            url = issue.url,
+            text = issue.title.." ("..issue.state..")",
+            subText = issue.repository.nameWithOwner,
         })
     end
 
@@ -117,56 +182,7 @@ function GitHub:createUserChoices(users)
     return choices
 end
 
--- Search on GitHub with debounced input for some SearchType enum (repository, user, etc.):
--- https://developer.github.com/v4/enum/searchtype/
-function GitHub:apiSearch(type, createChoices)
-    local graphql = self.graphqlClient:readGraphQLDocument("github/search")
-
-    local lastMs = 0
-    local elapsedMs = 0
-    local debounceMs = 500
-    local debounceSeconds = debounceMs / 1000
-    local debounceTimer = hs.timer.doEvery(0.001, function() elapsedMs = elapsedMs + 1 end)
-    local lagTimer = nil
-
-    local function onChoice(choice)
-        if choice then
-            debounceTimer:stop()
-            debounceTimer = nil
-            return self.open(choice.url)
-        end
-    end
-
-    local function search(query)
-        local variables = { type = type, query = query }
-        self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
-            local results = response.data.search.results
-            local choices = createChoices(self, results)
-            self.selectionModal:choices(choices)
-        end))
-    end
-
-    self:showSelectionModal({}, onChoice, {
-        placeholderText = "Search for a GitHub "..type:lower()
-    })
-
-    self.selectionModal:queryChangedCallback(function(query)
-        if lagTimer then lagTimer:stop() end
-
-        if lastMs ~= 0 and elapsedMs - lastMs >= debounceMs then
-            search(query)
-        elseif #query:gsub("%s+", "") > 0 then
-            lagTimer = hs.timer.doAfter(debounceSeconds, function()
-                lastMs = 0
-                search(query)
-            end)
-        end
-
-        lastMs = elapsedMs
-    end)
-end
-
--- Wrapper function to either notify on error or invoke a callback on a successful response
+-- Create response handler functions that invoke a callback on successful responses or notifies errors
 function GitHub:createResponseHandler(callback)
     return function(status, rawResponse)
         local success, response = pcall(function() return hs.json.decode(rawResponse) end)
@@ -176,25 +192,25 @@ function GitHub:createResponseHandler(callback)
             callback(response)
         else
             local message = "Error communicating with Github (status "..tostring(status)..")"
-            self.notifyError(message, hs.inspect(response))
-        end
+            self.notifyError(message, hs.inspect(response)) end
     end
 end
 
--- Create an action to show a selection modal of user connection items on the viewer
-function GitHub:createViewerRepositorySelection(queryName, field, variables, placeholderText)
+-- Create actions to show a selection modal of results on the viewer object
+function GitHub:createViewerResultAction(queryName, field, variables, placeholderText, choicesGenerator)
     return function()
         -- Create response handler to display the viewer's repository results in a selection modal
         local handleResponse = self:createResponseHandler(function(response)
-            local repositories = response.data.viewer[field].results
-            local choices = self:createRepositoryChoices(repositories)
+            local results = response.data.viewer[field].results
+            local choices = choicesGenerator(self, results)
             local options = { placeholderText = placeholderText }
-
-            self:showSelectionModal(choices, function(choice)
+            local function onChoice(choice)
                 if choice then
                     return self.open(choice.url)
                 end
-            end, options)
+            end
+
+            self:showSelectionModal(choices, onChoice, options)
         end)
 
         local graphql = self.graphqlClient:readGraphQLDocument("github/"..queryName)
@@ -203,52 +219,37 @@ function GitHub:createViewerRepositorySelection(queryName, field, variables, pla
     end
 end
 
--- Initialize show viewer repository actions
-GitHub.showRepositories = GitHub:createViewerRepositorySelection("repositories", "repositories", {
+local orderByCreatedAt = {
     orderBy = {
         field = "CREATED_AT",
         direction = "DESC",
     },
-}, "Owned repositories")
-GitHub.showStarredRepositories = GitHub:createViewerRepositorySelection("starred-repositories", "starredRepositories", {
+}
+local orderByStarredAt = {
     orderBy = {
         field = "STARRED_AT",
         direction = "DESC",
     },
-}, "Starred repositories")
-GitHub.showWatchingRepositories = GitHub:createViewerRepositorySelection("watching-repositories", "watching", {
-    orderBy = {
-        field = "CREATED_AT",
-        direction = "DESC",
-    },
-}, "Watched repositories")
+}
 
--- Create an action to show a selection modal of user connection items on the viewer
-function GitHub:createViewerConnectionSelectionAction(queryName)
-    return function()
-        -- Create response handler to display user connection results in a selection modal
-        local handleResponse = self:createResponseHandler(function(response)
-            local following = response.data.viewer[queryName].results
-            local choices = self:createUserChoices(following)
-            local function onChoice(choice)
-                if choice then
-                    return self.open(choice.url)
-                end
-            end
+-- Initialize show viewer repository actions
+GitHub.showFollowers = GitHub:createViewerResultAction("followers", "followers", nil,
+    "Your followers", GitHub.createUserChoices)
 
-            self:showSelectionModal(choices, onChoice, {
-                placeholderText = "Your "..queryName:gsub('^%l', string.upper)
-            })
-        end)
+GitHub.showFollowing = GitHub:createViewerResultAction("following", "following", nil,
+    "Your following", GitHub.createUserChoices)
 
-        local graphql = self.graphqlClient:readGraphQLDocument("github/"..queryName)
+GitHub.showIssues = GitHub:createViewerResultAction("issues", "issues", orderByCreatedAt,
+    "Your issues", GitHub.createIssueChoices)
 
-        self.graphqlClient:query(graphql, nil, nil, handleResponse)
-    end
-end
+GitHub.showRepositories = GitHub:createViewerResultAction("repositories", "repositories",
+    orderByCreatedAt, "Owned repositories", GitHub.createRepositoryChoices)
 
-GitHub.showFollowers = GitHub:createViewerConnectionSelectionAction("followers")
-GitHub.showFollowing = GitHub:createViewerConnectionSelectionAction("following")
+GitHub.showStarredRepositories = GitHub:createViewerResultAction("starred-repositories", "starredRepositories",
+    orderByStarredAt, "Starred repositories", GitHub.createRepositoryChoices)
+
+GitHub.showWatchingRepositories = GitHub:createViewerResultAction("watching-repositories", "watching",
+    orderByCreatedAt, "Watched repositories", GitHub.createRepositoryChoices)
 
 -- Create an action to show a selection modal of user connection items on the viewer
 function GitHub:showGists()
@@ -325,45 +326,50 @@ function GitHub:showProjects()
     self.graphqlClient:query(graphql, nil, nil, handleResponse)
 end
 
-GitHub.searchRepositories = function() GitHub:apiSearch("REPOSITORY", GitHub.createRepositoryChoices) end
-GitHub.searchUsers = function() GitHub:apiSearch("USER", GitHub.createUserChoices) end
+-- Create API search actions
+function GitHub:createAPISearchAction(type, choicesGenerator)
+    return function()
+        -- Create search input handler
+        local function onInput(query)
+            local variables = { type = type, query = query }
+            local graphql = self.graphqlClient:readGraphQLDocument("github/search")
+
+            self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
+                local results = response.data.search.results
+                local choices = choicesGenerator(self, results)
+                self.selectionModal:choices(choices)
+            end))
+        end
+
+        -- Create item selection handler
+        local onSelection = function(choice)
+            if choice then
+                return self.open(choice.url)
+            end
+        end
+
+        -- Start API search interface
+        self:apiSearch(onInput, onSelection, {
+            placeholderText = "Search for a GitHub "..type:lower()
+        })
+    end
+end
+
+-- Initialize API search actions
+GitHub.searchRepositories = GitHub:createAPISearchAction("REPOSITORY", GitHub.createRepositoryChoices)
+GitHub.searchUsers = GitHub:createAPISearchAction("USER", GitHub.createUserChoices)
 
 GitHub:registerShortcuts({
     { nil, "f", GitHub.showFollowers, { "GitHub", "Show GitHub Followers" } },
     { nil, "g", function() GitHub:showGists() end, { "GitHub", "Show GitHub Gists" } },
+    { nil, "i", GitHub.showIssues, { "GitHub", "Show GitHub Issues" } },
     { nil, "p", function() GitHub:showProjects() end, { "GitHub", "Show Projects" } },
     { nil, "r", GitHub.showRepositories, { "GitHub", "Show Repositories" } },
     { nil, "s", GitHub.searchRepositories, { "GitHub", "Search GitHub Repositories" } },
     { nil, "u", GitHub.searchUsers, { "GitHub", "Search GitHub Users" } },
     { nil, "w", GitHub.showWatchingRepositories, { "GitHub", "Show Watched Repositories" } },
-    { { "shift" }, "f", function() GitHub.showFollowing() end, { "GitHub", "Show GitHub Following" } },
-    { { "shift" }, "s", function() GitHub:showStarredRepositories() end, { "GitHub", "Show Starred Repositories" } },
-})
-
-function GitHub:openRepositoryPage(path)
-    return function(modal)
-        local selectedRow = modal:selectedRow()
-        local choice = modal:selectedRowContents(selectedRow)
-
-        modal:cancel()
-        self.open(choice.url.."/"..path)
-
-        return true
-    end
-end
-
-GitHub:registerSelectionModalShortcuts({
-    { { "cmd", "shift" }, "a", GitHub:openRepositoryPage("actions") },
-    { { "cmd" }, "b", GitHub:openRepositoryPage("branches") },
-    { { "cmd" }, "c", GitHub:openRepositoryPage("commits/master") },
-    { { "cmd" }, "g", GitHub:openRepositoryPage("graphs") },
-    { { "cmd" }, "i", GitHub:openRepositoryPage("issues") },
-    { { "cmd" }, "p", GitHub:openRepositoryPage("projects") },
-    { { "cmd" }, "r", GitHub:openRepositoryPage("releases") },
-    { { "cmd" }, "s", GitHub:openRepositoryPage("settings") },
-    { { "cmd" }, "t", GitHub:openRepositoryPage("graphs/traffic") },
-    { { "cmd" }, "w", GitHub:openRepositoryPage("wiki") },
-    { { "cmd", "shift" }, "i", GitHub:openRepositoryPage("pulse") },
+    { { "shift" }, "f", GitHub.showFollowing, { "GitHub", "Show GitHub Following" } },
+    { { "shift" }, "s", GitHub.showStarredRepositories, { "GitHub", "Show Starred Repositories" } },
 })
 
 return GitHub
