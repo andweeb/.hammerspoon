@@ -4,8 +4,8 @@
 --
 -- Usage:
 -- local Example = Website:new("Example", "https://www.example.com")
--- Example.class:include(SearchMixin)
--- Example.initURLSearch("searchPath", "queryParam", "queryDelimiter")
+-- Example.graphqlClient = GraphQLClient("https://api.github.com/graphql", { --[[headers]] })
+-- Example.graphqlClient:query(Example.graphqlClient:readGraphQLDocument(...), ...)
 --
 local APISearchMixin = {}
 

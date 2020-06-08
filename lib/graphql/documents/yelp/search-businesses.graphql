@@ -1,0 +1,21 @@
+query searchBusinesses($term: String!, $limit:Int!, $location: String) {
+  search(term: $term, limit: $limit, location: $location) {
+    business {
+      name
+      url
+      review_count
+      location {
+        formatted_address
+      }
+      photos
+      hours {
+        open {
+          is_overnight
+          end
+          start
+          day
+        }
+      }
+    }
+  }
+}
