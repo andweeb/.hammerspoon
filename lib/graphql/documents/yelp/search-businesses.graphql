@@ -1,5 +1,5 @@
-query searchBusinesses($term: String!, $limit:Int!, $location: String) {
-  search(term: $term, limit: $limit, location: $location) {
+query searchBusinesses($term: String!, $limit:Int!, $location: String, $latitude: Float, $longitude: Float) {
+  search(term: $term, limit: $limit, location: $location, latitude: $latitude, longitude: $longitude) {
     business {
       name
       url

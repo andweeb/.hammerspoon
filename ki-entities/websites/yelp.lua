@@ -5,6 +5,7 @@ local Yelp = spoon.Ki.defaultEntities.website.Yelp
 local APISearchMixin = require("ki-entities/api-search")
 local URLSearchMixin = require("ki-entities/url-search")
 local GraphQLClient = require("lib/graphql/client")
+local usCities = require("lib/us-cities")
 
 -- Initialize website instance with search mixins
 Yelp.class:include(APISearchMixin)
@@ -17,9 +18,7 @@ Yelp.graphqlClient = GraphQLClient("https://api.yelp.com/v3/graphql", {
     ["Content-Type"] = "application/json",
     ["Accept-Language"] = "en_US",
 })
-
--- Set a default location
-Yelp.location = "California"
+Yelp.defaultCurrentLocation = "Orange County, CA"
 
 -- URL search using location query parameters
 function Yelp:advancedURLSearch(query, location)
@@ -71,8 +70,9 @@ function Yelp:createChoices(businesses)
             end)
         end
 
+        local address = business.location.formatted_address:gsub("\n", " ")
         local subTexts = {
-            business.location.formatted_address:gsub("\n", " "),
+            address,
             business.review_count.." reviews"
         }
 
@@ -96,19 +96,64 @@ function Yelp:createChoices(businesses)
             url = business.url,
             text = business.name,
             subText = table.concat(subTexts, " • "),
+            businessName = business.name,
+            address = address,
         })
     end
 
     return choices
 end
 
+-- Search for businesses in city
+function Yelp:searchBusinessInCity()
+    local options = { placeholderText = "Select a city" }
+    local function onChoice(choice)
+        if choice then
+            self:searchBusinesses(choice.text)
+        end
+    end
+
+    self:showSelectionModal(usCities, onChoice, options)
+end
+
+-- Use location services to search businesses using the current location
+function Yelp:searchBusinessWithCurrentLocation()
+    -- Start local tracking if location services are enabled
+    if hs.location.servicesEnabled() and hs.location.start() then
+        -- Add slight delay for tracking to start
+        hs.timer.doAfter(0.5, function()
+            local location = hs.location.get()
+            hs.location.stop()
+
+            self:searchBusinesses(location)
+        end)
+    else
+        -- Default location to OC
+        self:searchBusinesses(self.defaultCurrentLocation)
+    end
+end
+
 -- Search and display businesses in a selection modal using the Yelp GraphQL API
-function Yelp:searchBusinesses()
+-- for some location string or latitude/longitude table
+function Yelp:searchBusinesses(location)
+    local placeholderText = "Search Yelp for businesses"
+    local isLatLonLocation = location.latitude and location.longitude
+    placeholderText = isLatLonLocation and placeholderText or placeholderText.." in "..location
+
     -- Create search input handler
     local function onInput(input)
-        local variables = { term = input, location = self.location, limit = 25 }
         local graphql = self.graphqlClient:readGraphQLDocument("yelp/search-businesses")
 
+        -- Create variables with either location string or coordinates
+        local variables = { term = input, limit = 25 }
+        if isLatLonLocation then
+            variables.latitude = location.latitude
+            variables.longitude = location.longitude
+        else
+            variables.location = location.location
+        end
+
+        -- Query the GraphQL API
         self.graphqlClient:query(graphql, variables, nil, function(status, rawResponse)
             local success, response = pcall(function() return hs.json.decode(rawResponse) end)
             local acceptedRequest = tostring(status):sub(1, 1) == "2"
@@ -132,11 +177,24 @@ function Yelp:searchBusinesses()
     end
 
     -- Start API search interface
-    self:apiSearch(onInput, onSelection, { placeholderText = "Search businesses on Yelp" })
+    self:apiSearch(onInput, onSelection, { placeholderText = placeholderText })
 end
 
+function Yelp:openGoogleMaps(modal)
+    local selectedRow = modal:selectedRow()
+    local choice = modal:selectedRowContents(selectedRow)
+    local query = choice.businessName.." "..choice.address
+    local _, encodedQuery, _ = self.encodeSearchQuery(query)
+    self.open("https://www.google.com/maps/search/"..encodedQuery)
+end
+
+Yelp:registerSelectionModalShortcuts({
+    { { "cmd" }, "d", function(...) Yelp:openGoogleMaps(...) end },
+})
+
 Yelp:registerShortcuts({
-    { nil, "s", function() Yelp:searchBusinesses() end },
+    { nil, "c", function() Yelp:searchBusinessInCity() end },
+    { nil, "s", function() Yelp:searchBusinessWithCurrentLocation() end },
 })
 
 return Yelp
