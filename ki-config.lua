@@ -7,7 +7,9 @@ local File = spoon.Ki.File
 local Application = spoon.Ki.Application
 local defaultEntities = spoon.Ki.defaultEntities.entity
 
+-- Require Ki modes
 require("ki-modes/mouse-mode")
+require("ki-modes/search-mode")
 require("ki-modes/window-mode")
 
 -- Helper functions
@@ -207,13 +209,8 @@ Ki:registerModeShortcuts("file", {
     { { "alt" }, "d", files.Dropbox, { "Files", "Dropbox" } },
 })
 
-----------------------------------------------------------------------------------------------------
--- Register a custom search mode and register its shortcuts for searchable entities
---
-local enterSearchModeShortcut = {
-    {"shift", "cmd"}, "s", nil, { "Normal Mode", "Enter Search Mode" },
-}
-Ki:registerMode("search", enterSearchModeShortcut, {
+-- Register shortcuts for the custom search mode
+Ki:registerModeShortcuts("search", {
     { nil, "a", websites.Amazon, { "Searchable Websites", "Amazon" } },
     { nil, "d", websites.DuckDuckGo, { "Searchable Websites", "DuckDuckGo" } },
     { nil, "g", websites.Google, { "Searchable Websites", "Google" } },
@@ -229,10 +226,6 @@ Ki:registerMode("search", enterSearchModeShortcut, {
     { { "shift" }, "y", websites.Yelp, { "Searchable Websites", "Yelp" } },
     { { "shift", "cmd" }, "n", websites.NPR, { "Searchable Websites", "NPR" } },
 })
-
--- Add Website entity behavior for search mode to invoke
--- a `search` method implemented on searchable Website entities
-Website.behaviors.search = function(self) self:search() end
 
 ----------------------------------------------------------------------------------------------------
 -- Save custom entities to reference in local configs
