@@ -3,14 +3,17 @@
 --
 local Entity = spoon.Ki.Entity
 local LIFX = Entity:subclass("LIFX")
+local RESTClient = require("lib/rest-client")
 
+-- Attach REST Client instance initialized with auth header
+LIFX.restClient = RESTClient("https://api.lifx.com/v1", {
+    Authorization = "Bearer "..RESTClient.getEnvironmentVariable("LIFX_TOKEN"),
+})
+
+-- Action to toggle the power of the LIFX light
+-- https://api.developer.lifx.com/docs/toggle-power
 function LIFX:togglePower()
-    local url = "https://api.lifx.com/v1/lights/"..self.selector.."/toggle"
-    local headers = {
-        Authorization = "Bearer "..self.token,
-    }
-
-    hs.http.asyncPost(url, nil, headers, function(status, rawResponse)
+    self.restClient:post("/lights/"..self.selector.."/toggle", nil, nil, function(status, rawResponse)
         local success, response = pcall(function() return hs.json.decode(rawResponse) end)
         local acceptedRequest = tostring(status):sub(1, 1) == "2"
 
@@ -25,16 +28,13 @@ function LIFX:togglePower()
     end)
 end
 
-function LIFX:createStateEvent(data)
-    local payload = hs.json.encode(data)
+-- Generate action functions that change the state of the LIFX light
+-- https://api.developer.lifx.com/docs/set-state
+function LIFX:createStateChangeAction(data)
+    local body = hs.json.encode(data)
 
     return function()
-        local url = "https://api.lifx.com/v1/lights/"..self.selector.."/state"
-        local headers = {
-            Authorization = "Bearer "..self.token,
-        }
-
-        hs.http.doAsyncRequest(url, "PUT", payload, headers, function(status, rawResponse)
+        self.restClient:put("/lights/"..self.selector.."/state", body, nil, function(status, rawResponse)
             local success, response = pcall(function() return hs.json.decode(rawResponse) end)
             local acceptedRequest = tostring(status):sub(1, 1) == "2"
 
@@ -50,10 +50,11 @@ function LIFX:createStateEvent(data)
     end
 end
 
+-- Action to update the LIFX light color upon a preset color selection from a modal
 function LIFX:selectColors(choices)
     self:showSelectionModal(choices, function(choice)
         if choice then
-            self:createStateEvent({
+            self:createStateChangeAction({
                 duration = 2,
                 color = choice.color
             })()
@@ -61,6 +62,8 @@ function LIFX:selectColors(choices)
     end)
 end
 
+-- Define preset LIFX light colors
+-- https://api.developer.lifx.com/docs/colors
 LIFX.colors = {
     "white",
     "red",
@@ -83,31 +86,31 @@ for _, color in pairs(LIFX.colors) do
     })
 end
 
-function LIFX:initialize(selector, token, shortcuts)
+-- Extend the Entity class to allow for creating individual LIFX light instances
+function LIFX:initialize(name, selector, shortcuts)
     shortcuts = shortcuts or {}
 
     self.selector = selector
-    self.token = token
 
     local defaultShortcuts = {
-        { nil, nil, function() return true end, { "LIFX", "No-op" } },
-        { nil, "c", function() self:selectColors(colorChoices) end, { "LIFX", "Select and Set a Color" } },
-        { nil, "delete", self:createStateEvent({ power = "off" }), { "LIFX", "Power Off" } },
-        { nil, "return", self:createStateEvent({ power = "on" }), { "LIFX", "Power On" } },
+        { nil, nil, function() self:showActions() end, { "LIFX", "Show LIFX actions" } },
+        { nil, "c", function() self:selectColors(colorChoices) end, { "Colors", "Select and Set a Color" } },
+        { nil, "delete", self:createStateChangeAction({ power = "off" }), { "Power", "Power Off" } },
+        { nil, "return", self:createStateChangeAction({ power = "on" }), { "Power", "Power On" } },
         { nil, "space", function() return self:togglePower() end, { "Power", "Toggle Light On/Off" } },
     }
 
     -- Initialize events to set brightness levels
     for number = 0, 9 do
         local percent = number / 9
-        local setBrightnessEvent = self:createStateEvent({ brightness = percent })
+        local setBrightnessEvent = self:createStateChangeAction({ brightness = percent })
         local eventDescription = "Set Brightness to "..tostring(math.floor(percent * 100)).."%"
-        local shortcut = { nil, tostring(number), setBrightnessEvent, { "LIFX", eventDescription } }
+        local shortcut = { nil, tostring(number), setBrightnessEvent, { "Brightness", eventDescription } }
 
         table.insert(defaultShortcuts, shortcut)
     end
 
-    Entity.initialize(self, "LIFX", self:mergeShortcuts(shortcuts, defaultShortcuts), true)
+    Entity.initialize(self, name, self:mergeShortcuts(shortcuts, defaultShortcuts))
 end
 
 return LIFX

@@ -24,13 +24,6 @@ function URLSearchMixin:title()
     return "Ki - Search "..(Website.getDomain(self.url) or self.url)
 end
 
-function URLSearchMixin.encodeSearchQuery(primaryQuery, secondaryQuery)
-    local script = secondaryQuery == nil
-        and "encodeURIComponent(`"..primaryQuery.."`)"
-        or "[ encodeURIComponent(`"..primaryQuery.."`), encodeURIComponent(`"..secondaryQuery.."`) ]"
-    return hs.osascript.javascript(script)
-end
-
 -- Main search function handler
 function URLSearchMixin:search()
     local handleSearch = self.handleSearch or URLSearchMixin.defaultSearchHandler
@@ -69,27 +62,18 @@ function URLSearchMixin:defaultSearchHandler(instance, searchQuery)
         local primaryQuery, secondaryQuery = searchQuery:match(splitRegex)
 
         if primaryQuery and secondaryQuery then
-            local success, encodedQueries, descriptor =
-                self.encodeSearchQuery(primaryQuery, secondaryQuery )
+            local encodedQueries = hs.http.encodeForQuery(primaryQuery, secondaryQuery)
 
-            if success then
-                return instance:advancedURLSearch(encodedQueries[1], encodedQueries[2])
-            else
-                instance.notifyError(self:title(), descriptor.NSLocalizedDescription)
-            end
+            return instance:advancedURLSearch(encodedQueries[1], encodedQueries[2])
         end
     end
 
     -- Dispatch basic search
-    local success, encodedQuery, descriptor = self.encodeSearchQuery(searchQuery)
-    if success then
-        if instance.basicURLSearch then
-            instance:basicURLSearch(encodedQuery)
-        else
-            self:basicURLSearch(encodedQuery)
-        end
+    local encodedQuery = hs.http.encodeForQuery(searchQuery)
+    if instance.basicURLSearch then
+        instance:basicURLSearch(encodedQuery)
     else
-        instance.notifyError(self:title(), descriptor.NSLocalizedDescription)
+        self:basicURLSearch(encodedQuery)
     end
 end
 

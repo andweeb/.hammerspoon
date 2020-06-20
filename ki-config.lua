@@ -12,14 +12,10 @@ require("ki-modes/mouse-mode")
 require("ki-modes/search-mode")
 require("ki-modes/window-mode")
 
--- Helper functions
+-- Helper function to require entity config
 local function requireEntity(type, file)
     local directory = type == "entity" and "entities" or type.."s"
     return require("ki-entities/"..directory.."/"..file)
-end
-local function getEnvironmentVariable(name)
-    local variable = hs.execute("printenv "..name, true)
-    return variable:gsub("\n", "")
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -49,6 +45,7 @@ local websites = {
     HammerspoonDocs = requireEntity("website", "hammerspoon-docs"),
     LearnXInYMinutes = requireEntity("website", "learnxinyminutes"),
     Netflix = requireEntity("website", "netflix"),
+    NPM = requireEntity("website", "npm"),
     NPR = requireEntity("website", "npr"),
     NYTimes = requireEntity("website", "nytimes"),
     Reddit = requireEntity("website", "reddit"),
@@ -58,9 +55,6 @@ local websites = {
     YouTube = requireEntity("website", "youtube"),
 }
 
--- Set Github API token to entity instance
-websites.Github.token = getEnvironmentVariable("GITHUB_TOKEN")
-
 -- Create custom file entities
 local files = {
     Code = File:new("~/Code"),
@@ -69,8 +63,7 @@ local files = {
 
 -- Initialize LIFX light
 local LIFX = requireEntity("entity", "lifx")
-local lifxToken = getEnvironmentVariable("LIFX_TOKEN")
-local BedroomLIFX = LIFX:new("label:Bedroom", lifxToken)
+local BedroomLIFX = LIFX:new("Bedroom Light", "label:Bedroom")
 
 -- Create custom application entities
 local entities = {
@@ -197,6 +190,7 @@ Ki:registerModeShortcuts("website", {
     { { "shift" }, "g", websites.Github, { "Websites", "Github" } },
     { { "shift" }, "l", websites.LearnXInYMinutes, { "Websites", "Learn X In Y Minutes" } },
     { { "shift" }, "m", websites.GoogleMaps, { "Websites", "Google Maps" } },
+    { { "shift" }, "n", websites.NPM, { "Websites", "NPM" } },
     { { "shift" }, "t", websites.TempMail, { "Websites", "Temp Mail" } },
     { { "shift" }, "y", websites.Yelp, { "Websites", "Yelp" } },
     { { "shift", "cmd" }, "h", websites.HammerspoonDocs, { "Websites", "Hammerspoon Docs" } },
@@ -223,6 +217,7 @@ Ki:registerModeShortcuts("search", {
     { { "cmd" }, "n", websites.NYTimes, { "Searchable Websites", "NYTimes" } },
     { { "shift" }, "g", websites.Github, { "Searchable Websites", "Github" } },
     { { "shift" }, "m", websites.GoogleMaps, { "Searchable Websites", "Google Maps" } },
+    { { "shift" }, "n", websites.NPM, { "Searchable Websites", "NPM" } },
     { { "shift" }, "y", websites.Yelp, { "Searchable Websites", "Yelp" } },
     { { "shift", "cmd" }, "n", websites.NPR, { "Searchable Websites", "NPR" } },
 })
