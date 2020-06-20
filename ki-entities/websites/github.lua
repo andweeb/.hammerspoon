@@ -25,6 +25,7 @@ local customLinks = {
     { name = "Stars", link = "/andweeb?tab=stars" },
     { name = "Followers", link = "/andweeb?tab=followers" },
     { name = "Following", link = "/andweeb?tab=following" },
+    { name = "Trending", link = "/trending?since=daily" },
     -- Projects
     { name = "ki", link = "/andweeb/ki" },
     { name = ".hammerspoon", link = "/andweeb/.hammerspoon" },
@@ -67,7 +68,6 @@ end
 GitHub:registerSelectionModalShortcuts({
     { { "cmd", "shift" }, "a", GitHub:createRepositoryPageAction("actions") },
     { { "cmd" }, "b", GitHub:createRepositoryPageAction("branches") },
-    { { "cmd" }, "c", GitHub:createRepositoryPageAction("commits/master") },
     { { "cmd" }, "g", GitHub:createRepositoryPageAction("graphs") },
     { { "cmd" }, "i", GitHub:createRepositoryPageAction("issues") },
     { { "cmd" }, "p", GitHub:createRepositoryPageAction("projects") },
@@ -75,6 +75,7 @@ GitHub:registerSelectionModalShortcuts({
     { { "cmd" }, "s", GitHub:createRepositoryPageAction("settings") },
     { { "cmd" }, "t", GitHub:createRepositoryPageAction("graphs/traffic") },
     { { "cmd" }, "w", GitHub:createRepositoryPageAction("wiki") },
+    { { "cmd", "shift" }, "c", GitHub:createRepositoryPageAction("commits/master") },
     { { "cmd", "shift" }, "i", GitHub:createRepositoryPageAction("pulse") },
 })
 
