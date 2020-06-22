@@ -8,7 +8,7 @@ FSVolume.txtWriteLocation = "~/Documents"
 
 function FSVolume.selectFSVolumeEvent(eventHandler)
     return function()
-        local choices = FSVolume:getSelectionItems()
+        local choices = FSVolume:getChooserItems()
 
         if choices and #choices > 0 then
             local function onSelection(choice)
@@ -17,7 +17,7 @@ function FSVolume.selectFSVolumeEvent(eventHandler)
                 end
             end
 
-            FSVolume:showSelectionModal(choices, onSelection)
+            FSVolume:showChooser(choices, onSelection)
         end
     end
 end
@@ -101,7 +101,7 @@ function FSVolume.writeContentsToFile(volumeName, volumePath)
     end
 end
 
-function FSVolume:getSelectionItems()
+function FSVolume:getChooserItems()
     local choices = {}
     local volumes = hs.fs.volume.allVolumes()
 

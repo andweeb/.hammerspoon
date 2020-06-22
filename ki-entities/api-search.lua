@@ -10,7 +10,7 @@
 local APISearchMixin = {}
 
 -- Query an API and render results in a chooser with debounce logic
-function APISearchMixin:apiSearch(onInput, onSelection, placeholderOptions)
+function APISearchMixin:apiSearch(updateChoices, onInput, onSelection, placeholderOptions)
     local lastMs = 0
     local elapsedMs = 0
     local debounceMs = 500
@@ -26,9 +26,9 @@ function APISearchMixin:apiSearch(onInput, onSelection, placeholderOptions)
         end
     end
 
-    self:showSelectionModal({}, onChoice, placeholderOptions)
+    self:showChooser(updateChoices, onChoice, placeholderOptions)
 
-    self.selectionModal:queryChangedCallback(function(query)
+    self.chooser:queryChangedCallback(function(query)
         if lagTimer then lagTimer:stop() end
 
         if lastMs ~= 0 and elapsedMs - lastMs >= debounceMs then

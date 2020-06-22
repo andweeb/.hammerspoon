@@ -58,16 +58,7 @@ function Yelp:createChoices(businesses)
         local business = businesses[i]
 
         if #business.photos > 0 then
-            hs.image.imageFromURL(business.photos[1], function(image)
-                if not self.selectionModal then
-                    return
-                end
-
-                if choices[i] then
-                    choices[i].image = image
-                    self.selectionModal:choices(choices)
-                end
-            end)
+            self:loadChooserRowImage(choices, business.photos[1], i)
         end
 
         local address = business.location.formatted_address:gsub("\n", " ")
@@ -113,7 +104,7 @@ function Yelp:searchBusinessInCity()
         end
     end
 
-    self:showSelectionModal(usCities, onChoice, options)
+    self:showChooser(usCities, onChoice, options)
 end
 
 -- Use location services to search businesses using the current location
@@ -133,12 +124,17 @@ function Yelp:searchBusinessWithCurrentLocation()
     end
 end
 
--- Search and display businesses in a selection modal using the Yelp GraphQL API
+-- Search and display businesses in a chooser using the Yelp GraphQL API
 -- for some location string or latitude/longitude table
 function Yelp:searchBusinesses(location)
     local placeholderText = "Search Yelp for businesses"
     local isLatLonLocation = location.latitude and location.longitude
     placeholderText = isLatLonLocation and placeholderText or placeholderText.." in "..location
+
+    local choices = {}
+    local function updateChoices()
+        return choices
+    end
 
     -- Create search input handler
     local function onInput(input)
@@ -160,8 +156,8 @@ function Yelp:searchBusinesses(location)
 
             if acceptedRequest and success and response and not response.errors then
                 local businesses = response.data.search.business
-                local choices = self:createChoices(businesses)
-                self.selectionModal:choices(choices)
+                choices = self:createChoices(businesses)
+                self.chooser:choices(updateChoices)
             else
                 local message = "Error communicating with Yelp (status "..tostring(status)..")"
                 self.notifyError(message, hs.inspect(response))
@@ -177,18 +173,18 @@ function Yelp:searchBusinesses(location)
     end
 
     -- Start API search interface
-    self:apiSearch(onInput, onSelection, { placeholderText = placeholderText })
+    self:apiSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
 end
 
-function Yelp:openGoogleMaps(modal)
-    local selectedRow = modal:selectedRow()
-    local choice = modal:selectedRowContents(selectedRow)
+-- Open address of selected row item in Google Maps
+function Yelp:openGoogleMaps(chooser)
+    local selectedRow = chooser:selectedRow()
+    local choice = chooser:selectedRowContents(selectedRow)
     local query = choice.businessName.." "..choice.address
-    local _, encodedQuery, _ = self.encodeSearchQuery(query)
-    self.open("https://www.google.com/maps/search/"..encodedQuery)
+    self.open("https://www.google.com/maps/search/"..hs.http.encodeForQuery(query))
 end
 
-Yelp:registerSelectionModalShortcuts({
+Yelp:registerChooserShortcuts({
     { { "cmd" }, "d", function(...) Yelp:openGoogleMaps(...) end },
 })
 

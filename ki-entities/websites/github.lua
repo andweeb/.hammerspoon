@@ -54,18 +54,18 @@ end
 
 -- Create repository page actions
 function GitHub:createRepositoryPageAction(path)
-    return function(modal)
-        local selectedRow = modal:selectedRow()
-        local choice = modal:selectedRowContents(selectedRow)
+    return function(chooser)
+        local selectedRow = chooser:selectedRow()
+        local choice = chooser:selectedRowContents(selectedRow)
 
-        modal:cancel()
+        chooser:cancel()
         self.open(choice.url.."/"..path)
 
         return true
     end
 end
 
-GitHub:registerSelectionModalShortcuts({
+GitHub:registerChooserShortcuts({
     { { "cmd", "shift" }, "a", GitHub:createRepositoryPageAction("actions") },
     { { "cmd" }, "b", GitHub:createRepositoryPageAction("branches") },
     { { "cmd" }, "g", GitHub:createRepositoryPageAction("graphs") },
@@ -93,19 +93,11 @@ function GitHub:createRepositoryChoices(repositories)
     local choices = {}
 
     for index, repository in pairs(repositories) do
-        hs.image.imageFromURL(repository.imageURL, function(image)
-            if not self.selectionModal then
-                return
-            end
-
-            if choices[index] then
-                choices[index].image = image
-                self.selectionModal:choices(choices)
-            end
-        end)
+        self:loadChooserRowImage(choices, repository.imageURL, index)
 
         table.insert(choices, {
             url = repository.url,
+            imageURL = repository.imageURL,
             text = repository.owner.name.." / "..repository.name,
             subText = repository.description,
         })
@@ -127,16 +119,7 @@ function GitHub:createIssueChoices(issues)
     local choices = {}
 
     for index, issue in pairs(issues) do
-        hs.image.imageFromURL(issue.repository.imageURL, function(image)
-            if not self.selectionModal then
-                return
-            end
-
-            if choices[index] then
-                choices[index].image = image
-                self.selectionModal:choices(choices)
-            end
-        end)
+        self:loadChooserRowImage(choices, issue.repository.imageURL, index)
 
         table.insert(choices, {
             url = issue.url,
@@ -160,22 +143,11 @@ function GitHub:createUserChoices(users)
     local choices = {}
 
     for index, user in pairs(users) do
-        local name = user.name and user.name.." ("..user.login..")" or user.login
-
-        hs.image.imageFromURL(user.imageURL, function(image)
-            if not self.selectionModal then
-                return
-            end
-
-            if choices[index] then
-                choices[index].image = image
-                self.selectionModal:choices(choices)
-            end
-        end)
+        self:loadChooserRowImage(choices, user.imageURL, index)
 
         table.insert(choices, {
             url = user.url,
-            text = name,
+            text = user.name and user.name.." ("..user.login..")" or user.login,
             subText = user.bio,
         })
     end
@@ -193,17 +165,24 @@ function GitHub:createResponseHandler(callback)
             callback(response)
         else
             local message = "Error communicating with Github (status "..tostring(status)..")"
-            self.notifyError(message, hs.inspect(response)) end
+            self.notifyError(message, hs.inspect(response))
+        end
     end
 end
 
--- Create actions to show a selection modal of results on the viewer object
+-- Create actions to show a chooser of results on the viewer object
 function GitHub:createViewerResultAction(queryName, field, variables, placeholderText, choicesGenerator)
     return function()
-        -- Create response handler to display the viewer's repository results in a selection modal
+        local choices = {}
+        local function updateChoices()
+            return choices
+        end
+
+        -- Create response handler to display the viewer's repository results in a chooser
         local handleResponse = self:createResponseHandler(function(response)
             local results = response.data.viewer[field].results
-            local choices = choicesGenerator(self, results)
+            choices = choicesGenerator(self, results)
+
             local options = { placeholderText = placeholderText }
             local function onChoice(choice)
                 if choice then
@@ -211,7 +190,7 @@ function GitHub:createViewerResultAction(queryName, field, variables, placeholde
                 end
             end
 
-            self:showSelectionModal(choices, onChoice, options)
+            self:showChooser(updateChoices, onChoice, options)
         end)
 
         local graphql = self.graphqlClient:readGraphQLDocument("github/"..queryName)
@@ -252,9 +231,9 @@ GitHub.showStarredRepositories = GitHub:createViewerResultAction("starred-reposi
 GitHub.showWatchingRepositories = GitHub:createViewerResultAction("watching-repositories", "watching",
     orderByCreatedAt, "Watched repositories", GitHub.createRepositoryChoices)
 
--- Create an action to show a selection modal of user connection items on the viewer
+-- Create an action to show a chooser of user connection items on the viewer
 function GitHub:showGists()
-    -- Create response handler to display gist results in a selection modal
+    -- Create response handler to display gist results in a chooser
     local handleResponse = self:createResponseHandler(function(response)
         local gists = response.data.viewer.gists.results
         local choices = {}
@@ -274,7 +253,7 @@ function GitHub:showGists()
             end
         end
 
-        self:showSelectionModal(choices, onChoice, { placeholderText = "Gists" })
+        self:showChooser(choices, onChoice, { placeholderText = "Gists" })
     end)
 
     local graphql = self.graphqlClient:readGraphQLDocument("github/gists")
@@ -282,28 +261,29 @@ function GitHub:showGists()
     self.graphqlClient:query(graphql, nil, nil, handleResponse)
 end
 
--- Create an action to show a selection modal of user connection items on the viewer
+-- Create an action to show a chooser of user connection items on the viewer
 function GitHub:showProjects()
-    -- Create repsonse handler to show project results in a selection modal
+    -- Create repsonse handler to show project results in a chooser
     local handleResponse = self:createResponseHandler(function(response)
         local repositories = response.data.viewer.repositories.results
         local choices = {}
+        local function updateChoices()
+            return choices
+        end
+        local function onChoice(choice)
+            if choice then
+                return self.open(choice.url)
+            end
+        end
 
         for i = 1, #repositories do
             local repository = repositories[i]
             local projects = repository.projects.results
 
-            for j = 1, #projects do
-                local project = projects[j]
+            for projectIndex = 1, #projects do
+                local project = projects[projectIndex]
 
-                hs.image.imageFromURL(repository.imageURL, function(image)
-                    if not self.selectionModal then return end
-
-                    if choices[j] then
-                        choices[j].image = image
-                        self.selectionModal:choices(choices)
-                    end
-                end)
+                self:loadChooserRowImage(choices, repository.imageURL, projectIndex)
 
                 table.insert(choices, {
                     url = project.url,
@@ -313,13 +293,7 @@ function GitHub:showProjects()
             end
         end
 
-        local function onChoice(choice)
-            if choice then
-                return self.open(choice.url)
-            end
-        end
-
-        self:showSelectionModal(choices, onChoice, { placeholderText = "Repository Projects" })
+        self:showChooser(updateChoices, onChoice, { placeholderText = "Repository Projects" })
     end)
 
     local graphql = self.graphqlClient:readGraphQLDocument("github/repository-projects")
@@ -330,6 +304,11 @@ end
 -- Create API search actions
 function GitHub:createAPISearchAction(type, choicesGenerator)
     return function()
+        local choices = {}
+        local function updateChoices()
+            return choices
+        end
+
         -- Create search input handler
         local function onInput(query)
             local variables = { type = type, query = query }
@@ -337,8 +316,8 @@ function GitHub:createAPISearchAction(type, choicesGenerator)
 
             self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
                 local results = response.data.search.results
-                local choices = choicesGenerator(self, results)
-                self.selectionModal:choices(choices)
+                choices = choicesGenerator(self, results)
+                self.chooser:refreshChoicesCallback()
             end))
         end
 
@@ -350,7 +329,7 @@ function GitHub:createAPISearchAction(type, choicesGenerator)
         end
 
         -- Start API search interface
-        self:apiSearch(onInput, onSelection, {
+        self:apiSearch(updateChoices, onInput, onSelection, {
             placeholderText = "Search for a GitHub "..type:lower()
         })
     end

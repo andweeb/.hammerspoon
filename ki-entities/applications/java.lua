@@ -46,7 +46,7 @@ function Java:getName(app)
     return appName or defaultName
 end
 
-function Java:getSelectionItems(apps)
+function Java:getChooserItems(apps)
     apps = apps or self:getApps()
 
     local choices = {}

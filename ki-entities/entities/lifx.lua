@@ -50,9 +50,9 @@ function LIFX:createStateChangeAction(data)
     end
 end
 
--- Action to update the LIFX light color upon a preset color selection from a modal
+-- Action to update the LIFX light color upon a preset color selection from a chooser
 function LIFX:selectColors(choices)
-    self:showSelectionModal(choices, function(choice)
+    self:showChooser(choices, function(choice)
         if choice then
             self:createStateChangeAction({
                 duration = 2,

@@ -16,7 +16,7 @@ VMwareFusion.export = Application.createMenuItemEvent({ "File", "Export…" })
 VMwareFusion.import = Application.createMenuItemEvent({ "File", "Import…" })
 VMwareFusion.migrateYourPC = Application.createMenuItemEvent({ "File", "Migrate Your PC…" })
 VMwareFusion.scanForVirtualMachines = Application.createMenuItemEvent({ "File", "Scan for Virtual Machines…" })
-VMwareFusion.openRecent = Application.createMenuItemSelectionEvent({ "File", "Open Recent" })
+VMwareFusion.openRecent = Application.createMenuItemChooserEvent({ "File", "Open Recent" })
 -- Edit actions
 VMwareFusion.selectAll = Application.createMenuItemEvent({ "Edit", "Select All" })
 VMwareFusion.copy = Application.createMenuItemEvent({ "Edit", "Copy" })
@@ -41,7 +41,7 @@ VMwareFusion.showTabBar = Application.createMenuItemEvent({ "View", "Show Tab Ba
 VMwareFusion.showTaskbarInUnity = Application.createMenuItemEvent({ "View", "Show Taskbar in Unity" })
 VMwareFusion.singleWindow = Application.createMenuItemEvent({ "View", "Single Window" })
 VMwareFusion.useAllDisplaysInFullScreen = Application.createMenuItemEvent({ "View", "Use All Displays in Full Screen" })
-VMwareFusion.fullScreenMinibar = Application.createMenuItemSelectionEvent({ "View", "Full Screen Minibar" })
+VMwareFusion.fullScreenMinibar = Application.createMenuItemChooserEvent({ "View", "Full Screen Minibar" })
 -- Virtual Machine actions
 VMwareFusion.settings = Application.createMenuItemEvent({ "Virtual Machine", "Settings…" })
 VMwareFusion.getInfo = Application.createMenuItemEvent({ "Virtual Machine", "Get Info…" })
@@ -57,8 +57,8 @@ VMwareFusion.shutDown = Application.createMenuItemEvent({ "Virtual Machine", "Sh
 VMwareFusion.shutDown = Application.createMenuItemEvent({ "Virtual Machine", "Shut Down" })
 VMwareFusion.startUp = Application.createMenuItemEvent({ "Virtual Machine", "Start Up" })
 VMwareFusion.startUp = Application.createMenuItemEvent({ "Virtual Machine", "Start Up" })
-VMwareFusion.sendKey = Application.createMenuItemSelectionEvent({ "Virtual Machine", "Send Key" })
-VMwareFusion.snapshots = Application.createMenuItemSelectionEvent({ "Virtual Machine", "Snapshots…" })
+VMwareFusion.sendKey = Application.createMenuItemChooserEvent({ "Virtual Machine", "Send Key" })
+VMwareFusion.snapshots = Application.createMenuItemChooserEvent({ "Virtual Machine", "Snapshots…" })
 -- Window actions
 VMwareFusion.minimize = Application.createMenuItemEvent({ "Window", "Minimize" })
 VMwareFusion.minimizeAll = Application.createMenuItemEvent({ "Window", "Minimize All" })

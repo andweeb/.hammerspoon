@@ -299,7 +299,7 @@ function Window.select()
         })
     end
 
-    Entity.showSelectionModal(choices, function(choice)
+    Entity.showChooser(choices, function(choice)
         if not choice or not choice.id then return end
 
         local window = hs.window(choice.id)

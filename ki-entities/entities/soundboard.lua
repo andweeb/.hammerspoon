@@ -19,7 +19,7 @@ function Soundboard:selectSound()
         end
     end
 
-    self:showSelectionModal(choices, function(choice)
+    self:showChooser(choices, function(choice)
         if choice then
             return self:play(choice.name)
         end

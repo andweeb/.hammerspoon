@@ -5,9 +5,9 @@ local Entity = spoon.Ki.Entity
 local Picker = Entity:subclass("Picker")
 
 function Picker:pick(list)
-    -- Defer execution to avoid conflicts with any prior selection modal that just previously closed
+    -- Defer execution to avoid conflicts with any prior chooser that just previously closed
     hs.timer.doAfter(0, function()
-        self:showSelectionModal(list or self.choices, function(choice)
+        self:showChooser(list or self.choices, function(choice)
             if choice then
                 hs.pasteboard.setContents(choice.item)
             end
@@ -16,7 +16,7 @@ function Picker:pick(list)
 end
 
 function Picker:pickCategory()
-    self:showSelectionModal(self.categoryChoices, function(choice)
+    self:showChooser(self.categoryChoices, function(choice)
         if choice then
             local list = {}
             local items = self.categories[choice.categoryName]
@@ -39,7 +39,7 @@ function Picker:initialize(choices, categories, categoryChoices)
         { nil, nil, function() self:pick() end, { "Picker", "Pick Item" } },
     }
 
-    -- Add category selection functionality if provided
+    -- Add category chooser functionality if provided
     if categories and categoryChoices then
         local pickCategory = function()
             self:pickCategory()

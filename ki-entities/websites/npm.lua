@@ -39,6 +39,11 @@ end
 function NPM:searchPackages()
     local placeholderText = "Search for NPM packages"
 
+    local choices = {}
+    local function updateChoices()
+        return choices
+    end
+
     -- Create search input handler
     local function onInput(input)
         local uri = "/v2/search?q="..hs.http.encodeForQuery(input)
@@ -51,8 +56,8 @@ function NPM:searchPackages()
                 local message = "npms.io error (code "..tostring(response.code)..")"
                 self.notifyError(message, response.message)
             else
-                local choices = self.createSearchResultChoices(response.results)
-                self.selectionModal:choices(choices)
+                choices = self.createSearchResultChoices(response.results)
+                self.chooser:choices(updateChoices)
             end
         end)
     end
@@ -65,7 +70,7 @@ function NPM:searchPackages()
     end
 
     -- Start API search interface
-    self:apiSearch(onInput, onSelection, { placeholderText = placeholderText })
+    self:apiSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
 end
 
 NPM:registerShortcuts({
