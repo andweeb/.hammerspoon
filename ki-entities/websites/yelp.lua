@@ -57,10 +57,6 @@ function Yelp:createChoices(businesses)
     for i = 1, #businesses do
         local business = businesses[i]
 
-        if #business.photos > 0 then
-            self:loadChooserRowImage(choices, business.photos[1], i)
-        end
-
         local address = business.location.formatted_address:gsub("\n", " ")
         local subTexts = {
             address,
@@ -89,6 +85,7 @@ function Yelp:createChoices(businesses)
             subText = table.concat(subTexts, " • "),
             businessName = business.name,
             address = address,
+            imageURL = business.photos[1],
         })
     end
 
@@ -157,6 +154,7 @@ function Yelp:searchBusinesses(location)
             if acceptedRequest and success and response and not response.errors then
                 local businesses = response.data.search.business
                 choices = self:createChoices(businesses)
+                self:loadChooserRowImages(choices)
                 self.chooser:choices(updateChoices)
             else
                 local message = "Error communicating with Yelp (status "..tostring(status)..")"
@@ -189,8 +187,8 @@ Yelp:registerChooserShortcuts({
 })
 
 Yelp:registerShortcuts({
-    { nil, "c", function() Yelp:searchBusinessInCity() end },
-    { nil, "s", function() Yelp:searchBusinessWithCurrentLocation() end },
+    { nil, "c", function() Yelp:searchBusinessInCity() end, { "Yelp", "Search Yelp Businesses By City" } },
+    { nil, "s", function() Yelp:searchBusinessWithCurrentLocation() end, { "Yelp", "Search Yelp Businesses By Location" } },
 })
 
 return Yelp

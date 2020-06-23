@@ -89,12 +89,10 @@ GitHub:registerChooserShortcuts({
 --     description
 --     imageURL: openGraphImageUrl
 -- }
-function GitHub:createRepositoryChoices(repositories)
+function GitHub.createRepositoryChoices(repositories)
     local choices = {}
 
-    for index, repository in pairs(repositories) do
-        self:loadChooserRowImage(choices, repository.imageURL, index)
-
+    for _, repository in pairs(repositories) do
         table.insert(choices, {
             url = repository.url,
             imageURL = repository.imageURL,
@@ -115,16 +113,15 @@ end
 --     title
 --     url
 -- }
-function GitHub:createIssueChoices(issues)
+function GitHub.createIssueChoices(issues)
     local choices = {}
 
-    for index, issue in pairs(issues) do
-        self:loadChooserRowImage(choices, issue.repository.imageURL, index)
-
+    for _, issue in pairs(issues) do
         table.insert(choices, {
             url = issue.url,
             text = issue.title.." ("..issue.state..")",
             subText = issue.repository.nameWithOwner,
+            imageURL = issue.repository.imageURL,
         })
     end
 
@@ -139,16 +136,15 @@ end
 --     bio
 --     avatarUrl
 -- }
-function GitHub:createUserChoices(users)
+function GitHub.createUserChoices(users)
     local choices = {}
 
-    for index, user in pairs(users) do
-        self:loadChooserRowImage(choices, user.imageURL, index)
-
+    for _, user in pairs(users) do
         table.insert(choices, {
             url = user.url,
             text = user.name and user.name.." ("..user.login..")" or user.login,
             subText = user.bio,
+            imageURL = user.imageURL,
         })
     end
 
@@ -181,7 +177,7 @@ function GitHub:createViewerResultAction(queryName, field, variables, placeholde
         -- Create response handler to display the viewer's repository results in a chooser
         local handleResponse = self:createResponseHandler(function(response)
             local results = response.data.viewer[field].results
-            choices = choicesGenerator(self, results)
+            choices = choicesGenerator(results)
 
             local options = { placeholderText = placeholderText }
             local function onChoice(choice)
@@ -190,6 +186,7 @@ function GitHub:createViewerResultAction(queryName, field, variables, placeholde
                 end
             end
 
+            self:loadChooserRowImages(choices)
             self:showChooser(updateChoices, onChoice, options)
         end)
 
@@ -283,16 +280,16 @@ function GitHub:showProjects()
             for projectIndex = 1, #projects do
                 local project = projects[projectIndex]
 
-                self:loadChooserRowImage(choices, repository.imageURL, projectIndex)
-
                 table.insert(choices, {
                     url = project.url,
                     text = repository.name.." | "..project.name,
                     subText = project.body,
+                    imageURL = repository.imageURL,
                 })
             end
         end
 
+        self:loadChooserRowImages(choices)
         self:showChooser(updateChoices, onChoice, { placeholderText = "Repository Projects" })
     end)
 
@@ -316,7 +313,8 @@ function GitHub:createAPISearchAction(type, choicesGenerator)
 
             self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
                 local results = response.data.search.results
-                choices = choicesGenerator(self, results)
+                choices = choicesGenerator(results)
+                self:loadChooserRowImages(choices)
                 self.chooser:refreshChoicesCallback()
             end))
         end
