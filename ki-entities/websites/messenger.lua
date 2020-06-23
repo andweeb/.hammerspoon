@@ -101,7 +101,7 @@ local Messenger = Website:new("Facebook Messenger", messengerURL, {
     { nil, "i", openConversationInfoPane, { "Messenger.com", "Open Conversation Info Pane" } },
 })
 
-function Messenger.getSelectionItems()
+function Messenger.getChooserItems()
     local choices = {}
 
     local viewModel = {

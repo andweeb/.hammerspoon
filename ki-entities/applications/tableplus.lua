@@ -44,7 +44,7 @@ function TablePlus:readPlist(name, callback)
 end
 
 -- Override selection items method to be able to select a TablePlus connection
-function TablePlus.getSelectionItems()
+function TablePlus.getChooserItems()
     local choices = {}
 
     -- Initialize connection groups by group id and connections list

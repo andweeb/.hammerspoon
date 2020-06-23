@@ -74,7 +74,7 @@ function MicrosoftExcel.focus(app, choice)
 end
 
 -- Override selections to allow selection of Excel worksheets
-function MicrosoftExcel:getSelectionItems()
+function MicrosoftExcel:getChooserItems()
     local choices = {}
     local worksheets = self.fetchWorksheets()
 
