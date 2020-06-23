@@ -74,7 +74,7 @@ function NPM:searchPackages()
 end
 
 NPM:registerShortcuts({
-    { nil, "s", function(...) NPM:searchPackages(...) end },
+    { nil, "s", function(...) NPM:searchPackages(...) end, { "Search", "Search for an NPM Package" } },
 })
 
 return NPM
