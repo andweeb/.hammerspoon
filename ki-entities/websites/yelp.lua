@@ -154,7 +154,7 @@ function Yelp:searchBusinesses(location)
             if acceptedRequest and success and response and not response.errors then
                 local businesses = response.data.search.business
                 choices = self:createChoices(businesses)
-                self:loadChooserRowImages(choices)
+                self:loadChooserRowImages(choices, false)
                 self.chooser:choices(updateChoices)
             else
                 local message = "Error communicating with Yelp (status "..tostring(status)..")"

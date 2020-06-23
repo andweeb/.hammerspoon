@@ -189,7 +189,7 @@ function GitHub:createViewerResultAction(queryName, field, variables, placeholde
                 end
             end
 
-            self:loadChooserRowImages(choices)
+            self:loadChooserRowImages(choices, false)
             self:showChooser(updateChoices, onChoice, options)
         end)
 
@@ -292,7 +292,7 @@ function GitHub:showProjects()
             end
         end
 
-        self:loadChooserRowImages(choices)
+        self:loadChooserRowImages(choices, false)
         self:showChooser(updateChoices, onChoice, { placeholderText = "Repository Projects" })
     end)
 
@@ -317,7 +317,7 @@ function GitHub:createAPISearchAction(type, choicesGenerator)
             self.graphqlClient:query(graphql, variables, nil, self:createResponseHandler(function(response)
                 local results = response.data.search.results
                 choices = choicesGenerator(results)
-                self:loadChooserRowImages(choices)
+                self:loadChooserRowImages(choices, false)
                 self.chooser:refreshChoicesCallback()
             end))
         end
