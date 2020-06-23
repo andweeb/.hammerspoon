@@ -17,6 +17,15 @@ query search($type: SearchType!, $query: String!) {
         bio
         imageURL: avatarUrl
       }
+      ... on Issue {
+        repository {
+          nameWithOwner
+          imageURL: openGraphImageUrl
+        }
+        title
+        url
+        state
+      }
     }
   }
 }

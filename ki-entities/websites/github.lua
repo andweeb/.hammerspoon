@@ -107,22 +107,25 @@ end
 -- Create choice objects for each issue result with the following fragment:
 -- ... on Issue {
 --     repository {
---         name
+--         nameWithOwner
 --         imageURL: openGraphImageUrl
 --     }
 --     title
 --     url
+--     state
 -- }
 function GitHub.createIssueChoices(issues)
     local choices = {}
 
     for _, issue in pairs(issues) do
-        table.insert(choices, {
-            url = issue.url,
-            text = issue.title.." ("..issue.state..")",
-            subText = issue.repository.nameWithOwner,
-            imageURL = issue.repository.imageURL,
-        })
+        if issue.url then
+            table.insert(choices, {
+                url = issue.url,
+                text = issue.title.." ("..issue.state..")",
+                subText = issue.repository.nameWithOwner,
+                imageURL = issue.repository.imageURL,
+            })
+        end
     end
 
     return choices
@@ -336,18 +339,20 @@ end
 -- Initialize API search actions
 GitHub.searchRepositories = GitHub:createAPISearchAction("REPOSITORY", GitHub.createRepositoryChoices)
 GitHub.searchUsers = GitHub:createAPISearchAction("USER", GitHub.createUserChoices)
+GitHub.searchIssues = GitHub:createAPISearchAction("ISSUE", GitHub.createIssueChoices)
 
 GitHub:registerShortcuts({
-    { nil, "f", GitHub.showFollowers, { "GitHub", "Show GitHub Followers" } },
-    { nil, "g", function() GitHub:showGists() end, { "GitHub", "Show GitHub Gists" } },
-    { nil, "i", GitHub.showIssues, { "GitHub", "Show GitHub Issues" } },
-    { nil, "p", function() GitHub:showProjects() end, { "GitHub", "Show Projects" } },
-    { nil, "r", GitHub.showRepositories, { "GitHub", "Show Repositories" } },
-    { nil, "s", GitHub.searchRepositories, { "GitHub", "Search GitHub Repositories" } },
-    { nil, "u", GitHub.searchUsers, { "GitHub", "Search GitHub Users" } },
-    { nil, "w", GitHub.showWatchingRepositories, { "GitHub", "Show Watched Repositories" } },
-    { { "shift" }, "f", GitHub.showFollowing, { "GitHub", "Show GitHub Following" } },
-    { { "shift" }, "s", GitHub.showStarredRepositories, { "GitHub", "Show Starred Repositories" } },
+    { nil, "f", GitHub.showFollowers, { "Viewer", "Show GitHub Followers" } },
+    { nil, "g", function() GitHub:showGists() end, { "Viewer", "Show GitHub Gists" } },
+    { nil, "i", GitHub.showIssues, { "Viewer", "Show GitHub Issues" } },
+    { nil, "p", function() GitHub:showProjects() end, { "Viewer", "Show Projects" } },
+    { nil, "r", GitHub.showRepositories, { "Viewer", "Show Repositories" } },
+    { nil, "s", GitHub.searchRepositories, { "Search", "Search GitHub Repositories" } },
+    { nil, "u", GitHub.searchUsers, { "Search", "Search GitHub Users" } },
+    { nil, "w", GitHub.showWatchingRepositories, { "Viewer", "Show Watching Repositories" } },
+    { { "shift" }, "f", GitHub.showFollowing, { "Viewer", "Show GitHub Following" } },
+    { { "shift" }, "i", GitHub.searchIssues, { "Search", "Search GitHub Issues" } },
+    { { "shift" }, "s", GitHub.showStarredRepositories, { "Viewer", "Show Starred Repositories" } },
 })
 
 return GitHub
