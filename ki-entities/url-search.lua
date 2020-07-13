@@ -62,9 +62,10 @@ function URLSearchMixin:defaultSearchHandler(instance, searchQuery)
         local primaryQuery, secondaryQuery = searchQuery:match(splitRegex)
 
         if primaryQuery and secondaryQuery then
-            local encodedQueries = hs.http.encodeForQuery(primaryQuery, secondaryQuery)
+            local encodedPrimaryQuery = hs.http.encodeForQuery(primaryQuery)
+            local encodedSecondaryQuery = hs.http.encodeForQuery(secondaryQuery)
 
-            return instance:advancedURLSearch(encodedQueries[1], encodedQueries[2])
+            return instance:advancedURLSearch(encodedPrimaryQuery, encodedSecondaryQuery)
         end
     end
 
