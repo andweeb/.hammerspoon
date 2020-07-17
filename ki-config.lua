@@ -105,9 +105,12 @@ local entities = {
     NotificationCenter = requireEntity("entity", "notification-center"),
     Soundboard = requireEntity("entity", "soundboard"),
 
-    -- Add default Ki application entities that are to be configured
+    -- Add default Ki application entities that are to be remapped
     FaceTime = defaultEntities.FaceTime,
     TextEdit = defaultEntities.TextEdit,
+
+    -- Add default Ki application entities that have been configured
+    Safari = requireEntity("application", "safari"),
 }
 
 ----------------------------------------------------------------------------------------------------
