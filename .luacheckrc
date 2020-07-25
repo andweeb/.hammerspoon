@@ -19,6 +19,8 @@ std = {
         'pcall',
         'assert',
         'type',
-    }
+    },
 }
-
+ignore = {
+    "631",
+}
