@@ -112,6 +112,7 @@ local entities = {
 
     -- Add default Ki application entities that have been configured
     Safari = requireEntity("application", "safari"),
+    Spotify = requireEntity("application", "spotify"),
 }
 
 ----------------------------------------------------------------------------------------------------
