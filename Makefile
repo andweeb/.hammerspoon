@@ -1,2 +1,2 @@
 lint:
-	luacheck . --exclude-files Spoons
+	luacheck . --exclude-files Spoons deps
