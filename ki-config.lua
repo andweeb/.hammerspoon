@@ -69,6 +69,7 @@ local BedroomLIFX = LIFX:new("Bedroom Light", "label:Bedroom")
 local entities = {
     -- Initialize basic application entities inline
     Alacritty = Application:new("Alacritty"),
+    BlueJeans = Application:new("BlueJeans"),
     Discord = Application:new("Discord"),
     Firefox = Application:new("Firefox"),
     Messenger = Application:new("Messenger"),
@@ -120,6 +121,7 @@ local entities = {
 -- Register entity mode shortcuts
 Ki:registerModeShortcuts("entity", {
     { nil, "a", entities.Alacritty, { "Entities", "Alacritty" } },
+    { nil, "b", entities.BlueJeans, { "Entities", "BlueJeans" } },
     { nil, "c", entities.Fantastical, { "Entities", "Fantastical" } },
     { nil, "e", entities.MicrosoftExcel, { "Entities", "Microsoft Excel" } },
     { nil, "j", entities.Java, { "Entities", "Java" } },
