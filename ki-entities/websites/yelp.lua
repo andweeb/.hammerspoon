@@ -2,13 +2,13 @@
 -- Yelp website config
 --
 local Yelp = spoon.Ki.defaultEntities.website.Yelp
-local APISearchMixin = require("ki-entities/api-search")
+local AsyncSearchMixin = require("ki-entities/async-search")
 local URLSearchMixin = require("ki-entities/url-search")
 local GraphQLClient = require("lib/graphql/client")
 local usCities = require("lib/us-cities")
 
 -- Initialize website instance with search mixins
-Yelp.class:include(APISearchMixin)
+Yelp.class:include(AsyncSearchMixin)
 Yelp.class:include(URLSearchMixin)
 
 -- Attach GraphQL Client instance initialized with auth header
@@ -171,7 +171,7 @@ function Yelp:searchBusinesses(location)
     end
 
     -- Start API search interface
-    self:apiSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
+    self:asyncSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
 end
 
 -- Open address of selected row item in Google Maps

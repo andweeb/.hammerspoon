@@ -1,16 +1,16 @@
 ----------------------------------------------------------------------------------------------------
--- API search mixin
--- Enables `apiSearch` methods that can also be overridden
+-- Async search mixin
+-- Augments a class with an `asyncSearch` method that debounces and allows asynchronous updates
 --
 -- Usage:
 -- local Example = Website:new("Example", "https://www.example.com")
 -- Example.graphqlClient = GraphQLClient("https://api.github.com/graphql", { --[[headers]] })
 -- Example.graphqlClient:query(Example.graphqlClient:readGraphQLDocument(...), ...)
 --
-local APISearchMixin = {}
+local AsyncSearchMixin = {}
 
--- Query an API and render results in a chooser with debounce logic
-function APISearchMixin:apiSearch(updateChoices, onInput, onSelection, placeholderOptions)
+-- Run some asynchronous `onInput` and render results in a chooser with debounce logic
+function AsyncSearchMixin:asyncSearch(updateChoices, onInput, onSelection, placeholderOptions)
     local lastMs = 0
     local elapsedMs = 0
     local debounceMs = 500
@@ -44,4 +44,4 @@ function APISearchMixin:apiSearch(updateChoices, onInput, onSelection, placehold
     end)
 end
 
-return APISearchMixin
+return AsyncSearchMixin

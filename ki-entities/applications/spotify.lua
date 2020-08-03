@@ -1,9 +1,9 @@
 local Ki = spoon.Ki
 local Spotify = Ki.defaultEntities.entity.Spotify
 local RESTClient = require("lib/rest-client")
-local APISearchMixin = require("ki-entities/api-search")
+local AsyncSearchMixin = require("ki-entities/async-search")
 
-Spotify.class:include(APISearchMixin)
+Spotify.class:include(AsyncSearchMixin)
 
 local apiEndpoint = "https://api.spotify.com/v1"
 local authEndpoint = "https://accounts.spotify.com"
@@ -321,7 +321,7 @@ function Spotify:createSearchAction(searchType, createChoice)
         end
 
         -- Start API search interface
-        self:apiSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
+        self:asyncSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
     end
 end
 

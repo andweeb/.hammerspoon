@@ -2,13 +2,13 @@
 -- GitHub website config
 --
 local GitHub = spoon.Ki.defaultEntities.website.GitHub
-local APISearchMixin = require("ki-entities/api-search")
+local AsyncSearchMixin = require("ki-entities/async-search")
 local URLSearchMixin = require("ki-entities/url-search")
 local GraphQLClient = require("lib/graphql/client")
 local apiToken = GraphQLClient.getEnvironmentVariable("GITHUB_TOKEN")
 
 -- Initialize website instance with search mixins
-GitHub.class:include(APISearchMixin)
+GitHub.class:include(AsyncSearchMixin)
 GitHub.class:include(URLSearchMixin)
 
 -- Attach GraphQL Client instance initialized with auth header
@@ -330,7 +330,7 @@ function GitHub:createAPISearchAction(type, choicesGenerator)
         end
 
         -- Start API search interface
-        self:apiSearch(updateChoices, onInput, onSelection, {
+        self:asyncSearch(updateChoices, onInput, onSelection, {
             placeholderText = "Search for a GitHub "..type:lower()
         })
     end

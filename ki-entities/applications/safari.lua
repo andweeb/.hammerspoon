@@ -1,14 +1,24 @@
 local Ki = spoon.Ki
 local Website = spoon.Ki.Website
 local Safari = Ki.defaultEntities.entity.Safari
-local APISearchMixin = require("ki-entities/api-search")
+local AsyncSearchMixin = require("ki-entities/async-search")
 local COREDATA_EPOCH_OFFSET = 978307200
 
-Safari.class:include(APISearchMixin)
-Safari.historySQLitePath = hs.fs.pathToAbsolute("/Users/andrew/Library/Safari/History.db")
+Safari.class:include(AsyncSearchMixin)
+Safari.historySQLitePath = hs.fs.pathToAbsolute("~/Library/Safari/History.db")
+
+-- Validate History.db location
+local success, value = pcall(function()
+    return hs.fs.attributes(Safari.historySQLitePath)
+end)
+if not success then
+    Safari.notifyError("Safari History.db file not found", value or "")
+end
 
 function Safari.createSearchHistorySQL(query)
-    local condition = query and "WHERE v.title LIKE '%"..query.."%' COLLATE nocase" or ""
+    local condition = query
+        and "WHERE v.title LIKE '%"..query.."%' COLLATE nocase"
+        or ""
 
     return [=[
         SELECT
@@ -75,7 +85,7 @@ function Safari:searchBrowserHistory()
     end
 
     -- Start API search interface
-    self:apiSearch(updateChoices, onInput, onSelection, {
+    self:asyncSearch(updateChoices, onInput, onSelection, {
         placeholderText = "Search Safari history"
     })
 

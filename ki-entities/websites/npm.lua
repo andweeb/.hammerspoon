@@ -3,13 +3,13 @@
 --
 local Website = spoon.Ki.Website
 local RESTClient = require("lib/rest-client")
-local APISearchMixin = require("ki-entities/api-search")
+local AsyncSearchMixin = require("ki-entities/async-search")
 local URLSearchMixin = require("ki-entities/url-search")
 
 local NPM = Website:new("NPM", "https://www.npmjs.com")
 
 -- Initialize website instance with search mixins
-NPM.class:include(APISearchMixin)
+NPM.class:include(AsyncSearchMixin)
 NPM.class:include(URLSearchMixin)
 
 -- Attach REST Client instance using the the https://npms.io API
@@ -70,7 +70,7 @@ function NPM:searchPackages()
     end
 
     -- Start API search interface
-    self:apiSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
+    self:asyncSearch(updateChoices, onInput, onSelection, { placeholderText = placeholderText })
 end
 
 NPM:registerShortcuts({
