@@ -9,6 +9,7 @@ local defaultEntities = spoon.Ki.defaultEntities.entity
 
 -- Require Ki modes
 require("ki-modes/mouse-mode")
+require("ki-modes/scroll-mode")
 require("ki-modes/search-mode")
 require("ki-modes/window-mode")
 
