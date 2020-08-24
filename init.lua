@@ -49,16 +49,3 @@ end
 
 -- Start Ki
 spoon.Ki:start()
-
-----------------------------------------------------------------------------------------------------
--- Watch for mounted volumes to store local directory trees
---
-local FSVolume = spoon.Ki.customEntities.FSVolume
-local VolumeWatcher = hs.fs.volume.new(function(event, volume)
-    if event == hs.fs.volume.didMount then
-        local name = volume.path:match(".+/(.+)")
-        FSVolume.writeContentsToFile(name, volume.path)
-    end
-end)
-
-VolumeWatcher:start()
