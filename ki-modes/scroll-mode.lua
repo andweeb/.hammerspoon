@@ -5,24 +5,24 @@ local Scroll = {}
 local Ki = spoon.Ki
 
 -- Scroll action creator method
-local function createScrollAction(horizontalPixels, verticalPixels, modifiers)
+function Scroll.createScrollAction(horizontalPixels, verticalPixels, modifiers)
     local offsets = { horizontalPixels, verticalPixels }
     return function()
-        hs.eventtap.event.newScrollEvent(offsets, modifiers, 'pixel'):post()
+        hs.eventtap.event.newScrollEvent(offsets, modifiers or {}, 'pixel'):post()
     end
 end
 
 -- Page scrolling
-Scroll.toTop = createScrollAction(0, 1e10)
-Scroll.toBottom = createScrollAction(0, -1e10)
-Scroll.pageUp = createScrollAction(0, 500)
-Scroll.pageDown = createScrollAction(0, -500)
+Scroll.toTop = Scroll.createScrollAction(0, 1e10)
+Scroll.toBottom = Scroll.createScrollAction(0, -1e10)
+Scroll.pageUp = Scroll.createScrollAction(0, 500)
+Scroll.pageDown = Scroll.createScrollAction(0, -500)
 
 -- Small directional scrolling
-Scroll.up = createScrollAction(0, 50)
-Scroll.down = createScrollAction(0, -50)
-Scroll.left = createScrollAction(50, 0)
-Scroll.right = createScrollAction(-50, 0)
+Scroll.up = Scroll.createScrollAction(0, 50)
+Scroll.down = Scroll.createScrollAction(0, -50)
+Scroll.left = Scroll.createScrollAction(50, 0)
+Scroll.right = Scroll.createScrollAction(-50, 0)
 
 local enterScrollModeShortcut = {
     { "alt", "cmd" }, "s", nil, { "Scroll Mode", "Enter Scroll Mode" },
