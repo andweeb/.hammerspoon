@@ -64,7 +64,7 @@ local files = {
 
 -- Initialize LIFX light
 local LIFX = requireEntity("entity", "lifx")
-local BedroomLIFX = LIFX:new("Bedroom Light", "label:Bedroom")
+local BedroomLIFX = LIFX:new("Bedroom Light", "label:Main Lamp")
 
 -- Create custom application entities
 local entities = {

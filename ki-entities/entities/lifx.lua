@@ -13,7 +13,9 @@ LIFX.restClient = RESTClient("https://api.lifx.com/v1", {
 -- Action to toggle the power of the LIFX light
 -- https://api.developer.lifx.com/docs/toggle-power
 function LIFX:togglePower()
-    self.restClient:post("/lights/"..self.selector.."/toggle", nil, nil, function(status, rawResponse)
+    local uri = "/lights/"..hs.http.encodeForQuery(self.selector).."/toggle"
+
+    self.restClient:post(uri, nil, nil, function(status, rawResponse)
         local success, response = pcall(function() return hs.json.decode(rawResponse) end)
         local acceptedRequest = tostring(status):sub(1, 1) == "2"
 
@@ -32,9 +34,10 @@ end
 -- https://api.developer.lifx.com/docs/set-state
 function LIFX:createStateChangeAction(data)
     local body = hs.json.encode(data)
+    local uri = "/lights/"..hs.http.encodeForQuery(self.selector).."/state"
 
     return function()
-        self.restClient:put("/lights/"..self.selector.."/state", body, nil, function(status, rawResponse)
+        self.restClient:put(uri, body, nil, function(status, rawResponse)
             local success, response = pcall(function() return hs.json.decode(rawResponse) end)
             local acceptedRequest = tostring(status):sub(1, 1) == "2"
 
