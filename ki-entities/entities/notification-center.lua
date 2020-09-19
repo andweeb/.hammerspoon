@@ -1,23 +1,28 @@
 ----------------------------------------------------------------------------------------------------
--- Notification Center entity
+-- Notification Center entity config
 --
-local Entity = spoon.Ki.Entity
-local NotificationCenter = Entity:new("Notification Center")
-local applescriptLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/notification-center.applescript")
+local Ki = spoon.Ki
+local Entity = Ki.Entity
+local filename = "notification-center.applescript"
+local applescriptLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/"..filename)
 
-function NotificationCenter.dismissNotifications()
+local function dismissNotifications()
     hs.notify.withdrawAll()
 
-    local script = Entity.renderScriptTemplate(applescriptLocation, { operation = "dismiss-notifications" })
+    local script = Entity.renderScriptTemplate(applescriptLocation, {
+        operation = "dismiss-notifications",
+    })
+
     local isOk, _, rawTable = hs.osascript.applescript(script)
 
     if not isOk then
-        Entity.notifyError("Error opening the connection", rawTable.NSLocalizedFailureReason)
+        Entity.notifyError("Error dismissing notifications", rawTable.NSLocalizedFailureReason)
     end
 end
 
-NotificationCenter:registerShortcuts({
-    { nil, "delete", NotificationCenter.dismissNotifications, { "Notification Center", "Dismiss Notifications" } }
-})
-
-return NotificationCenter
+return Entity {
+    name = "Notification Center",
+    shortcuts = {
+        { nil, "delete", dismissNotifications, { "Notification Center", "Dismiss Notifications" } }
+    },
+}

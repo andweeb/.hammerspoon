@@ -90,9 +90,18 @@ for _, color in pairs(LIFX.colors) do
 end
 
 -- Extend the Entity class to allow for creating individual LIFX light instances
-function LIFX:initialize(name, selector, shortcuts)
-    shortcuts = shortcuts or {}
+function LIFX:initialize(options)
+    local name, selector, shortcuts
 
+    if #options > 0 then
+        name, selector, shortcuts = table.unpack(options)
+    else
+        name = options.name
+        selector = options.selector
+        shortcuts = options.shortcuts
+    end
+
+    shortcuts = shortcuts or {}
     self.selector = selector
 
     local defaultShortcuts = {
@@ -113,7 +122,7 @@ function LIFX:initialize(name, selector, shortcuts)
         table.insert(defaultShortcuts, shortcut)
     end
 
-    Entity.initialize(self, name, self:mergeShortcuts(shortcuts, defaultShortcuts))
+    Entity.initialize(self, { name, self:mergeShortcuts(shortcuts, defaultShortcuts ) })
 end
 
 return LIFX

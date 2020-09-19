@@ -1,7 +1,8 @@
 ----------------------------------------------------------------------------------------------------
 -- Facebook Messenger website config
 --
-local Website = spoon.Ki.Website
+local Ki = spoon.Ki
+local Website = Ki.Website
 local messengerURL = "https://www.messenger.com"
 local htmlParserLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts")
 local applescriptLocation = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/messenger-conversations.applescript")
@@ -96,10 +97,14 @@ local function openConversationInfoPane(_, choice)
     return true
 end
 
-local Messenger = Website:new("Facebook Messenger", messengerURL, {
-    { nil, nil, openConversation, { "Messenger.com", "Open Messenger or Messenger Conversation" } },
-    { nil, "i", openConversationInfoPane, { "Messenger.com", "Open Conversation Info Pane" } },
-})
+local Messenger = Website {
+    name = "Facebook Messenger",
+    url = messengerURL,
+    links = {
+        { nil, nil, openConversation, { "Messenger.com", "Open Messenger or Messenger Conversation" } },
+        { nil, "i", openConversationInfoPane, { "Messenger.com", "Open Conversation Info Pane" } },
+    },
+}
 
 function Messenger.getChooserItems()
     local choices = {}

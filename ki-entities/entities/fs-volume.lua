@@ -1,39 +1,16 @@
 ----------------------------------------------------------------------------------------------------
--- macOS filesystem volume entity
+-- MacOS filesystem volume entity
 --
-local File = spoon.Ki.File
-local Entity = spoon.Ki.Entity
-local FSVolume = Entity:new("FSVolume", {})
-FSVolume.txtWriteLocation = "~/Documents"
-
-function FSVolume.selectFSVolumeEvent(eventHandler)
-    return function()
-        local choices = FSVolume:getChooserItems()
-
-        if choices and #choices > 0 then
-            local function onSelection(choice)
-                if choice then
-                    eventHandler(choice)
-                end
-            end
-
-            FSVolume:showChooser(choices, onSelection)
-        end
-    end
-end
-
-FSVolume.behaviors = FSVolume.behaviors + {
-    select = function(_, eventHandler)
-        FSVolume.selectFSVolumeEvent(eventHandler)()
-        return true
-    end
-}
+local Ki = spoon.Ki
+local File = Ki.File
+local Entity = Ki.Entity
+local txtWriteLocation = "~/Documents"
 
 local function round(num, precision)
     return tonumber(string.format("%." .. (precision or 0) .. "f", num))
 end
 
-function FSVolume.bytesToSize(bytes)
+local function bytesToSize(bytes)
     local precision = 2
     local kilobyte = 1024;
     local megabyte = kilobyte * 1024;
@@ -55,7 +32,45 @@ function FSVolume.bytesToSize(bytes)
     end
 end
 
-function FSVolume.writeContentsToFile(volumeName, volumePath)
+local function getVolumes()
+    local choices = {}
+    local volumes = hs.fs.volume.allVolumes()
+
+    for path, volume in pairs(volumes) do
+        local text = volume.NSURLVolumeNameKey
+        local name = volume.NSURLVolumeLocalizedNameKey
+        local totalSize = bytesToSize(volume.NSURLVolumeTotalCapacityKey)
+        local availableSize = bytesToSize(volume.NSURLVolumeAvailableCapacityKey)
+        local subText = totalSize..", "..availableSize.." available"
+
+        table.insert(choices, {
+            name = name,
+            path = path,
+            text = text,
+            subText = subText,
+        })
+    end
+
+    return choices
+end
+
+local function selectFSVolumeEvent(eventHandler)
+    return function()
+        local choices = getVolumes()
+
+        if choices and #choices > 0 then
+            local function onSelection(choice)
+                if choice then
+                    eventHandler(choice)
+                end
+            end
+
+            Entity:showChooser(choices, onSelection)
+        end
+    end
+end
+
+local function writeContentsToFile(volumeName, volumePath)
     local tree = "/usr/local/bin/tree"
     local contents = ""
 
@@ -66,7 +81,7 @@ function FSVolume.writeContentsToFile(volumeName, volumePath)
             return hs.notify.show("Ki", message, stderr)
         end
 
-        local txtPath = FSVolume.txtWriteLocation.."/"..volumeName:lower()..".txt"
+        local txtPath = txtWriteLocation.."/"..volumeName:lower()..".txt"
         local absoluteTxtPath = hs.fs.pathToAbsolute(txtPath)
 
         if not absoluteTxtPath then
@@ -101,41 +116,19 @@ function FSVolume.writeContentsToFile(volumeName, volumePath)
     end
 end
 
-function FSVolume:getChooserItems()
-    local choices = {}
-    local volumes = hs.fs.volume.allVolumes()
-
-    for path, volume in pairs(volumes) do
-        local text = volume.NSURLVolumeNameKey
-        local name = volume.NSURLVolumeLocalizedNameKey
-        local totalSize = self.bytesToSize(volume.NSURLVolumeTotalCapacityKey)
-        local availableSize = self.bytesToSize(volume.NSURLVolumeAvailableCapacityKey)
-        local subText = totalSize..", "..availableSize.." available"
-
-        table.insert(choices, {
-            name = name,
-            path = path,
-            text = text,
-            subText = subText,
-        })
-    end
-
-    return choices
-end
-
-FSVolume.openSelectedVolume = FSVolume.selectFSVolumeEvent(function(choice)
+local openSelectedVolume = selectFSVolumeEvent(function(choice)
     File.open(choice.path)
 end)
 
-function FSVolume.open(choice)
+local function open(choice)
     if choice then
         File.open(choice.path)
     else
-        FSVolume.openSelectedVolume()
+        openSelectedVolume()
     end
 end
 
-FSVolume.ejectSelectedVolume = FSVolume.selectFSVolumeEvent(function(choice)
+local ejectSelectedVolume = selectFSVolumeEvent(function(choice)
     local path = choice.path
     local hasEjected, err = hs.fs.volume.eject(path)
 
@@ -149,21 +142,32 @@ FSVolume.ejectSelectedVolume = FSVolume.selectFSVolumeEvent(function(choice)
     hs.notify.show("Ki", "Successfully ejected "..choice.name, "")
 end)
 
-FSVolume.writeSelectedVolumeContentsToFile = FSVolume.selectFSVolumeEvent(function(choice)
+local writeSelectedVolumeContentsToFile = selectFSVolumeEvent(function(choice)
     if choice.path ~= "/" then
-        FSVolume.writeContentsToFile(choice.name, choice.path)
+        writeContentsToFile(choice.name, choice.path)
     end
 end)
 
-FSVolume:registerShortcuts({
-    { nil, nil, FSVolume.open, { "macOS Volume", "Open Selected Volume" } },
-    { nil, "e", FSVolume.ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
-    { nil, "o", FSVolume.openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
-    {
-        nil, "w",
-        FSVolume.writeSelectedVolumeContentsToFile,
-        { "macOS Volume", "Write Selected Volume's Contents to File" },
+local FSVolume = Entity {
+    name = "FS Volume",
+    shortcuts = {
+        { nil, nil, open, { "macOS Volume", "Open Selected Volume" } },
+        { nil, "e", ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
+        { nil, "o", openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
+        {
+            nil, "w", writeSelectedVolumeContentsToFile, {
+                "macOS Volume",
+                "Write Selected Volume's Contents to File"
+            },
+        },
     },
-})
+}
+
+FSVolume.behaviors = FSVolume.behaviors + {
+    select = function(_, eventHandler)
+        selectFSVolumeEvent(eventHandler)()
+        return true
+    end
+}
 
 return FSVolume

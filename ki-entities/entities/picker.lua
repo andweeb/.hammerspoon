@@ -48,7 +48,7 @@ function Picker:initialize(choices, categories, categoryChoices)
         table.insert(shortcuts, { { "cmd" }, "c", pickCategory, { "Picker", "Pick Item Category" } } )
     end
 
-    Entity.initialize(self, "Picker", shortcuts, true)
+    Entity.initialize(self, { "Picker", shortcuts })
 end
 
 return Picker

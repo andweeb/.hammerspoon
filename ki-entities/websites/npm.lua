@@ -1,12 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- NPM website config
 --
-local Website = spoon.Ki.Website
+local Ki = spoon.Ki
+local Website = Ki.Website
 local RESTClient = require("lib/rest-client")
 local AsyncSearchMixin = require("ki-entities/async-search")
 local URLSearchMixin = require("ki-entities/url-search")
 
-local NPM = Website:new("NPM", "https://www.npmjs.com")
+local NPM = Website { "NPM", "https://www.npmjs.com" }
 
 -- Initialize website instance with search mixins
 NPM.class:include(AsyncSearchMixin)

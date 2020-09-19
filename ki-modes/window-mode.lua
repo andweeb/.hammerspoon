@@ -2,10 +2,8 @@
 -- Window Mode
 --
 local Ki = spoon.Ki
-local Entity = spoon.Ki.Entity
-local Window = {
-    frames = {},
-}
+local Entity = Ki.Entity
+local frames = {}
 
 -- Clone utility function
 local function cloneTable(input)
@@ -22,14 +20,19 @@ local function cloneTable(input)
     return copy
 end
 
+-- Screen dimensions utility function
+local function getScreenDimensions()
+    return hs.window.focusedWindow():screen():frame()
+end
+
 -- Move window to the left half
-function Window.moveWindowLeft()
+local function moveWindowLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -41,13 +44,13 @@ function Window.moveWindowLeft()
 end
 
 -- Move window to the right half
-function Window.moveWindowRight()
+local function moveWindowRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
@@ -59,13 +62,13 @@ function Window.moveWindowRight()
 end
 
 -- Move window to the top half
-function Window.moveWindowTopHalf()
+local function moveWindowTopHalf()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -77,13 +80,13 @@ function Window.moveWindowTopHalf()
 end
 
 -- Move window to the bottom half
-function Window.moveWindowBottomHalf()
+local function moveWindowBottomHalf()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -95,15 +98,15 @@ function Window.moveWindowBottomHalf()
 end
 
 -- Move window to the upper left
-function Window.moveWindowUpperLeft()
+local function moveWindowUpperLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -115,15 +118,15 @@ function Window.moveWindowUpperLeft()
 end
 
 -- Move window to the upper right
-function Window.moveWindowUpperRight()
+local function moveWindowUpperRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w / 2)
@@ -135,15 +138,15 @@ function Window.moveWindowUpperRight()
 end
 
 -- Move window to the bottom left
-function Window.moveWindowBottomLeft()
+local function moveWindowBottomLeft()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x
@@ -155,15 +158,15 @@ function Window.moveWindowBottomLeft()
 end
 
 -- Move window to the bottom right
-function Window.moveWindowBottomRight()
+local function moveWindowBottomRight()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local screenWidth = screenDimensions.w
     local screenHeight = screenDimensions.h
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenWidth / 2)
@@ -175,31 +178,31 @@ function Window.moveWindowBottomRight()
 end
 
 -- Maximize window
-function Window.maximizeWindow()
+local function maximizeWindow()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
-    local previousFrame = Window.frames[window:id()]
+    local screenDimensions = getScreenDimensions()
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(window:frame())
+        frames[window:id()] = cloneTable(window:frame())
     end
 
     window:setFrame(screenDimensions)
 end
 
 -- Toggle window fullscreen status
-function Window.fullScreenWindow()
+local function fullScreenWindow()
     local win = hs.window.focusedWindow()
     win:toggleFullScreen()
 end
 
 -- Center window
-function Window.centerWindow()
+local function centerWindow()
     local window = hs.window.focusedWindow()
-    local screenDimensions = Window.getScreenDimensions()
+    local screenDimensions = getScreenDimensions()
     local windowFrame = window:frame()
-    local previousFrame = Window.frames[window:id()]
+    local previousFrame = frames[window:id()]
     if not previousFrame then
-        Window.frames[window:id()] = cloneTable(windowFrame)
+        frames[window:id()] = cloneTable(windowFrame)
     end
 
     windowFrame.x = screenDimensions.x + (screenDimensions.w * 0.25)
@@ -211,7 +214,7 @@ function Window.centerWindow()
 end
 
 -- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219)
-function Window.moveWindowOneSpace(direction)
+local function moveWindowOneSpace(direction)
     local mouseOrigin = hs.mouse.getAbsolutePosition()
     local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
@@ -247,7 +250,7 @@ function Window.moveWindowOneSpace(direction)
 end
 
 -- Move window to the next monitor
-function Window.moveWindowToNextMonitor()
+local function moveWindowToNextMonitor()
     local win = hs.window.focusedWindow()
     local screenFrame = win:screen():frame()
     local nextScreenFrame = win:screen():next():frame()
@@ -261,28 +264,23 @@ function Window.moveWindowToNextMonitor()
     win:setFrame(windowFrame)
 end
 
--- Screen dimensions utility function
-function Window.getScreenDimensions()
-    return hs.window.focusedWindow():screen():frame()
-end
-
 -- Restore previous window frame state
-function Window.restorePreviousWindowSize()
+local function restorePreviousWindowSize()
     local window = hs.window.frontmostWindow()
-    local previousWindowFrame = Window.frames[window:id()]
+    local previousWindowFrame = frames[window:id()]
 
     if previousWindowFrame then
         window:setFrame(previousWindowFrame)
-        Window.frames[window:id()] = nil
+        frames[window:id()] = nil
     end
 end
 
 -- Define window mode shortcuts
-function Window.moveWindowOneSpaceLeft() Window.moveWindowOneSpace("left") end
-function Window.moveWindowOneSpaceRight() Window.moveWindowOneSpace("right") end
+local function moveWindowOneSpaceLeft() moveWindowOneSpace("left") end
+local function moveWindowOneSpaceRight() moveWindowOneSpace("right") end
 
 -- Select a window
-function Window.select()
+local function selectWindow()
     Ki.state:exitMode()
 
     local choices = {}
@@ -314,36 +312,39 @@ function Window.select()
 end
 
 -- Minimize window
-function Window.minimizeWindow()
+local function minimizeWindow()
     hs.window.focusedWindow():minimize()
 end
 
 -- Unminimize the last minimized window
-function Window.unminimizeRecentWindow()
+local function unminimizeRecentWindow()
     local minimizedWindows = hs.window.minimizedWindows()
     if minimizedWindows and #minimizedWindows > 0 then
         minimizedWindows[1]:unminimize()
     end
 end
 
-local enterWindowModeShortcut = {
-    {"cmd"}, "w", nil, { "Normal Mode", "Enter Window Mode" },
+Ki:Mode {
+    name = "window",
+    actions = Ki.getLocalVariables("function"),
+    shortcut = { {"cmd"}, "w" },
+    shortcuts = {
+        { nil, "f", fullScreenWindow, { "Window Mode", "Full Screen Window" } },
+        { nil, "h", moveWindowLeft, { "Window Mode", "Move Window Left" } },
+        { nil, "j", centerWindow, { "Window Mode", "Center Window" } },
+        { nil, "k", maximizeWindow, { "Window Mode", "Maximize Window" } },
+        { nil, "l", moveWindowRight, { "Window Mode", "Move Window Right" } },
+        { nil, "m", minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
+        { nil, "s", selectWindow, { "Window Mode", "Select Window" } },
+        { nil, "space", moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
+        { { "alt", "cmd" }, "k", moveWindowTopHalf, { "Window Mode", "Move Window Top Half" } },
+        { { "alt", "cmd" }, "j", moveWindowBottomHalf, { "Window Mode", "Move Window Bottom Half" } },
+        { { "ctrl" }, "h", moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
+        { { "ctrl" }, "l", moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
+        { { "shift" }, "h", moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
+        { { "shift" }, "l", moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
+        { { "shift" }, "m", unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
+        { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
+        { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
+    },
 }
-
-Ki:registerMode("window", enterWindowModeShortcut, {
-    { nil, "f", Window.fullScreenWindow, { "Window Mode", "Full Screen Window" } },
-    { nil, "h", Window.moveWindowLeft, { "Window Mode", "Move Window Left" } },
-    { nil, "j", Window.centerWindow, { "Window Mode", "Center Window" } },
-    { nil, "k", Window.maximizeWindow, { "Window Mode", "Maximize Window" } },
-    { nil, "l", Window.moveWindowRight, { "Window Mode", "Move Window Right" } },
-    { nil, "m", Window.minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
-    { nil, "s", Window.select, { "Window Mode", "Select Window" } },
-    { nil, "space", Window.moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
-    { { "ctrl" }, "h", Window.moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
-    { { "ctrl" }, "l", Window.moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
-    { { "shift" }, "h", Window.moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
-    { { "shift" }, "l", Window.moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
-    { { "shift" }, "m", Window.unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
-    { { "cmd" }, "h", Window.moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
-    { { "cmd" }, "l", Window.moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
-})
