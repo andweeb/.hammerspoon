@@ -7,12 +7,6 @@ local Website = spoon.Ki.Website
 local Application = spoon.Ki.Application
 local defaultEntities = spoon.Ki.defaultEntities.entity
 
--- Require Ki modes
-require("ki-modes/mouse-mode")
-require("ki-modes/scroll-mode")
-require("ki-modes/search-mode")
-require("ki-modes/window-mode")
-
 -- Helper function to require entity config
 local function requireEntity(type, file)
     local directory = type == "entity" and "entities" or type.."s"
@@ -231,6 +225,22 @@ Ki:Mode {
         { { "alt" }   , "d" , files.Dropbox },
         { { "shift" } , "t" , files.TV      },
     },
+}
+
+----------------------------------------------------------------------------------------------------
+-- Register custom modes and their shortcuts
+--
+
+-- Register custom Ki modes
+require("ki-modes/mouse-mode")
+require("ki-modes/scroll-mode")
+require("ki-modes/search-mode")
+require("ki-modes/window-mode")
+
+-- Register mode transitions between mouse and scroll mode
+Ki:ModeTransitions {
+    { "mouse", "scroll", { { "alt", "cmd" }, "s" } },
+    { "scroll", "mouse", { { "cmd" }, "m" } },
 }
 
 -- Register shortcuts for the custom search mode
