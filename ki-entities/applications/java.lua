@@ -83,8 +83,8 @@ function Java.about(_, choice)
 end
 
 Java:registerShortcuts({
-    { nil, nil, Java.focus, { "Java", "Activate/Focus Java App" } },
-    { nil, "a", Java.about, { "Java", "About Java Application" } },
+    { nil, nil, Java.focus, "Activate/Focus Java App" },
+    { nil, "a", Java.about, "About Java Application" },
 })
 
 return Java

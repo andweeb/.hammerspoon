@@ -93,5 +93,5 @@ function Safari:searchBrowserHistory()
 end
 
 Safari:registerShortcuts({
-    { nil, "s", function() Safari:searchBrowserHistory() end, { "History", "Search Browser History" } }
+    { nil, "s", function() Safari:searchBrowserHistory() end, "Search Browser History" }
 })

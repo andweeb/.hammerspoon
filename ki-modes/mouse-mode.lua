@@ -14,10 +14,6 @@ local INDICATOR = {
     },
 }
 
-local function getScreenDimensions()
-    return hs.window.focusedWindow():screen():frame()
-end
-
 -- Flash an indicator to highlight the mouse location
 local function flashIndicator()
     local size = INDICATOR.SIZE
@@ -97,25 +93,25 @@ local moveMouseMiddle = moveRelativeToScreenEvent(function(pos, frame) return po
 local moveMouseLow = moveRelativeToScreenEvent(function(pos, frame) return pos.x, frame.h end)
 
 local shortcuts = {
-    { nil, "space", cycleMouseToNextScreen, { "Mouse Mode", "Cycle Mouse to Next Screen" } },
+    { nil, "space", cycleMouseToNextScreen, "Cycle Mouse to Next Screen" },
     -- Mouse clicks
-    { nil, "return", leftClick, { "Mouse Mode", "Left Click" } },
-    { { "shift" }, "return", rightClick, { "Mouse Mode", "Right Click" } },
-    { { "shift" }, "/", flashIndicator, { "Mouse Mode", "Flash the Mouse Indicator" } },
+    { nil, "return", leftClick, "Left Click" },
+    { { "shift" }, "return", rightClick, "Right Click" },
+    { { "shift" }, "/", flashIndicator, "Flash the Mouse Indicator" },
     -- Slight directional movement shortcuts
-    { nil, "h", moveMouseSlightLeft, { "Mouse Mode", "Move Mouse Left Slightly" } },
-    { nil, "j", moveMouseSlightDown, { "Mouse Mode", "Move Mouse Down Slightly" } },
-    { nil, "k", moveMouseSlightUp, { "Mouse Mode", "Move Mouse Up Slightly" } },
-    { nil, "l", moveMouseSlightRight, { "Mouse Mode", "Move Mouse Right Slightly" } },
+    { nil, "h", moveMouseSlightLeft, "Move Mouse Left Slightly" },
+    { nil, "j", moveMouseSlightDown, "Move Mouse Down Slightly" },
+    { nil, "k", moveMouseSlightUp, "Move Mouse Up Slightly" },
+    { nil, "l", moveMouseSlightRight, "Move Mouse Right Slightly" },
     -- Standard directional movement shortcuts
-    { nil, "b", moveMouseStandardLeft, { "Mouse Mode", "Move Mouse Left" } },
-    { nil, "d", moveMouseStandardDown, { "Mouse Mode", "Move Mouse Down" } },
-    { nil, "u", moveMouseStandardUp, { "Mouse Mode", "Move Mouse Up" } },
-    { nil, "w", moveMouseStandardRight, { "Mouse Mode", "Move Mouse Right" } },
+    { nil, "b", moveMouseStandardLeft, "Move Mouse Left" },
+    { nil, "d", moveMouseStandardDown, "Move Mouse Down" },
+    { nil, "u", moveMouseStandardUp, "Move Mouse Up" },
+    { nil, "w", moveMouseStandardRight, "Move Mouse Right" },
     -- Vertical high/medium/low mouse movement shortcuts
-    { { "shift" }, "h", moveMouseHigh, { "Mouse Mode", "Move Mouse to Top of Screen" } },
-    { { "shift" }, "m", moveMouseMiddle, { "Mouse Mode", "Move Mouse to Middle of Screen" } },
-    { { "shift" }, "l", moveMouseLow, { "Mouse Mode", "Move Mouse to Bottom of Screen" } },
+    { { "shift" }, "h", moveMouseHigh, "Move Mouse to Top of Screen" },
+    { { "shift" }, "m", moveMouseMiddle, "Move Mouse to Middle of Screen" },
+    { { "shift" }, "l", moveMouseLow, "Move Mouse to Bottom of Screen" },
 }
 
 -- Dynamically create 0-9 shortcuts to move mouse to numbered "columns" of the screen
@@ -144,7 +140,7 @@ for i = 0, 9 do
     end
 
     local description = "Move Mouse to "..columnText.." Column of Current Screen"
-    table.insert(shortcuts, { nil, tostring(i), action, { "Mouse Mode", description } })
+    table.insert(shortcuts, { nil, tostring(i), action, description })
 end
 
 Ki:Mode {

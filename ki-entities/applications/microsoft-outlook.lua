@@ -17,8 +17,8 @@ function MicrosoftOutlook.switchToViewEvent(view)
 end
 
 MicrosoftOutlook:registerShortcuts({
-    { nil, "c", MicrosoftOutlook.switchToViewEvent("calendar"), { "View", "Switch to Calendar View" } },
-    { nil, "m", MicrosoftOutlook.switchToViewEvent("mail"), { "View", "Switch to Mail View" } },
+    { nil, "c", MicrosoftOutlook.switchToViewEvent("calendar"), "Switch to Calendar View" },
+    { nil, "m", MicrosoftOutlook.switchToViewEvent("mail"), "Switch to Mail View" },
 })
 
 return MicrosoftOutlook

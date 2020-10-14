@@ -24,17 +24,28 @@ spoon.Ki:useDefaultConfig()
 
 -- Remap Website Mode transition shortcuts
 spoon.Ki:remapShortcuts({
-    ["Normal Mode"] = {
-        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Normal Mode", "Enter Website Mode" } }
+    -- NORMAL --
+    {
+        mode = "normal",
+        name = "Enter Website Mode",
+        shortcut = { {"cmd"}, "u" },
     },
-    ["Entity Mode"] = {
-        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Entity Mode", "Enter Website Mode" } }
+    -- ENTITY --
+    {
+        mode = "entity",
+        name = "Enter Website Mode",
+        shortcut = { {"cmd"}, "u" },
     },
-    ["Select Mode"] = {
-        ["Enter Website Mode"] = { {"cmd"}, "u", nil, { "Select Mode", "Enter Website Mode" } }
+    {
+        mode = "entity",
+        name = "App Store",
+        shortcut = { { "cmd" }, "a" },
     },
-    ["Entities"] = {
-        ["App Store"] = { { "cmd" }, "a", nil, { "Entities", "App Store" } },
+    -- SELECT --
+    {
+        mode = "select",
+        name = "Enter Website Mode",
+        shortcut = { {"cmd"}, "u" },
     },
 })
 

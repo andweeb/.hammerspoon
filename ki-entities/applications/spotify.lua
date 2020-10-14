@@ -358,9 +358,9 @@ Spotify.searchArtists = Spotify:createSearchAction("artist", function(item)
 end)
 
 Spotify:registerShortcuts({
-    { nil, "d", function(...) Spotify:showMyDevices(...) end, { "Spotify API", "Show My Devices" } },
-    { nil, "s", Spotify.searchTracks, { "Spotify API", "Search Tracks" } },
-    { { "shift" }, "p", function(...) Spotify:showMyPlaylists(...) end, { "Spotify API", "Show My Playlists" } },
-    { { "shift" }, "s", Spotify.searchArtists, { "Spotify API", "Search Artists" } },
-    { { "alt", "cmd" }, "a", function() Spotify:authorize("localhost", 8888) end, { "Spotify API", "Authorize" } }
+    { nil, "d", function(...) Spotify:showMyDevices(...) end, "Show My Devices" },
+    { nil, "s", Spotify.searchTracks, "Search Tracks" },
+    { { "shift" }, "p", function(...) Spotify:showMyPlaylists(...) end, "Show My Playlists" },
+    { { "shift" }, "s", Spotify.searchArtists, "Search Artists" },
+    { { "alt", "cmd" }, "a", function() Spotify:authorize("localhost", 8888) end, "Authorize" }
 })

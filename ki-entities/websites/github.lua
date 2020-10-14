@@ -342,17 +342,17 @@ GitHub.searchUsers = GitHub:createAPISearchAction("USER", GitHub.createUserChoic
 GitHub.searchIssues = GitHub:createAPISearchAction("ISSUE", GitHub.createIssueChoices)
 
 GitHub:registerShortcuts({
-    { nil, "f", GitHub.showFollowers, { "Viewer", "Show GitHub Followers" } },
-    { nil, "g", function() GitHub:showGists() end, { "Viewer", "Show GitHub Gists" } },
-    { nil, "i", GitHub.showIssues, { "Viewer", "Show GitHub Issues" } },
-    { nil, "p", function() GitHub:showProjects() end, { "Viewer", "Show Projects" } },
-    { nil, "r", GitHub.showRepositories, { "Viewer", "Show Repositories" } },
-    { nil, "s", GitHub.searchRepositories, { "Search", "Search GitHub Repositories" } },
-    { nil, "u", GitHub.searchUsers, { "Search", "Search GitHub Users" } },
-    { nil, "w", GitHub.showWatchingRepositories, { "Viewer", "Show Watching Repositories" } },
-    { { "shift" }, "f", GitHub.showFollowing, { "Viewer", "Show GitHub Following" } },
-    { { "shift" }, "i", GitHub.searchIssues, { "Search", "Search GitHub Issues" } },
-    { { "shift" }, "s", GitHub.showStarredRepositories, { "Viewer", "Show Starred Repositories" } },
+    { nil, "f", GitHub.showFollowers, "Show GitHub Followers" },
+    { nil, "g", function() GitHub:showGists() end, "Show GitHub Gists" },
+    { nil, "i", GitHub.showIssues, "Show GitHub Issues" },
+    { nil, "p", function() GitHub:showProjects() end, "Show Projects" },
+    { nil, "r", GitHub.showRepositories, "Show Repositories" },
+    { nil, "s", GitHub.searchRepositories, "Search GitHub Repositories" },
+    { nil, "u", GitHub.searchUsers, "Search GitHub Users" },
+    { nil, "w", GitHub.showWatchingRepositories, "Show Watching Repositories" },
+    { { "shift" }, "f", GitHub.showFollowing, "Show GitHub Following" },
+    { { "shift" }, "i", GitHub.searchIssues, "Search GitHub Issues" },
+    { { "shift" }, "s", GitHub.showStarredRepositories, "Show Starred Repositories" },
 })
 
 return GitHub

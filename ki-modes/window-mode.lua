@@ -264,17 +264,6 @@ local function moveWindowToNextMonitor()
     win:setFrame(windowFrame)
 end
 
--- Restore previous window frame state
-local function restorePreviousWindowSize()
-    local window = hs.window.frontmostWindow()
-    local previousWindowFrame = frames[window:id()]
-
-    if previousWindowFrame then
-        window:setFrame(previousWindowFrame)
-        frames[window:id()] = nil
-    end
-end
-
 -- Define window mode shortcuts
 local function moveWindowOneSpaceLeft() moveWindowOneSpace("left") end
 local function moveWindowOneSpaceRight() moveWindowOneSpace("right") end
@@ -329,22 +318,22 @@ Ki:Mode {
     actions = Ki.getLocalVariables("function"),
     shortcut = { {"cmd"}, "w" },
     shortcuts = {
-        { nil, "f", fullScreenWindow, { "Window Mode", "Full Screen Window" } },
-        { nil, "h", moveWindowLeft, { "Window Mode", "Move Window Left" } },
-        { nil, "j", centerWindow, { "Window Mode", "Center Window" } },
-        { nil, "k", maximizeWindow, { "Window Mode", "Maximize Window" } },
-        { nil, "l", moveWindowRight, { "Window Mode", "Move Window Right" } },
-        { nil, "m", minimizeWindow, { "Window Mode", "Minimize Focused Window" } },
-        { nil, "s", selectWindow, { "Window Mode", "Select Window" } },
-        { nil, "space", moveWindowToNextMonitor, { "Window Mode", "Move Window To Next Monitor" } },
-        { { "alt", "cmd" }, "k", moveWindowTopHalf, { "Window Mode", "Move Window Top Half" } },
-        { { "alt", "cmd" }, "j", moveWindowBottomHalf, { "Window Mode", "Move Window Bottom Half" } },
-        { { "ctrl" }, "h", moveWindowBottomLeft, { "Window Mode", "Move Window Bottom Left" } },
-        { { "ctrl" }, "l", moveWindowBottomRight, { "Window Mode", "Move Window Bottom Right" } },
-        { { "shift" }, "h", moveWindowUpperLeft, { "Window Mode", "Move Window Upper Left" } },
-        { { "shift" }, "l", moveWindowUpperRight, { "Window Mode", "Move Window Upper Right" } },
-        { { "shift" }, "m", unminimizeRecentWindow, { "Window Mode", "Minimize Most Recent Window" } },
-        { { "cmd" }, "h", moveWindowOneSpaceLeft, { "Window Mode", "Move Window One Space to the Left" } },
-        { { "cmd" }, "l", moveWindowOneSpaceRight, { "Window Mode", "Move Window One Space to the Right" } },
+        { nil, "f", fullScreenWindow, "Full Screen Window" },
+        { nil, "h", moveWindowLeft, "Move Window Left" },
+        { nil, "j", centerWindow, "Center Window" },
+        { nil, "k", maximizeWindow, "Maximize Window" },
+        { nil, "l", moveWindowRight, "Move Window Right" },
+        { nil, "m", minimizeWindow, "Minimize Focused Window" },
+        { nil, "s", selectWindow, "Select Window" },
+        { nil, "space", moveWindowToNextMonitor, "Move Window To Next Monitor" },
+        { { "alt", "cmd" }, "k", moveWindowTopHalf, "Move Window Top Half" },
+        { { "alt", "cmd" }, "j", moveWindowBottomHalf, "Move Window Bottom Half" },
+        { { "ctrl" }, "h", moveWindowBottomLeft, "Move Window Bottom Left" },
+        { { "ctrl" }, "l", moveWindowBottomRight, "Move Window Bottom Right" },
+        { { "shift" }, "h", moveWindowUpperLeft, "Move Window Upper Left" },
+        { { "shift" }, "l", moveWindowUpperRight, "Move Window Upper Right" },
+        { { "shift" }, "m", unminimizeRecentWindow, "Minimize Most Recent Window" },
+        { { "cmd" }, "h", moveWindowOneSpaceLeft, "Move Window One Space to the Left" },
+        { { "cmd" }, "l", moveWindowOneSpaceRight, "Move Window One Space to the Right" },
     },
 }

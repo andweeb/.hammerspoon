@@ -20,18 +20,18 @@ LINE.help = Application.createMenuItemEvent({ "Help", "LINE Help" })
 
 LINE:registerShortcuts({
     -- View
-    { nil, "c", LINE.chats, { "View", "Chats" } },
-    { nil, "p", LINE.myProfile, { "View", "My profile" } },
-    { { "shift" }, "f", LINE.friends, { "View", "Friends" } },
+    { nil, "c", LINE.chats, "Chats" },
+    { nil, "p", LINE.myProfile, "My profile" },
+    { { "shift" }, "f", LINE.friends, "Friends" },
     -- Friends
-    { nil, "g", LINE.createAGroup, { "Friends", "Create a group" } },
-    { { "shift" }, "a", LINE.addFriends, { "Friends", "Add friends" } },
+    { nil, "g", LINE.createAGroup, "Create a group" },
+    { { "shift" }, "a", LINE.addFriends, "Add friends" },
     -- Windows
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.maximize, { "Windows", "Maximize" } },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.minimize, { "Windows", "Minimize" } },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.moveAllToTop, { "Windows", "Move all to top" } },
+    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.maximize, "Maximize" },
+    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.minimize, "Minimize" },
+    { { "﴾unmapped﴿" }, "﴾unmapped﴿", LINE.moveAllToTop, "Move all to top" },
     -- Help
-    { { "shift" }, "h", LINE.help, { "Help", "LINE Help" } },
+    { { "shift" }, "h", LINE.help, "LINE Help" },
 })
 
 return LINE

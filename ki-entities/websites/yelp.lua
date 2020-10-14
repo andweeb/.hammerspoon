@@ -187,8 +187,8 @@ Yelp:registerChooserShortcuts({
 })
 
 Yelp:registerShortcuts({
-    { nil, "c", function() Yelp:searchBusinessInCity() end, { "Yelp", "Search Yelp Businesses By City" } },
-    { nil, "s", function() Yelp:searchBusinessWithCurrentLocation() end, { "Yelp", "Search Yelp Businesses By Location" } },
+    { nil, "c", function() Yelp:searchBusinessInCity() end, "Search Yelp Businesses By City" },
+    { nil, "s", function() Yelp:searchBusinessWithCurrentLocation() end, "Search Yelp Businesses By Location" },
 })
 
 return Yelp

@@ -151,15 +151,10 @@ end)
 local FSVolume = Entity {
     name = "FS Volume",
     shortcuts = {
-        { nil, nil, open, { "macOS Volume", "Open Selected Volume" } },
-        { nil, "e", ejectSelectedVolume, { "macOS Volume", "Eject Selected Volume" } },
-        { nil, "o", openSelectedVolume, { "macOS Volume", "Open Selected Volume" } },
-        {
-            nil, "w", writeSelectedVolumeContentsToFile, {
-                "macOS Volume",
-                "Write Selected Volume's Contents to File"
-            },
-        },
+        { nil, nil, open, "Open Selected Volume" },
+        { nil, "e", ejectSelectedVolume, "Eject Selected Volume" },
+        { nil, "o", openSelectedVolume, "Open Selected Volume" },
+        { nil, "w", writeSelectedVolumeContentsToFile, "Write Selected Volume's Contents to File" },
     },
 }
 

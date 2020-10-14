@@ -100,9 +100,9 @@ end
 local Messenger = Website {
     name = "Facebook Messenger",
     url = messengerURL,
-    links = {
-        { nil, nil, openConversation, { "Messenger.com", "Open Messenger or Messenger Conversation" } },
-        { nil, "i", openConversationInfoPane, { "Messenger.com", "Open Conversation Info Pane" } },
+    shortcuts = {
+        { nil, nil, openConversation, "Open Messenger or Messenger Conversation" },
+        { nil, "i", openConversationInfoPane, "Open Conversation Info Pane" },
     },
 }
 
