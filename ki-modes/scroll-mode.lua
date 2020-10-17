@@ -2,6 +2,7 @@
 -- Scroll Mode
 --
 local Ki = spoon.Ki
+local Mode = Ki.Mode
 
 -- Scroll action creator method
 local function scrollTo(horizontalPixels, verticalPixels, modifiers)
@@ -23,9 +24,8 @@ local down = scrollTo(0, -50)
 local left = scrollTo(50, 0)
 local right = scrollTo(-50, 0)
 
-Ki:Mode {
+Mode {
     name = "scroll",
-    actions = Ki.getLocalVariables("function"),
     shortcut = { { "alt", "cmd" }, "s" },
     shortcuts = {
         { nil, "d", pageDown, "Scroll Page Down" },

@@ -2,6 +2,7 @@
 -- Window Mode
 --
 local Ki = spoon.Ki
+local Mode = Ki.Mode
 local Entity = Ki.Entity
 local frames = {}
 
@@ -313,9 +314,8 @@ local function unminimizeRecentWindow()
     end
 end
 
-Ki:Mode {
+Mode {
     name = "window",
-    actions = Ki.getLocalVariables("function"),
     shortcut = { {"cmd"}, "w" },
     shortcuts = {
         { nil, "f", fullScreenWindow, "Full Screen Window" },

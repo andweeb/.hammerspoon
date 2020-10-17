@@ -2,6 +2,10 @@
 -- Ki Config File
 --
 local Ki = spoon.Ki
+local Mode = Ki.Mode
+local Remaps = Ki.Remaps
+local ModeTransitions = Ki.ModeTransitions
+
 local File = spoon.Ki.File
 local Website = spoon.Ki.Website
 local Application = spoon.Ki.Application
@@ -12,6 +16,35 @@ local function requireEntity(type, file)
     local directory = type == "entity" and "entities" or type.."s"
     return require("ki-entities/"..directory.."/"..file)
 end
+
+----------------------------------------------------------------------------------------------------
+-- Remap Website Mode transition shortcuts
+--
+Remaps {
+    -- NORMAL --
+    {
+        mode = "normal",
+        name = "Enter Website Mode",
+        shortcut = { { "cmd" }, "u" },
+    },
+    -- ENTITY --
+    {
+        mode = "entity",
+        name = "Enter Website Mode",
+        shortcut = { { "cmd" }, "u" },
+    },
+    {
+        mode = "entity",
+        name = "App Store",
+        shortcut = { { "cmd" }, "a" },
+    },
+    -- SELECT --
+    {
+        mode = "select",
+        name = "Enter Website Mode",
+        shortcut = { { "cmd" }, "u" },
+    },
+}
 
 ----------------------------------------------------------------------------------------------------
 -- Create custom ki entities
@@ -68,6 +101,7 @@ local BedroomLIFX = LIFX {
 -- Create custom application entities
 local entities = {
     -- Initialize basic application entities inline
+    ["1Password"]      = Application "1Password 7",
     Alacritty          = Application "Alacritty",
     BlueJeans          = Application "BlueJeans",
     Discord            = Application "Discord",
@@ -122,9 +156,10 @@ local entities = {
 --
 
 -- Register entity mode shortcuts
-Ki:Mode {
+Mode {
     name = "entity",
     shortcuts = {
+        { nil                , "1" , entities["1Password"]       },
         { nil                , "a" , entities.Alacritty          },
         { nil                , "b" , entities.BlueJeans          },
         { nil                , "c" , entities.Fantastical        },
@@ -165,7 +200,7 @@ Ki:Mode {
 }
 
 -- Register select mode shortcuts
-Ki:Mode {
+Mode {
     name = "select",
     shortcuts = {
         { nil                , "e" , entities.MicrosoftExcel   , "Select a Microsoft Excel window"   },
@@ -184,7 +219,7 @@ Ki:Mode {
 }
 
 -- Register Website mode shortcuts
-Ki:Mode {
+Mode {
     name = "website",
     shortcuts = {
         { nil                , "a" , websites.Amazon            },
@@ -218,7 +253,7 @@ Ki:Mode {
 }
 
 -- Register file mode shortcuts
-Ki:Mode {
+Mode {
     name = "file",
     shortcuts = {
         { nil         , "c" , files.Code    },
@@ -238,13 +273,13 @@ require("ki-modes/search-mode")
 require("ki-modes/window-mode")
 
 -- Register mode transitions between mouse and scroll mode
-Ki:ModeTransitions {
+ModeTransitions {
     { "mouse", "scroll", { { "alt", "cmd" }, "s" } },
     { "scroll", "mouse", { { "cmd" }, "m" } },
 }
 
 -- Register shortcuts for the custom search mode
-Ki:Mode {
+Mode {
     name = "search",
     shortcuts = {
         { nil                , "a" , websites.Amazon        },

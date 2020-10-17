@@ -5,91 +5,91 @@ local Application = spoon.Ki.Application
 local ZoomUs = Application:new("zoom.us")
 
 -- zoom.us menu bar actions
-ZoomUs.services = Application.createMenuItemChooserEvent({ "zoom.us", "Services" })
-ZoomUs.preferences = Application.createMenuItemEvent({ "zoom.us", "Preferences..." })
-ZoomUs.scheduleMeeting = Application.createMenuItemEvent({ "zoom.us", "Schedule Meeting..." })
-ZoomUs.hideZoom = Application.createMenuItemEvent({ "zoom.us", "Hide Zoom" })
-ZoomUs.joinMeeting = Application.createMenuItemEvent({ "zoom.us", "Join Meeting..." })
-ZoomUs.quitZoom = Application.createMenuItemEvent({ "zoom.us", "Quit Zoom" })
-ZoomUs.hideOthers = Application.createMenuItemEvent({ "zoom.us", "Hide Others" })
-ZoomUs.screenShare = Application.createMenuItemEvent({ "zoom.us", "Screen Share..." })
-ZoomUs.startMeeting = Application.createMenuItemEvent({ "zoom.us", "Start Meeting" })
-ZoomUs.aboutZoom = Application.createMenuItemEvent({ "zoom.us", "About Zoom" })
-ZoomUs.checkForUpdates = Application.createMenuItemEvent({ "zoom.us", "Check for Updates..." })
-ZoomUs.showAll = Application.createMenuItemEvent({ "zoom.us", "Show All" })
-ZoomUs.signOut = Application.createMenuItemEvent({ "zoom.us", "Sign Out" })
-ZoomUs.switchAccount = Application.createMenuItemEvent({ "zoom.us", "Switch Account" })
-ZoomUs.uninstallZoom = Application.createMenuItemEvent({ "zoom.us", "Uninstall Zoom" })
+ZoomUs.services = Application:createChooseMenuItemAction({ "zoom.us", "Services" })
+ZoomUs.preferences = Application:createMenuItemAction({ "zoom.us", "Preferences..." })
+ZoomUs.scheduleMeeting = Application:createMenuItemAction({ "zoom.us", "Schedule Meeting..." })
+ZoomUs.hideZoom = Application:createMenuItemAction({ "zoom.us", "Hide Zoom" })
+ZoomUs.joinMeeting = Application:createMenuItemAction({ "zoom.us", "Join Meeting..." })
+ZoomUs.quitZoom = Application:createMenuItemAction({ "zoom.us", "Quit Zoom" })
+ZoomUs.hideOthers = Application:createMenuItemAction({ "zoom.us", "Hide Others" })
+ZoomUs.screenShare = Application:createMenuItemAction({ "zoom.us", "Screen Share..." })
+ZoomUs.startMeeting = Application:createMenuItemAction({ "zoom.us", "Start Meeting" })
+ZoomUs.aboutZoom = Application:createMenuItemAction({ "zoom.us", "About Zoom" })
+ZoomUs.checkForUpdates = Application:createMenuItemAction({ "zoom.us", "Check for Updates..." })
+ZoomUs.showAll = Application:createMenuItemAction({ "zoom.us", "Show All" })
+ZoomUs.signOut = Application:createMenuItemAction({ "zoom.us", "Sign Out" })
+ZoomUs.switchAccount = Application:createMenuItemAction({ "zoom.us", "Switch Account" })
+ZoomUs.uninstallZoom = Application:createMenuItemAction({ "zoom.us", "Uninstall Zoom" })
 -- Meeting menu bar actions
-ZoomUs.invite = Application.createMenuItemEvent({ "Meeting", "Invite" })
-ZoomUs.muteAll = Application.createMenuItemEvent({ "Meeting", "Mute All" })
-ZoomUs.unmuteAll = Application.createMenuItemEvent({ "Meeting", "Unmute All" })
-ZoomUs.muteOrUnmuteAudio = Application.createMenuItemEvent({
+ZoomUs.invite = Application:createMenuItemAction({ "Meeting", "Invite" })
+ZoomUs.muteAll = Application:createMenuItemAction({ "Meeting", "Mute All" })
+ZoomUs.unmuteAll = Application:createMenuItemAction({ "Meeting", "Unmute All" })
+ZoomUs.muteOrUnmuteAudio = Application:createMenuItemAction({
     { "Meeting", "Unmute Audio" },
     { "Meeting", "Mute Audio" }
 }, { isToggleable = true })
-ZoomUs.enterOrExitMinimalView = Application.createMenuItemEvent({
+ZoomUs.enterOrExitMinimalView = Application:createMenuItemAction({
     { "Meeting", "Exit Minimal View" },
     { "Meeting", "Enter Minimal View" }
 }, { isToggleable = true })
-ZoomUs.switchCamera = Application.createMenuItemEvent({ "Meeting", "Switch Camera" })
-ZoomUs.record = Application.createMenuItemEvent({ "Meeting", "Record" })
-ZoomUs.startOrStopShare = Application.createMenuItemEvent({
+ZoomUs.switchCamera = Application:createMenuItemAction({ "Meeting", "Switch Camera" })
+ZoomUs.record = Application:createMenuItemAction({ "Meeting", "Record" })
+ZoomUs.startOrStopShare = Application:createMenuItemAction({
     { "Meeting", "Stop Share" },
     { "Meeting", "Start Share" }
 }, { isToggleable = true })
-ZoomUs.startOrStopVideo = Application.createMenuItemEvent({
+ZoomUs.startOrStopVideo = Application:createMenuItemAction({
     { "Meeting", "Stop Video" },
     { "Meeting", "Start Video" }
 }, { isToggleable = true })
 -- View menu bar actions
-ZoomUs.showOrCloseManageParticipants = Application.createMenuItemEvent({
+ZoomUs.showOrCloseManageParticipants = Application:createMenuItemAction({
     { "View", "Close Manage Participants" },
     { "View", "Show Manage Participants" }
 }, { isToggleable = true })
-ZoomUs.showOrCloseChat = Application.createMenuItemEvent({
+ZoomUs.showOrCloseChat = Application:createMenuItemAction({
     { "View", "Close Chat" },
     { "View", "Show Chat" }
 }, { isToggleable = true })
 -- Edit menu bar actions
-ZoomUs.selectAll = Application.createMenuItemEvent({ "Edit", "Select All" })
-ZoomUs.copy = Application.createMenuItemEvent({ "Edit", "Copy" })
-ZoomUs.find = Application.createMenuItemEvent({ "Edit", "Find" })
-ZoomUs.jumpToChat = Application.createMenuItemEvent({ "Edit", "Jump to Chat" })
-ZoomUs.screenshot = Application.createMenuItemEvent({ "Edit", "Screenshot" })
-ZoomUs.paste = Application.createMenuItemEvent({ "Edit", "Paste" })
-ZoomUs.cut = Application.createMenuItemEvent({ "Edit", "Cut" })
-ZoomUs.undo = Application.createMenuItemEvent({ "Edit", "Undo" })
-ZoomUs.redo = Application.createMenuItemEvent({ "Edit", "Redo" })
-ZoomUs.pasteAndMatchStyle = Application.createMenuItemEvent({ "Edit", "Paste and Match Style" })
-ZoomUs.delete = Application.createMenuItemEvent({ "Edit", "Delete" })
-ZoomUs.emojiSymbols = Application.createMenuItemEvent({ "Edit", "Emoji & Symbols" })
-ZoomUs.startDictation = Application.createMenuItemEvent({ "Edit", "Start Dictation…" })
+ZoomUs.selectAll = Application:createMenuItemAction({ "Edit", "Select All" })
+ZoomUs.copy = Application:createMenuItemAction({ "Edit", "Copy" })
+ZoomUs.find = Application:createMenuItemAction({ "Edit", "Find" })
+ZoomUs.jumpToChat = Application:createMenuItemAction({ "Edit", "Jump to Chat" })
+ZoomUs.screenshot = Application:createMenuItemAction({ "Edit", "Screenshot" })
+ZoomUs.paste = Application:createMenuItemAction({ "Edit", "Paste" })
+ZoomUs.cut = Application:createMenuItemAction({ "Edit", "Cut" })
+ZoomUs.undo = Application:createMenuItemAction({ "Edit", "Undo" })
+ZoomUs.redo = Application:createMenuItemAction({ "Edit", "Redo" })
+ZoomUs.pasteAndMatchStyle = Application:createMenuItemAction({ "Edit", "Paste and Match Style" })
+ZoomUs.delete = Application:createMenuItemAction({ "Edit", "Delete" })
+ZoomUs.emojiSymbols = Application:createMenuItemAction({ "Edit", "Emoji & Symbols" })
+ZoomUs.startDictation = Application:createMenuItemAction({ "Edit", "Start Dictation…" })
 -- Window menu bar actions
-ZoomUs.moveFocusToNextWindow = Application.createMenuItemEvent({ "Window", "Move Focus to Next Window" })
-ZoomUs.togglePortraitLandscape = Application.createMenuItemEvent({ "Window", "Toggle Portrait/Landscape" })
-ZoomUs.minimize = Application.createMenuItemEvent({ "Window", "Minimize" })
-ZoomUs.close = Application.createMenuItemEvent({ "Window", "Close" })
-ZoomUs.minimizeAll = Application.createMenuItemEvent({ "Window", "Minimize All" })
-ZoomUs.closeAll = Application.createMenuItemEvent({ "Window", "Close All" })
-ZoomUs.alwaysShowMeetingControls = Application.createMenuItemEvent({ "Window", "Always Show Meeting Controls" })
-ZoomUs.switchToNextTab = Application.createMenuItemEvent({ "Window", "Switch to Next Tab" })
-ZoomUs.closeCurrentChatSession = Application.createMenuItemEvent({ "Window", "Close Current Chat Session" })
-ZoomUs.arrangeInFront = Application.createMenuItemEvent({ "Window", "Arrange in Front" })
-ZoomUs.bringAllToFront = Application.createMenuItemEvent({ "Window", "Bring All to Front" })
-ZoomUs.moveWindowToLeftSideOfScreen = Application.createMenuItemEvent({
+ZoomUs.moveFocusToNextWindow = Application:createMenuItemAction({ "Window", "Move Focus to Next Window" })
+ZoomUs.togglePortraitLandscape = Application:createMenuItemAction({ "Window", "Toggle Portrait/Landscape" })
+ZoomUs.minimize = Application:createMenuItemAction({ "Window", "Minimize" })
+ZoomUs.close = Application:createMenuItemAction({ "Window", "Close" })
+ZoomUs.minimizeAll = Application:createMenuItemAction({ "Window", "Minimize All" })
+ZoomUs.closeAll = Application:createMenuItemAction({ "Window", "Close All" })
+ZoomUs.alwaysShowMeetingControls = Application:createMenuItemAction({ "Window", "Always Show Meeting Controls" })
+ZoomUs.switchToNextTab = Application:createMenuItemAction({ "Window", "Switch to Next Tab" })
+ZoomUs.closeCurrentChatSession = Application:createMenuItemAction({ "Window", "Close Current Chat Session" })
+ZoomUs.arrangeInFront = Application:createMenuItemAction({ "Window", "Arrange in Front" })
+ZoomUs.bringAllToFront = Application:createMenuItemAction({ "Window", "Bring All to Front" })
+ZoomUs.moveWindowToLeftSideOfScreen = Application:createMenuItemAction({
     "Window",
     "Move Window to Left Side of Screen"
 })
-ZoomUs.moveWindowToRightSideOfScreen = Application.createMenuItemEvent({
+ZoomUs.moveWindowToRightSideOfScreen = Application:createMenuItemAction({
     "Window",
     "Move Window to Right Side of Screen"
 })
-ZoomUs.zoomAll = Application.createMenuItemEvent({ "Window", "Zoom All" })
-ZoomUs.zoom = Application.createMenuItemEvent({ "Window", "Zoom" })
+ZoomUs.zoomAll = Application:createMenuItemAction({ "Window", "Zoom All" })
+ZoomUs.zoom = Application:createMenuItemAction({ "Window", "Zoom" })
 -- Help menu bar actions
-ZoomUs.helpCenter = Application.createMenuItemEvent({ "Help", "Help Center" })
-ZoomUs.reportProblem = Application.createMenuItemEvent({ "Help", "Report Problem..." })
+ZoomUs.helpCenter = Application:createMenuItemAction({ "Help", "Help Center" })
+ZoomUs.reportProblem = Application:createMenuItemAction({ "Help", "Report Problem..." })
 
 ZoomUs:registerShortcuts({
     -- zoom.us

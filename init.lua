@@ -19,35 +19,10 @@ hs.window.animationDuration = 0
 --
 hs.loadSpoon("Ki")
 
--- Use default config
-spoon.Ki:useDefaultConfig()
+local Ki = spoon.Ki
 
--- Remap Website Mode transition shortcuts
-spoon.Ki:remapShortcuts({
-    -- NORMAL --
-    {
-        mode = "normal",
-        name = "Enter Website Mode",
-        shortcut = { {"cmd"}, "u" },
-    },
-    -- ENTITY --
-    {
-        mode = "entity",
-        name = "Enter Website Mode",
-        shortcut = { {"cmd"}, "u" },
-    },
-    {
-        mode = "entity",
-        name = "App Store",
-        shortcut = { { "cmd" }, "a" },
-    },
-    -- SELECT --
-    {
-        mode = "select",
-        name = "Enter Website Mode",
-        shortcut = { {"cmd"}, "u" },
-    },
-})
+-- Use default config
+Ki:useDefaultConfig()
 
 -- Configure ki
 require("ki-config")
@@ -59,4 +34,4 @@ if err and not err:find("module '.*' not found") then
 end
 
 -- Start Ki
-spoon.Ki:start()
+Ki:start()

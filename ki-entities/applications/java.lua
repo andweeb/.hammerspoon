@@ -78,7 +78,7 @@ function Java.about(_, choice)
 
     if #apps > 0 then
         local name = app:name() or Java:getName(app)
-        return Java.createMenuItemEvent("About "..name)(app)
+        return Java:createMenuItemAction("About "..name)(app)
     end
 end
 

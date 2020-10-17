@@ -5,18 +5,18 @@ local Application = spoon.Ki.Application
 local LINE = Application:new("LINE")
 
 -- View actions
-LINE.chats = Application.createMenuItemEvent({ "View", "Chats" })
-LINE.friends = Application.createMenuItemEvent({ "View", "Friends" })
-LINE.myProfile = Application.createMenuItemEvent({ "View", "My profile" })
+LINE.chats = Application:createMenuItemAction({ "View", "Chats" })
+LINE.friends = Application:createMenuItemAction({ "View", "Friends" })
+LINE.myProfile = Application:createMenuItemAction({ "View", "My profile" })
 -- Friends actions
-LINE.addFriends = Application.createMenuItemEvent({ "Friends", "Add friends" })
-LINE.createAGroup = Application.createMenuItemEvent({ "Friends", "Create a group" })
+LINE.addFriends = Application:createMenuItemAction({ "Friends", "Add friends" })
+LINE.createAGroup = Application:createMenuItemAction({ "Friends", "Create a group" })
 -- Windows actions
-LINE.maximize = Application.createMenuItemEvent({ "Windows", "Maximize" })
-LINE.minimize = Application.createMenuItemEvent({ "Windows", "Minimize" })
-LINE.moveAllToTop = Application.createMenuItemEvent({ "Windows", "Move all to top" })
+LINE.maximize = Application:createMenuItemAction({ "Windows", "Maximize" })
+LINE.minimize = Application:createMenuItemAction({ "Windows", "Minimize" })
+LINE.moveAllToTop = Application:createMenuItemAction({ "Windows", "Move all to top" })
 -- Help actions
-LINE.help = Application.createMenuItemEvent({ "Help", "LINE Help" })
+LINE.help = Application:createMenuItemAction({ "Help", "LINE Help" })
 
 LINE:registerShortcuts({
     -- View

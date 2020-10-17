@@ -2,6 +2,7 @@
 -- Mouse Mode
 --
 local Ki = spoon.Ki
+local Mode = Ki.Mode
 
 local PIXEL_OFFSET = 1
 local INDICATOR = {
@@ -143,9 +144,8 @@ for i = 0, 9 do
     table.insert(shortcuts, { nil, tostring(i), action, description })
 end
 
-Ki:Mode {
+Mode {
     name = "mouse",
-    actions = Ki.getLocalVariables("function"),
     shortcut = { { "cmd" }, "m" },
     shortcuts = shortcuts,
 }
