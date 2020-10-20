@@ -1,5 +1,6 @@
 local Ki = spoon.Ki
-local Website = spoon.Ki.Website
+local Website = Ki.Website
+local Action = Website.Action
 local Safari = Ki.defaultEntities.entity.Safari
 local AsyncSearchMixin = require("ki-entities/async-search")
 local COREDATA_EPOCH_OFFSET = 978307200
@@ -35,8 +36,8 @@ function Safari.createSearchHistorySQL(query)
     ]=]
 end
 
-function Safari:searchBrowserHistory()
-    local historyDB = hs.sqlite3.open(self.historySQLitePath)
+local function searchBrowserHistory()
+    local historyDB = hs.sqlite3.open(Safari.historySQLitePath)
 
     local choices = {}
     local function updateChoices()
@@ -47,7 +48,7 @@ function Safari:searchBrowserHistory()
 
     -- Create search input handler
     local function onInput(query)
-        local sql = self.createSearchHistorySQL(query)
+        local sql = Safari.createSearchHistorySQL(query)
 
         choices = {}
         time = os.time()
@@ -73,8 +74,8 @@ function Safari:searchBrowserHistory()
             return 0
         end, time)
 
-        self:loadChooserRowImages(choices, false)
-        self.chooser:refreshChoicesCallback()
+        Safari:loadChooserRowImages(choices, false)
+        Safari.chooser:refreshChoicesCallback()
     end
 
     -- Create item selection handler
@@ -85,13 +86,20 @@ function Safari:searchBrowserHistory()
     end
 
     -- Start API search interface
-    self:asyncSearch(updateChoices, onInput, onSelection, {
+    Safari:asyncSearch(updateChoices, onInput, onSelection, {
         placeholderText = "Search Safari history"
     })
 
     onInput("")
 end
 
+local SearchBrowserHistory = Action {
+    action = searchBrowserHistory,
+    options = {
+        openBefore = false,
+    },
+}
+
 Safari:registerShortcuts({
-    { nil, "s", function() Safari:searchBrowserHistory() end, "Search Browser History" }
+    { nil, "s", SearchBrowserHistory, "Search Browser History" }
 })
