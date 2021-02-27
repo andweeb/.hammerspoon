@@ -101,7 +101,6 @@ local BedroomLIFX = LIFX {
 -- Create custom application entities
 local entities = {
     -- Initialize basic application entities inline
-    ["1Password"]      = Application "1Password 7",
     Alacritty          = Application "Alacritty",
     BlueJeans          = Application "BlueJeans",
     Discord            = Application "Discord",
@@ -115,6 +114,7 @@ local entities = {
     VisualStudioCode   = Application "Visual Studio Code",
 
     -- Require externally defined application entities
+    ["1Password"]      = requireEntity("application", "1password"),
     Fantastical        = requireEntity("application", "fantastical"),
     IINA               = requireEntity("application", "iina"),
     Hammerspoon        = requireEntity("application", "hammerspoon"),
