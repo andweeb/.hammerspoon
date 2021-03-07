@@ -3,6 +3,8 @@
 --
 local Ki = spoon.Ki
 local Mode = Ki.Mode
+local Action = Ki.Action
+local Passthrough = Action.Passthrough
 
 local PIXEL_OFFSET = 1
 local INDICATOR = {
@@ -18,7 +20,7 @@ local INDICATOR = {
 -- Flash an indicator to highlight the mouse location
 local function flashIndicator()
     local size = INDICATOR.SIZE
-    local mousePosition = hs.mouse.getAbsolutePosition()
+    local mousePosition = hs.mouse.absolutePosition()
     local canvasDimensions = {
         w = size,
         h = size,
@@ -35,7 +37,7 @@ end
 -- Create mouse click events
 local function clickEvent(clickMethod)
     return function()
-        local position = hs.mouse.getAbsolutePosition()
+        local position = hs.mouse.absolutePosition()
         hs.eventtap[clickMethod](position)
     end
 end
@@ -113,6 +115,7 @@ local shortcuts = {
     { { "shift" }, "h", moveMouseHigh, "Move Mouse to Top of Screen" },
     { { "shift" }, "m", moveMouseMiddle, "Move Mouse to Middle of Screen" },
     { { "shift" }, "l", moveMouseLow, "Move Mouse to Bottom of Screen" },
+    { { "alt", "cmd" }, "8", Passthrough "Toggle Zoom" },
 }
 
 -- Dynamically create 0-9 shortcuts to move mouse to numbered "columns" of the screen
