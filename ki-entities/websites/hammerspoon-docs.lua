@@ -3,12 +3,16 @@
 --
 local Ki = spoon.Ki
 local Website = Ki.Website
-local HammerspoonDocs = Website {
+local url = "http://www.hammerspoon.org/docs/index.html"
+
+return Website {
     name = "Hammerspoon Docs",
-    url = "http://www.hammerspoon.org/docs/index.html",
+    url = url,
     links = {
-        { name = "Getting Started", link = "http://www.hammerspoon.org/go/" },
+        { name = " #hammerspoon", link = "irc://chat.freenode.net/#hammerspoon" },
+        { name = "Getting Started", link = "https://www.hammerspoon.org/go/" },
         { name = "GitHub - Hammerspoon/hammerspoon: Staggeringly powerful macOS desktop automation with Lua", link = "https://github.com/Hammerspoon/hammerspoon" },
+        { name = "Google Groups #!forum/hammerspoon/", link = "https://groups.google.com/forum/#!forum/hammerspoon/" },
         { name = "Hammerspoon docs: hs", link = "http://www.hammerspoon.org/docs/hs.html" },
         { name = "Hammerspoon docs: hs.alert", link = "http://www.hammerspoon.org/docs/hs.alert.html" },
         { name = "Hammerspoon docs: hs.appfinder", link = "http://www.hammerspoon.org/docs/hs.appfinder.html" },
@@ -18,6 +22,9 @@ local HammerspoonDocs = Website {
         { name = "Hammerspoon docs: hs.audiodevice", link = "http://www.hammerspoon.org/docs/hs.audiodevice.html" },
         { name = "Hammerspoon docs: hs.audiodevice.datasource", link = "http://www.hammerspoon.org/docs/hs.audiodevice.datasource.html" },
         { name = "Hammerspoon docs: hs.audiodevice.watcher", link = "http://www.hammerspoon.org/docs/hs.audiodevice.watcher.html" },
+        { name = "Hammerspoon docs: hs.axuielement", link = "http://www.hammerspoon.org/docs/hs.axuielement.html" },
+        { name = "Hammerspoon docs: hs.axuielement.axtextmarker", link = "http://www.hammerspoon.org/docs/hs.axuielement.axtextmarker.html" },
+        { name = "Hammerspoon docs: hs.axuielement.observer", link = "http://www.hammerspoon.org/docs/hs.axuielement.observer.html" },
         { name = "Hammerspoon docs: hs.base64", link = "http://www.hammerspoon.org/docs/hs.base64.html" },
         { name = "Hammerspoon docs: hs.battery", link = "http://www.hammerspoon.org/docs/hs.battery.html" },
         { name = "Hammerspoon docs: hs.battery.watcher", link = "http://www.hammerspoon.org/docs/hs.battery.watcher.html" },
@@ -93,11 +100,13 @@ local HammerspoonDocs = Website {
         { name = "Hammerspoon docs: hs.notify", link = "http://www.hammerspoon.org/docs/hs.notify.html" },
         { name = "Hammerspoon docs: hs.osascript", link = "http://www.hammerspoon.org/docs/hs.osascript.html" },
         { name = "Hammerspoon docs: hs.pasteboard", link = "http://www.hammerspoon.org/docs/hs.pasteboard.html" },
+        { name = "Hammerspoon docs: hs.pasteboard.watcher", link = "http://www.hammerspoon.org/docs/hs.pasteboard.watcher.html" },
         { name = "Hammerspoon docs: hs.pathwatcher", link = "http://www.hammerspoon.org/docs/hs.pathwatcher.html" },
         { name = "Hammerspoon docs: hs.plist", link = "http://www.hammerspoon.org/docs/hs.plist.html" },
         { name = "Hammerspoon docs: hs.redshift", link = "http://www.hammerspoon.org/docs/hs.redshift.html" },
         { name = "Hammerspoon docs: hs.screen", link = "http://www.hammerspoon.org/docs/hs.screen.html" },
         { name = "Hammerspoon docs: hs.screen.watcher", link = "http://www.hammerspoon.org/docs/hs.screen.watcher.html" },
+        { name = "Hammerspoon docs: hs.serial", link = "http://www.hammerspoon.org/docs/hs.serial.html" },
         { name = "Hammerspoon docs: hs.settings", link = "http://www.hammerspoon.org/docs/hs.settings.html" },
         { name = "Hammerspoon docs: hs.sharing", link = "http://www.hammerspoon.org/docs/hs.sharing.html" },
         { name = "Hammerspoon docs: hs.socket", link = "http://www.hammerspoon.org/docs/hs.socket.html" },
@@ -127,6 +136,7 @@ local HammerspoonDocs = Website {
         { name = "Hammerspoon docs: hs.utf8", link = "http://www.hammerspoon.org/docs/hs.utf8.html" },
         { name = "Hammerspoon docs: hs.vox", link = "http://www.hammerspoon.org/docs/hs.vox.html" },
         { name = "Hammerspoon docs: hs.watchable", link = "http://www.hammerspoon.org/docs/hs.watchable.html" },
+        { name = "Hammerspoon docs: hs.websocket", link = "http://www.hammerspoon.org/docs/hs.websocket.html" },
         { name = "Hammerspoon docs: hs.webview", link = "http://www.hammerspoon.org/docs/hs.webview.html" },
         { name = "Hammerspoon docs: hs.webview.datastore", link = "http://www.hammerspoon.org/docs/hs.webview.datastore.html" },
         { name = "Hammerspoon docs: hs.webview.toolbar", link = "http://www.hammerspoon.org/docs/hs.webview.toolbar.html" },
@@ -139,10 +149,9 @@ local HammerspoonDocs = Website {
         { name = "Hammerspoon docs: hs.window.layout", link = "http://www.hammerspoon.org/docs/hs.window.layout.html" },
         { name = "Hammerspoon docs: hs.window.switcher", link = "http://www.hammerspoon.org/docs/hs.window.switcher.html" },
         { name = "Hammerspoon docs: hs.window.tiling", link = "http://www.hammerspoon.org/docs/hs.window.tiling.html" },
-        { name = "Hammerspoon Spoons Docs", link = "http://www.hammerspoon.org/Spoons" },
+        { name = "Hammerspoon Spoons Docs", link = "https://www.hammerspoon.org/Spoons" },
+        { name = "Hammerspoon", link = "https://www.hammerspoon.org/" },
         { name = "hammerspoon/SPOONS.md at master · Hammerspoon/hammerspoon · GitHub", link = "https://github.com/Hammerspoon/hammerspoon/blob/master/SPOONS.md" },
-        { name = "Skin.h", link = "http://www.hammerspoon.org/docs/LuaSkin/" }
+        { name = "Skin.h", link = "https://www.hammerspoon.org/docs/LuaSkin/" }
     },
 }
-
-return HammerspoonDocs
