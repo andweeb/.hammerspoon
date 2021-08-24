@@ -21,21 +21,25 @@ end
 
 -- Asynchronously read plist file as json
 function TablePlus:readPlist(name, callback)
-    local json = nil
+    local json = ""
     local filename = self.absoluteDataPath.."/"..name..".plist"
     local arguments = { "-convert", "json", "-o", "-", filename }
 
-    local taskDoneCallback = function() if json then callback(json) end end
-    local streamingCallback = function(_, stdout)
-        local success, data = pcall(function() return hs.json.decode(stdout) end)
+    local taskDoneCallback = function()
+        local success, data = pcall(function() return hs.json.decode(json) end)
 
         if not success or not data then
-            self.notifyError("Unable to initialize TablePlus "..name)
-        else
-            json = data
+            return self.notifyError("Unable to initialize TablePlus "..name, "")
         end
 
-        return false
+        callback(data)
+    end
+    local streamingCallback = function(_, stdout)
+        if stdout then
+            json = json..stdout
+        end
+
+        return true
     end
 
     hs.task
