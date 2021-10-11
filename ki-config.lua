@@ -135,7 +135,7 @@ local entities = {
     VLC                = requireEntity("application", "vlc"),
     Zoom               = requireEntity("application", "zoom"),
 
-    -- Require other (non-entity) entities
+    -- Require other (non-application) entities
     BedroomLIFX        = BedroomLIFX,
     ClipboardText      = requireEntity("entity", "clipboard-text"),
     EmojiPicker        = requireEntity("entity", "emoji-picker"),
@@ -144,6 +144,7 @@ local entities = {
     KaomojiPicker      = requireEntity("entity", "kaomoji-picker"),
     Keyboard           = requireEntity("entity", "keyboard"),
     NotificationCenter = requireEntity("entity", "notification-center"),
+    SmartPlug          = requireEntity("entity", "smart-plug"),
     Soundboard         = requireEntity("entity", "soundboard"),
 
     -- Add default Ki application entities that are to be remapped
@@ -172,9 +173,12 @@ Mode {
         { nil                , "k" , entities.Keyboard           },
         { nil                , "l" , entities.BedroomLIFX        },
         { nil                , "o" , entities.Obsidian           },
-        { nil                , "w" , entities.MicrosoftWord      },
         { nil                , "v" , entities.VMWareFusion       },
+        { nil                , "w" , entities.MicrosoftWord      },
         { nil                , "z" , entities.Zoom               },
+        { { "alt" }          , "p" , entities.SmartPlug          },
+        { { "alt", "cmd" }   , "p" , entities.Plex               },
+        { { "alt", "cmd" }   , "s" , entities.Steam              },
         { { "cmd" }          , "c" , entities.ClipboardText      },
         { { "cmd" }          , "e" , entities.EmojiPicker        },
         { { "cmd" }          , "g" , entities.GlyphPicker        },
@@ -185,16 +189,14 @@ Mode {
         { { "ctrl" }         , "s" , entities.ScriptEditor       },
         { { "shift" }        , "d" , entities.Discord            },
         { { "shift" }        , "f" , entities.Firefox            },
-        { { "shift" }        , "i" , entities.IINA               },
         { { "shift" }        , "g" , entities.Gitter             },
         { { "shift" }        , "h" , entities.Hammerspoon        },
+        { { "shift" }        , "i" , entities.IINA               },
         { { "shift" }        , "l" , entities.LINE               },
         { { "shift" }        , "m" , entities.Messenger          },
         { { "shift" }        , "p" , entities.TablePlus          },
         { { "shift" }        , "t" , entities.iTerm              },
         { { "shift" }        , "v" , entities.VLC                },
-        { { "alt", "cmd" }   , "p" , entities.Plex               },
-        { { "alt", "cmd" }   , "s" , entities.Steam              },
         { { "shift", "cmd" } , "f" , entities.FaceTime           },
         { { "shift", "cmd" } , "l" , entities.LimeChat           },
         { { "shift", "cmd" } , "m" , entities.MicrosoftOutlook   },

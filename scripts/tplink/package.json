@@ -1,0 +1,18 @@
+{
+  "name": "tplink",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "pkg index.js -t node14-macos-x64 -o tplink"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tplink-smarthome-api": "^3.3.0"
+  },
+  "devDependencies": {
+    "pkg": "^5.3.3"
+  }
+}
