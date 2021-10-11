@@ -10,6 +10,7 @@ local usCities = require("lib/us-cities")
 -- Initialize website instance with search mixins
 Yelp.class:include(AsyncSearchMixin)
 Yelp.class:include(URLSearchMixin)
+Yelp:initURLSearch("search", "find_desc")
 
 -- Attach GraphQL Client instance initialized with auth header
 local apiToken = GraphQLClient.getEnvironmentVariable("YELP_TOKEN")
@@ -23,7 +24,10 @@ Yelp.defaultCurrentLocation = "Orange County, CA"
 -- URL search using location query parameters
 function Yelp:advancedURLSearch(query, location)
     local searchURL = self.url.."/search?find_desc="..query
+
+    location = location or self.defaultCurrentLocation
     searchURL = searchURL.."&find_loc="..location
+
     self.open(searchURL)
 end
 
@@ -143,7 +147,7 @@ function Yelp:searchBusinesses(location)
             variables.latitude = location.latitude
             variables.longitude = location.longitude
         else
-            variables.location = location.location
+            variables.location = location
         end
 
         -- Query the GraphQL API
@@ -178,12 +182,23 @@ end
 function Yelp:openGoogleMaps(chooser)
     local selectedRow = chooser:selectedRow()
     local choice = chooser:selectedRowContents(selectedRow)
+
+    chooser:cancel()
+
     local query = choice.businessName.." "..choice.address
     self.open("https://www.google.com/maps/search/"..hs.http.encodeForQuery(query))
 end
 
+function Yelp:copyAddress(chooser)
+    local selectedRow = chooser:selectedRow()
+    local choice = chooser:selectedRowContents(selectedRow)
+    hs.pasteboard.setContents(choice.address)
+    self.notifyError("Copied business address to clipboard", choice.address)
+end
+
 Yelp:registerChooserShortcuts({
     { { "cmd" }, "d", function(...) Yelp:openGoogleMaps(...) end },
+    { { "cmd", "shift" }, "c", function(...) Yelp:copyAddress(...) end },
 })
 
 Yelp:registerShortcuts({
