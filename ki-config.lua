@@ -74,6 +74,7 @@ local websites = {
     HammerspoonDocs   = requireEntity("website", "hammerspoon-docs"),
     LearnXInYMinutes  = requireEntity("website", "learnxinyminutes"),
     MapleLegends      = requireEntity("website", "maplelegends"),
+    MyAnimeList       = requireEntity("website", "myanimelist"),
     Netflix           = requireEntity("website", "netflix"),
     NPM               = requireEntity("website", "npm"),
     NPR               = requireEntity("website", "npr"),
@@ -257,6 +258,7 @@ Mode {
         { { "shift" }        , "t" , websites.TempMail          },
         { { "shift" }        , "y" , websites.Yelp              },
         { { "shift" }        , "z" , websites.ZeroTier          },
+        { { "shift", "cmd" } , "a" , websites.MyAnimeList       },
         { { "shift", "cmd" } , "h" , websites.HammerspoonDocs   },
         { { "shift", "cmd" } , "n" , websites.NPR               },
     },
@@ -308,6 +310,7 @@ Mode {
         { { "shift" }        , "n" , websites.NPM           },
         { { "shift" }        , "y" , websites.Yelp          },
         { { "shift" }        , "z" , websites.ZeroTier      },
+        { { "shift", "cmd" } , "a" , websites.MyAnimeList   },
         { { "shift", "cmd" } , "n" , websites.NPR           },
     },
 }
