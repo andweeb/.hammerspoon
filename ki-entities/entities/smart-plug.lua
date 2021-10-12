@@ -33,6 +33,6 @@ end
 return Entity {
     name = "Smart Plug",
     shortcuts = {
-        { nil, nil, createPlugAction("Toggle Power", "OSMC", "togglePowerState") },
+        { nil, "space", createPlugAction("Toggle Power", "OSMC", "togglePowerState") },
     },
 }
