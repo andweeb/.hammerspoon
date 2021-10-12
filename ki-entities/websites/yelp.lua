@@ -35,6 +35,34 @@ end
 table.insert(Yelp.links, { name = "Yelp Developers Page", link = "/developers" })
 table.insert(Yelp.links, { name = "Yelp GraphQL API Console", link = "/developers/graphiql" })
 
+-- JavaScript to retrieve profile page links:
+--
+-- copy(
+--     Array.from(document.querySelectorAll(".titled-nav_link"))
+--         .map((node) => `{ name = "${node.innerText.trim()}", link = "${node.href}" },`)
+--         .join("\n")
+-- );
+local links = {
+    { name = "Profile Overview", link = "https://www.yelp.com/user_details" },
+    { name = "Friends", link = "https://www.yelp.com/user_details_friends" },
+    { name = "Reviews", link = "https://www.yelp.com/user_details_reviews_self" },
+    { name = "Review Drafts", link = "https://www.yelp.com/user_details_review_drafts" },
+    { name = "Business Photos", link = "https://www.yelp.com/user_local_photos" },
+    { name = "Compliments", link = "https://www.yelp.com/user_details_thanx" },
+    { name = "Tips", link = "https://www.yelp.com/user_details_quicktips" },
+    { name = "Bookmarks", link = "https://www.yelp.com/user_details_bookmarks" },
+    { name = "Collections", link = "https://www.yelp.com/collections/user" },
+    { name = "Check-Ins", link = "https://www.yelp.com/user_details_checkins" },
+    { name = "Events", link = "https://www.yelp.com/user_details_events" },
+    { name = "Reservations", link = "https://www.yelp.com/user_details_reservations" },
+    { name = "Order History", link = "https://www.yelp.com/user_details_purchases" },
+    { name = "Following", link = "https://www.yelp.com/user_details_following" },
+    { name = "Followers", link = "https://www.yelp.com/user_details_followers" },
+}
+for i = 1, #links do
+    table.insert(Yelp.links, links[i])
+end
+
 -- Convert military time to standard time
 function Yelp.militaryToStandardTime(time)
     local mHour = time:sub(1, -3)
