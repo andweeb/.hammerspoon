@@ -1,4 +1,3 @@
-const os = require( 'os' );
 const { Client } = require('tplink-smarthome-api');
 const client = new Client();
 

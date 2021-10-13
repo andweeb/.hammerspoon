@@ -145,7 +145,7 @@ local entities = {
     KaomojiPicker      = requireEntity("entity", "kaomoji-picker"),
     Keyboard           = requireEntity("entity", "keyboard"),
     NotificationCenter = requireEntity("entity", "notification-center"),
-    SmartPlug          = requireEntity("entity", "smart-plug"),
+    SmartPlug          = requireEntity("entity", "tplink-smart-plug"),
     Soundboard         = requireEntity("entity", "soundboard"),
 
     -- Add default Ki application entities that are to be remapped
