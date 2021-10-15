@@ -1,8 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- Clipboard text entity
+-- Clipboard Text entity
 --
 local Ki = spoon.Ki
 local Entity = Ki.Entity
+local Action = Ki.Action
 
 -- General text transform functions
 local function capitalize(text) return text:gsub('^%l', string.upper) end
@@ -10,65 +11,86 @@ local function camelCase(text) return text:gsub('%W+(%w+)', capitalize) end
 local function kebabCase(text) return text:gsub('%W+', '-') end
 local function snakeCase(text) return text:gsub('%W+', '_') end
 local function normalCase(text) return text:gsub('%W+', ' ') end
-
--- Helper method for notifying on completion of clipboard text events
+local function formatJSON(text)
+    return hs.json.encode(hs.json.decode(text), true)
+end
+local function capitalizeWords(text)
+    return (" "..text:lower()):gsub("%W%l", string.upper):sub(2)
+end
 local function notify(message, details)
     details = details or ""
-    return hs.notify.show("Ki - Clipboard Text Entity", message, details)
+    return hs.notify.show("Clipboard Text", message, details)
 end
 
--- Helper method to create events that transform text that exists in the clipboard
-local function transformText(message, transformFn)
-    return function()
-        local clipboardText = hs.pasteboard.getContents()
+-- Action that transforms clipboard text
+local function TransformTextAction(options)
+    local name, transformFn = table.unpack(options)
 
-        local convertedText, errorMessage = transformFn(clipboardText)
-        if not convertedText then
-            notify("Unable to transform text in clipboard", errorMessage)
-            return
-        end
+    return Action {
+        name = name,
+        action = function()
+            local clipboardText = hs.pasteboard.getContents()
 
-        local success = hs.pasteboard.setContents(convertedText)
-        if not success then
-            notify("Unable to set contents to clipboard:", convertedText)
-            return
-        end
+            local convertedText, errorMessage = transformFn(clipboardText)
+            if not convertedText then
+                notify("Unable to transform text in clipboard", errorMessage)
+                return
+            end
 
-        notify(message..":", convertedText)
-    end
+            local success = hs.pasteboard.setContents(convertedText)
+            if not success then
+                notify("Unable to set contents to clipboard:", convertedText)
+                return
+            end
+
+            notify(name, convertedText)
+        end,
+    }
 end
 
--- Various clipboard text transformation events
-local encodeBase64 = transformText("Encoded text in base64", hs.base64.encode)
-local decodeBase64 = transformText("Decoded text in base64", hs.base64.decode)
-local lowercase = transformText("Lowercased text", string.lower)
-local uppercase = transformText("Uppercased text", string.upper)
-local normalcase = transformText("Converted text to normal case", normalCase)
-local camelcase = transformText("Converted text to camel case", camelCase)
-local kebabcase = transformText("Converted text to kebab case", kebabCase)
-local snakecase = transformText("Converted text to snake case", snakeCase)
-local formatJSON = transformText("Formatted JSON text", function(text)
-    return hs.json.encode(hs.json.decode(text), true)
-end)
-local capitalizeWords = transformText("Capitalized words in text", function(text)
-    return (" "..text:lower()):gsub("%W%l", string.upper):sub(2)
-end)
+-- Format XML with four-space indentation
+local function formatXML()
+    hs.execute("pbpaste | XMLLINT_INDENT='    ' xmllint --format - | pbcopy")
+    notify("Formatted XML text in clipboard")
+end
 
--- Use minified sql-formatter package
-local sqlFormatterPath = hs.fs.pathToAbsolute("~/.hammerspoon/scripts/sql-formatter.min.js")
-local sqlFormatterFile = assert(io.open(sqlFormatterPath, "rb"))
-local sqlFormatterScript = sqlFormatterFile:read("*all")
-sqlFormatterFile:close()
+-- Determine sqlformat script path
+local parentPathRegex = "^(.+)/.+$"
+local spoonPath = hs.spoons.scriptPath()
+local root = spoonPath:match(parentPathRegex):match(parentPathRegex)
+local scriptPath = root.."/scripts/sqlformat/sqlformat"
 
 -- Create sql format text transform event
-local formatSQL = transformText("Formatted SQL", function(text)
-    -- The method call needs to be invoked in javascript due to osascript limitations
-    local sqlFormatter = sqlFormatterScript..[[
-        sqlFormatter.format(`]]..text:gsub("%`", "\\`")..[[`, { indent: '    ' })
-    ]]
-    local _, formattedSQL, descriptor = hs.osascript.javascript(sqlFormatter)
-    return formattedSQL, type(descriptor) == "table" and descriptor.NSLocalizedDescription or ""
-end)
+local FormatSQL = Action {
+    name = "Format SQL",
+    action = function()
+        local formattedSQL = ""
+        local clipboardText = hs.pasteboard.getContents()
+
+        local function callbackFn(exitCode, _, stderr)
+            if exitCode ~= 0 then
+                notify("Unable to format SQL", stderr)
+                return
+            end
+
+            local success = hs.pasteboard.setContents(formattedSQL)
+            if not success then
+                notify("Unable to set contents to clipboard:", formattedSQL)
+                return
+            end
+
+            notify("Format SQL", formattedSQL)
+        end
+
+        local function streamCallbackFn(_, stdout)
+            formattedSQL = formattedSQL..stdout
+            return true
+        end
+
+        hs.task.new(scriptPath, callbackFn, streamCallbackFn, { clipboardText }):start()
+
+    end,
+}
 
 -- Convert Rich Text Format (RTF) to plain text
 local function convertRtfToPlainText()
@@ -81,38 +103,35 @@ local function convertRtfToPlainText()
     notify("Clipboard RTF text converted to plain text:", text)
 end
 
--- Format XML with four-space indentation
-local function formatXML()
-    hs.execute("pbpaste | XMLLINT_INDENT='    ' xmllint --format - | pbcopy")
-    notify("Formatted XML text in clipboard")
-end
-
 -- Open a URL copied in the clipboard
-local function openURL()
-    local text = hs.pasteboard.getContents()
-    local success = hs.urlevent.openURL(text)
+local OpenURL = Action {
+    name = "Open Copied URL",
+    action = function()
+        local text = hs.pasteboard.getContents()
+        local success = hs.urlevent.openURL(text)
 
-    if not success then
-        notify("Unable to open URL in clipboard:", text)
+        if not success then
+            notify("Unable to open URL in clipboard:", text)
+        end
     end
-end
+}
 
 return Entity {
     name = "Clipboard Text",
     shortcuts = {
-        { nil, "c", capitalizeWords, "Capitalize Words in Text" },
-        { nil, "d", decodeBase64, "Decode Base64" },
-        { nil, "e", encodeBase64, "Encode Base64" },
-        { nil, "j", formatJSON, "Format JSON" },
-        { nil, "k", kebabcase, "Convert Text to Kebabcase" },
-        { nil, "l", lowercase, "Convert Text to Lowercase" },
-        { nil, "n", normalcase, "Convert Text to Normal" },
-        { nil, "r", convertRtfToPlainText, "Convert RTF Text to Plain Text" },
-        { nil, "s", formatSQL, "Format SQL" },
-        { nil, "u", uppercase, "Convert Text to Uppercase" },
-        { nil, "x", formatXML, "Format XML" },
-        { nil, "space", openURL, "Open Copied URL" },
-        { { "shift" }, "c", camelcase, "Convert Text to Camelcase" },
-        { { "shift" }, "s", snakecase, "Convert Text to Snakecase" },
+        { nil, "space", OpenURL },
+        { nil, "c", TransformTextAction { "Capitalize Words in Text", capitalizeWords } },
+        { nil, "d", TransformTextAction { "Decode Base64", hs.base64.decode } },
+        { nil, "e", TransformTextAction { "Encode Base64", hs.base64.encode } },
+        { nil, "j", TransformTextAction { "Encode Base64", formatJSON } },
+        { nil, "k", TransformTextAction { "Convert Text to Kebabcase", kebabCase } },
+        { nil, "l", TransformTextAction { "Convert Text to Lowercase", string.lower } },
+        { nil, "n", TransformTextAction { "Convert Text to Normal", normalCase } },
+        { nil, "r", TransformTextAction { "Convert RTF Text to Plain Text", convertRtfToPlainText } },
+        { nil, "s", FormatSQL },
+        { nil, "u", TransformTextAction { "Convert Text to Uppercase", string.upper } },
+        { nil, "x", TransformTextAction { "Format XML", formatXML } },
+        { { "shift" }, "c", TransformTextAction { "Convert Text to Camelcase", camelCase } },
+        { { "shift" }, "s", TransformTextAction { "Convert Text to Snakecase", snakeCase } },
     },
 }
