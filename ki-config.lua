@@ -66,6 +66,7 @@ local websites = {
     Amazon            = requireEntity("website", "amazon"),
     BBC               = requireEntity("website", "bbc"),
     DuckDuckGo        = requireEntity("website", "duckduckgo"),
+    Etsy              = requireEntity("website", "etsy"),
     FacebookMessenger = requireEntity("website", "messenger"),
     Github            = requireEntity("website", "github"),
     Google            = requireEntity("website", "google"),
@@ -73,12 +74,13 @@ local websites = {
     Hammerspoon       = requireEntity("website", "hammerspoon"),
     HammerspoonDocs   = requireEntity("website", "hammerspoon-docs"),
     LearnXInYMinutes  = requireEntity("website", "learnxinyminutes"),
+    Letterboxd        = requireEntity("website", "letterboxd"),
     MapleLegends      = requireEntity("website", "maplelegends"),
     MyAnimeList       = requireEntity("website", "myanimelist"),
-    Netflix           = requireEntity("website", "netflix"),
     NPM               = requireEntity("website", "npm"),
     NPR               = requireEntity("website", "npr"),
     NYTimes           = requireEntity("website", "nytimes"),
+    Netflix           = requireEntity("website", "netflix"),
     OwlRepo           = requireEntity("website", "owlrepo"),
     Reddit            = requireEntity("website", "reddit"),
     StackOverflow     = requireEntity("website", "stackoverflow"),
@@ -99,7 +101,7 @@ local files = {
 local LIFX = requireEntity("entity", "lifx")
 local BedroomLIFX = LIFX {
     name          = "Bedroom Light",
-    selector      = "label:Main Lamp",
+    selector      = "label:Bedroom Lamp",
 }
 
 -- Create custom application entities
@@ -234,6 +236,7 @@ Mode {
         { nil                , "b" , websites.BoA               },
         { nil                , "c" , websites.Chase             },
         { nil                , "d" , websites.DuckDuckGo        },
+        { nil                , "e" , websites.Etsy              },
         { nil                , "g" , websites.Google            },
         { nil                , "m" , websites.FacebookMessenger },
         { nil                , "n" , websites.Netflix           },
@@ -260,6 +263,7 @@ Mode {
         { { "shift" }        , "z" , websites.ZeroTier          },
         { { "shift", "cmd" } , "a" , websites.MyAnimeList       },
         { { "shift", "cmd" } , "h" , websites.HammerspoonDocs   },
+        { { "shift", "cmd" } , "l" , websites.Letterboxd        },
         { { "shift", "cmd" } , "n" , websites.NPR               },
     },
 }
@@ -296,6 +300,7 @@ Mode {
     shortcuts = {
         { nil                , "a" , websites.Amazon        },
         { nil                , "d" , websites.DuckDuckGo    },
+        { nil                , "e" , websites.Etsy          },
         { nil                , "g" , websites.Google        },
         { nil                , "n" , websites.Netflix       },
         { nil                , "r" , websites.Reddit        },
