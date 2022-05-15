@@ -4,7 +4,7 @@
 local Ki = spoon.Ki
 local File = Ki.File
 local Entity = Ki.Entity
-local txtWriteLocation = "~/Documents"
+local txtWriteLocation = "~/Dropbox/Notes/Personal/Movies"
 
 local function round(num, precision)
     return tonumber(string.format("%." .. (precision or 0) .. "f", num))
@@ -71,7 +71,7 @@ local function selectFSVolumeEvent(eventHandler)
 end
 
 local function writeContentsToFile(volumeName, volumePath)
-    local tree = "/usr/local/bin/tree"
+    local tree = "/opt/homebrew/bin/tree"
     local contents = ""
 
     -- Write to txt file
