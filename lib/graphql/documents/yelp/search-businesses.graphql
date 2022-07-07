@@ -5,7 +5,11 @@ query searchBusinesses($term: String!, $limit:Int!, $location: String, $latitude
       url
       review_count
       location {
-        formatted_address
+        address1
+        address2
+        address3
+        city
+        state
       }
       photos
       hours {

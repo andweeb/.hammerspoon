@@ -88,10 +88,20 @@ function Yelp:createChoices(businesses)
 
     for i = 1, #businesses do
         local business = businesses[i]
+        local location = business.location
+        local formatted_address = nil
 
-        local address = business.location.formatted_address:gsub("\n", " ")
+        if location then
+            local address = table.concat({
+                location.address1 or "",
+                location.address2 or "",
+                location.address3 or ""
+            }, " ")
+            formatted_address = string.format("%s %s, %s", address, location.city, location.state)
+        end
+
         local subTexts = {
-            address,
+            formatted_address,
             business.review_count.." reviews"
         }
 
@@ -111,14 +121,16 @@ function Yelp:createChoices(businesses)
             table.insert(subTexts, "Open Hours: "..openHoursInfo)
         end
 
-        table.insert(choices, {
-            url = business.url,
-            text = business.name,
-            subText = table.concat(subTexts, " • "),
-            businessName = business.name,
-            address = address,
-            imageURL = business.photos[1],
-        })
+        if formatted_address then
+            table.insert(choices, {
+                url = business.url,
+                text = business.name,
+                subText = table.concat(subTexts, " • "),
+                businessName = business.name,
+                address = address,
+                imageURL = business.photos[1],
+            })
+        end
     end
 
     return choices
