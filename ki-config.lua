@@ -143,6 +143,7 @@ local entities = {
 
     -- Require other (non-application) entities
     BedroomLIFX        = BedroomLIFX,
+    CiteAs             = requireEntity("entity", "cite-as"),
     ClipboardText      = requireEntity("entity", "clipboard-text"),
     EmojiPicker        = requireEntity("entity", "emoji-picker"),
     FSVolume           = requireEntity("entity", "fs-volume"),
@@ -181,6 +182,7 @@ Mode {
         { nil                , "v" , entities.VMWareFusion       },
         { nil                , "w" , entities.MicrosoftWord      },
         { nil                , "z" , entities.Zoom               },
+        { { "alt" }          , "c" , entities.CiteAs             },
         { { "alt" }          , "p" , entities.SmartPlug          },
         { { "alt", "cmd" }   , "p" , entities.Plex               },
         { { "alt", "cmd" }   , "s" , entities.Steam              },
