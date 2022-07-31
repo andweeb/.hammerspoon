@@ -111,7 +111,6 @@ local BedroomLIFX = LIFX {
 local entities = {
     -- Initialize basic application entities inline
     Alacritty          = Application "Alacritty",
-    BlueJeans          = Application "BlueJeans",
     Discord            = Application "Discord",
     Firefox            = Application "Firefox",
     Gitter             = Application "Gitter",
@@ -132,6 +131,7 @@ local entities = {
     Java               = requireEntity("application", "java"),
     LINE               = requireEntity("application", "line"),
     MicrosoftExcel     = requireEntity("application", "microsoft-excel"),
+    MEGASync           = requireEntity("application", "MEGASync"),
     MicrosoftOutlook   = requireEntity("application", "microsoft-outlook"),
     MicrosoftWord      = requireEntity("application", "microsoft-word"),
     ScriptEditor       = requireEntity("application", "script-editor"),
@@ -172,7 +172,6 @@ Mode {
     shortcuts = {
         { nil                , "1" , entities["1Password"]       },
         { nil                , "a" , entities.Alacritty          },
-        { nil                , "b" , entities.BlueJeans          },
         { nil                , "c" , entities.Fantastical        },
         { nil                , "e" , entities.MicrosoftExcel     },
         { nil                , "j" , entities.Java               },
@@ -189,6 +188,7 @@ Mode {
         { { "cmd" }          , "e" , entities.EmojiPicker        },
         { { "cmd" }          , "g" , entities.GlyphPicker        },
         { { "cmd" }          , "k" , entities.KaomojiPicker      },
+        { { "cmd" }          , "m" , entities.MEGASync           },
         { { "cmd" }          , "t" , entities.TextEdit           },
         { { "cmd" }          , "v" , entities.FSVolume           },
         { { "ctrl" }         , "n" , entities.NotificationCenter },
@@ -319,6 +319,7 @@ Mode {
         { { "shift" }        , "g" , websites.Github        },
         { { "shift", "cmd" } , "c" , websites.Crunchbase    },
         { { "shift", "cmd" } , "g" , websites.Glassdoor     },
+        { { "shift", "cmd" } , "l" , websites.Letterboxd    },
         { { "shift" }        , "m" , websites.GoogleMaps    },
         { { "shift" }        , "n" , websites.NPM           },
         { { "shift" }        , "y" , websites.Yelp          },
