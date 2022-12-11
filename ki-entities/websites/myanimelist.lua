@@ -19,7 +19,7 @@ end
 
 -- Attach REST Client instance using the Jikan API
 -- https://jikan.docs.apiary.io/#reference
-MyAnimeList.restClient = RESTClient("https://api.jikan.moe/v3")
+MyAnimeList.restClient = RESTClient("https://api.jikan.moe/v4")
 
 function MyAnimeList.createSearchResultChoices(results)
     local choices = {}
@@ -49,7 +49,7 @@ function MyAnimeList:searchAnime()
 
     -- Create search input handler
     local function onInput(input)
-        local uri = "/search/anime?q="..hs.http.encodeForQuery(input)
+        local uri = "/anime?q="..hs.http.encodeForQuery(input)
 
         self.restClient:get(uri, nil, function(status, rawResponse)
             local success, response = pcall(function() return hs.json.decode(rawResponse) end)
@@ -59,7 +59,7 @@ function MyAnimeList:searchAnime()
                 local message = "Jikan error (code "..tostring(response.code)..")"
                 self.notifyError(message, response.message)
             else
-                choices = self.createSearchResultChoices(response.results)
+                choices = self.createSearchResultChoices(response.data)
                 self:loadChooserRowImages(choices, false)
                 self.chooser:choices(updateChoices)
             end
