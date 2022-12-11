@@ -1,0 +1,18 @@
+{
+  "name": "offers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "chase": "./build.sh chase.js && echo 'Copied to clipboard'",
+    "capital-one": "./build.sh capital-one.js && echo 'Copied to clipboard'",
+    "bank-of-america": "./build.sh bank-of-america.js && echo 'Copied to clipboard'"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jsmin": "^1.0.1",
+    "uglify-js": "^3.17.4"
+  }
+}

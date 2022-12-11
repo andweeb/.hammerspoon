@@ -2,3 +2,4 @@
 Spoons
 local-*
 *.pyc
+node_modules

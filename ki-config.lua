@@ -54,9 +54,6 @@ Remaps {
 local websites = {
     -- Basic inline Website entities
     APNews            = Website { name = "AP News"         , url = "https://www.apnews.com"        },
-    BoA               = Website { name = "Bank of America" , url = "https://www.bankofamerica.com" },
-    Chase             = Website { name = "Chase"           , url = "https://www.chase.com"         },
-    CapitalOne        = Website { name = "Capital One"     , url = "https://www.capitalone.com"    },
     Dropbox           = Website { name = "Dropbox"         , url = "https://www.dropbox.com"       },
     Lobsters          = Website { name = "Lobsters"        , url = "http://lobste.rs"              },
     TempMail          = Website { name = "Temp Mail"       , url = "https://temp-mail.org/en/"     },
@@ -64,7 +61,10 @@ local websites = {
     -- Externally defined Website entities
     Airbnb            = requireEntity("website", "airbnb"),
     Amazon            = requireEntity("website", "amazon"),
+    BankOfAmerica     = requireEntity("website", "bank-of-america"),
     BBC               = requireEntity("website", "bbc"),
+    CapitalOne        = requireEntity("website", "capital-one"),
+    Chase             = requireEntity("website", "chase"),
     Crunchbase        = requireEntity("website", "crunchbase"),
     DuckDuckGo        = requireEntity("website", "duckduckgo"),
     Etsy              = requireEntity("website", "etsy"),
@@ -104,13 +104,14 @@ local files = {
 local LIFX = requireEntity("entity", "lifx")
 local BedroomLIFX = LIFX {
     name          = "Bedroom Light",
-    selector      = "label:Bedroom Lamp",
+    selector      = "label:Bedroom Light",
 }
 
 -- Create custom application entities
 local entities = {
     -- Initialize basic application entities inline
     Alacritty          = Application "Alacritty",
+    Cron               = Application "Cron",
     Discord            = Application "Discord",
     Firefox            = Application "Firefox",
     Gitter             = Application "Gitter",
@@ -119,6 +120,7 @@ local entities = {
     Obsidian           = Application "Obsidian",
     Plex               = Application "Plex",
     Postico            = Application "Postico",
+    ProtonVPN          = Application "ProtonVPN",
     Slack              = Application "Slack",
     VisualStudioCode   = Application "Visual Studio Code",
 
@@ -184,6 +186,7 @@ Mode {
         { nil                , "z" , entities.Zoom               },
         { { "alt" }          , "c" , entities.CiteAs             },
         { { "alt" }          , "p" , entities.SmartPlug          },
+        { { "alt", "cmd" }   , "c" , entities.Cron               },
         { { "alt", "cmd" }   , "p" , entities.Plex               },
         { { "alt", "cmd" }   , "s" , entities.Steam              },
         { { "cmd" }          , "c" , entities.ClipboardText      },
@@ -194,6 +197,7 @@ Mode {
         { { "cmd" }          , "t" , entities.TextEdit           },
         { { "cmd" }          , "v" , entities.FSVolume           },
         { { "ctrl" }         , "n" , entities.NotificationCenter },
+        { { "ctrl" }         , "p" , entities.ProtonVPN          },
         { { "ctrl" }         , "s" , entities.ScriptEditor       },
         { { "shift" }        , "d" , entities.Discord            },
         { { "shift" }        , "f" , entities.Firefox            },
@@ -238,7 +242,7 @@ Mode {
     name = "website",
     shortcuts = {
         { nil                , "a" , websites.Amazon            },
-        { nil                , "b" , websites.BoA               },
+        { nil                , "b" , websites.BankOfAmerica     },
         { nil                , "c" , websites.Chase             },
         { nil                , "d" , websites.DuckDuckGo        },
         { nil                , "e" , websites.Etsy              },
