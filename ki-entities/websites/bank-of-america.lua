@@ -3,7 +3,7 @@
 --
 local Ki = spoon.Ki
 local Website = Ki.Website
-local BankOfAmerica = Website { "BankOfAmerica", "" }
+local BankOfAmerica = Website { "BankOfAmerica", "https://www.bankofamerica.com" }
 
 -- Retrieve minified offer scraping code from `~/.hammerspoon/scripts/offers`: `npm run bank-of-america`
 function BankOfAmerica.getOffers()
