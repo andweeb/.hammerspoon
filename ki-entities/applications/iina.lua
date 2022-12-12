@@ -1,258 +1,164 @@
 ----------------------------------------------------------------------------------------------------
 -- IINA application config
 --
-local Application = spoon.Ki.Application
-local IINA = Application:new("IINA")
-
+local Ki = spoon.Ki
+local Application = Ki.Application
 local FocusAndChooseMenuItem = Application.FocusAndChooseMenuItem
+local FocusAndSelectMenuItem = Application.FocusAndSelectMenuItem
+local FocusAndToggleMenuItem = Application.FocusAndToggleMenuItem
+local unmapped = Application.unmapped
 
--- File actions
-IINA.open = Application:createMenuItemAction({ "File", "Open…" }, { focusBefore = true })
-IINA.close = Application:createMenuItemAction({ "File", "Close" }, { focusBefore = true })
-IINA.open = Application:createMenuItemAction({ "File", "Open…" }, { focusBefore = true })
-IINA.closeAll = Application:createMenuItemAction({ "File", "Close All" }, { focusBefore = true })
-IINA.playbackHistory = Application:createMenuItemAction({ "File", "Playback History" }, { focusBefore = true })
-IINA.openURL = Application:createMenuItemAction({ "File", "Open URL…" }, { focusBefore = true })
-IINA.deleteCurrentFile = Application:createMenuItemAction({ "File", "Delete Current File" }, { focusBefore = true })
-IINA.saveCurrentPlaylist = Application:createMenuItemAction({ "File", "Save Current Playlist…" }, { focusBefore = true })
-IINA.share = Application:createMenuItemAction({ "File", "Share" }, { focusBefore = true })
-IINA.openRecent = FocusAndChooseMenuItem { "File", "Open Recent" }
--- Edit actions
-IINA.selectAll = Application:createMenuItemAction({ "Edit", "Select All" }, { focusBefore = true })
-IINA.copy = Application:createMenuItemAction({ "Edit", "Copy" }, { focusBefore = true })
-IINA.paste = Application:createMenuItemAction({ "Edit", "Paste" }, { focusBefore = true })
-IINA.cut = Application:createMenuItemAction({ "Edit", "Cut" }, { focusBefore = true })
-IINA.undo = Application:createMenuItemAction({ "Edit", "Undo" }, { focusBefore = true })
-IINA.redo = Application:createMenuItemAction({ "Edit", "Redo" }, { focusBefore = true })
-IINA.delete = Application:createMenuItemAction({ "Edit", "Delete" }, { focusBefore = true })
-IINA.emojiSymbols = Application:createMenuItemAction({ "Edit", "Emoji & Symbols" }, { focusBefore = true })
-IINA.startDictation = Application:createMenuItemAction({ "Edit", "Start Dictation…" }, { focusBefore = true })
-IINA.speech = Application:createChooseMenuItemAction({ "Edit", "Speech" }, { focusBefore = true })
-IINA.transformations = Application:createChooseMenuItemAction({ "Edit", "Transformations" }, { focusBefore = true })
--- Playback actions
-IINA.stopAndClearPlaylists = Application:createMenuItemAction({ "Playback", "Stop and Clear Playlists" }, { focusBefore = true })
-IINA.speedDownBy05x = Application:createMenuItemAction({ "Playback", "Speed Down by 0.5x" }, { focusBefore = true })
-IINA.resetSpeed = Application:createMenuItemAction({ "Playback", "Reset Speed" }, { focusBefore = true })
-IINA.speedUpBy20x = Application:createMenuItemAction({ "Playback", "Speed Up by 2.0x" }, { focusBefore = true })
-IINA.jumpTo = Application:createMenuItemAction({ "Playback", "Jump to…" }, { focusBefore = true })
-IINA.ABLoop = Application:createMenuItemAction({ "Playback", "A-B Loop" }, { focusBefore = true })
-IINA.takeAScreenshot = Application:createMenuItemAction({ "Playback", "Take a Screenshot" }, { focusBefore = true })
-IINA.speedDownBy09x = Application:createMenuItemAction({ "Playback", "Speed Down by 0.9x" }, { focusBefore = true })
-IINA.speedUpBy11x = Application:createMenuItemAction({ "Playback", "Speed Up by 1.1x" }, { focusBefore = true })
-IINA.previousChapter = Application:createMenuItemAction({ "Playback", "Previous Chapter" }, { focusBefore = true })
-IINA.nextChapter = Application:createMenuItemAction({ "Playback", "Next Chapter" }, { focusBefore = true })
-IINA.showChaptersPanel = Application:createMenuItemAction({ "Playback", "Show Chapters Panel" }, { focusBefore = true })
-IINA.fileLoop = Application:createMenuItemAction({ "Playback", "File Loop" }, { focusBefore = true })
-IINA.showPlaylistPanel = Application:createMenuItemAction({ "Playback", "Show Playlist Panel" }, { focusBefore = true })
-IINA.chapters = Application:createMenuItemAction({ "Playback", "Chapters" }, { focusBefore = true })
-IINA.goToScreenshotFolder = Application:createMenuItemAction({ "Playback", "Go to Screenshot Folder" }, { focusBefore = true })
-IINA.jumpToBeginning = Application:createMenuItemAction({ "Playback", "Jump to Beginning" }, { focusBefore = true })
-IINA.nextFrame = Application:createMenuItemAction({ "Playback", "Next Frame" }, { focusBefore = true })
-IINA.nextMedia = Application:createMenuItemAction({ "Playback", "Next Media" }, { focusBefore = true })
-IINA.playPause = Application:createMenuItemAction({ "Pause", "Resume" }, {
-    isToggleable = true,
-    focusBefore = true,
-})
-IINA.playlistLoop = Application:createMenuItemAction({ "Playback", "Playlist Loop" }, { focusBefore = true })
-IINA.playlist = Application:createMenuItemAction({ "Playback", "Playlist" }, { focusBefore = true })
-IINA.previousFrame = Application:createMenuItemAction({ "Playback", "Previous Frame" }, { focusBefore = true })
-IINA.previousMedia = Application:createMenuItemAction({ "Playback", "Previous Media" }, { focusBefore = true })
-IINA.speed100x = Application:createMenuItemAction({ "Playback", "Speed: 1.00x" }, { focusBefore = true })
-IINA.stepBackward5s = Application:createMenuItemAction({ "Playback", "Step Backward 5s" }, { focusBefore = true })
-IINA.stepForward5s = Application:createMenuItemAction({ "Playback", "Step Forward 5s" }, { focusBefore = true })
--- Video actions
-IINA.smallerSize = Application:createMenuItemAction({ "Video", "Smaller Size" }, { focusBefore = true })
-IINA.halfSize = Application:createMenuItemAction({ "Video", "Half Size" }, { focusBefore = true })
-IINA.normalSize = Application:createMenuItemAction({ "Video", "Normal Size" }, { focusBefore = true })
-IINA.doubleSize = Application:createMenuItemAction({ "Video", "Double Size" }, { focusBefore = true })
-IINA.fitToScreen = Application:createMenuItemAction({ "Video", "Fit to Screen" }, { focusBefore = true })
-IINA.biggerSize = Application:createMenuItemAction({ "Video", "Bigger Size" }, { focusBefore = true })
-IINA.normalSizeRetina = Application:createMenuItemAction({ "Video", "Normal Size (Retina)" }, { focusBefore = true })
-IINA.musicMode = Application:createMenuItemAction({ "Video", "Music Mode" }, { focusBefore = true })
-IINA.enterFullScreen = Application:createMenuItemAction({ "Video", "Enter Full Screen" }, { focusBefore = true })
-IINA.enterPictureInPicture = Application:createMenuItemAction({ "Video", "Enter Picture-in-Picture" }, { focusBefore = true })
-IINA.floatOnTop = Application:createMenuItemAction({ "Video", "Float on Top" }, { focusBefore = true })
-IINA.cycleVideoTracks = Application:createMenuItemAction({ "Video", "Cycle Video Tracks" }, { focusBefore = true })
-IINA.videoFilters = Application:createMenuItemAction({ "Video", "Video Filters…" }, { focusBefore = true })
-IINA.showQuickSettingsPanel = Application:createMenuItemAction({ "Video", "Show Quick Settings Panel" }, { focusBefore = true })
-IINA.deinterlace = Application:createMenuItemAction({ "Video", "Deinterlace" }, { focusBefore = true })
-IINA.delogo = Application:createMenuItemAction({ "Video", "Delogo" }, { focusBefore = true })
-IINA.savedVideoFilters = Application:createMenuItemAction({ "Video", "Saved Video Filters" }, { focusBefore = true })
-IINA.aspectRatio = Application:createChooseMenuItemAction({ "Video", "Aspect Ratio" }, { focusBefore = true })
-IINA.crop = Application:createChooseMenuItemAction({ "Video", "Crop" }, { focusBefore = true })
-IINA.flip = Application:createChooseMenuItemAction({ "Video", "Flip" }, { focusBefore = true })
-IINA.rotation = Application:createChooseMenuItemAction({ "Video", "Rotation" }, { focusBefore = true })
-IINA.videoTrack = Application:createChooseMenuItemAction({ "Video", "Video Track" }, { focusBefore = true })
--- Audio actions
-IINA.mute = Application:createMenuItemAction({ "Audio", "Mute" }, { focusBefore = true })
-IINA.cycleAudioTracks = Application:createMenuItemAction({ "Audio", "Cycle Audio Tracks" }, { focusBefore = true })
-IINA.audioDelay05s = Application:createMenuItemAction({ "Audio", "Audio Delay + 0.5s" }, { focusBefore = true })
-IINA.audioDelay05s = Application:createMenuItemAction({ "Audio", "Audio Delay - 0.5s" }, { focusBefore = true })
-IINA.resetAudioDelay = Application:createMenuItemAction({ "Audio", "Reset Audio Delay" }, { focusBefore = true })
-IINA.showQuickSettingsPanel = Application:createMenuItemAction({ "Audio", "Show Quick Settings Panel" }, { focusBefore = true })
-IINA.audioFilters = Application:createMenuItemAction({ "Audio", "Audio Filters…" }, { focusBefore = true })
-IINA.audioDelay01s = Application:createMenuItemAction({ "Audio", "Audio Delay + 0.1s" }, { focusBefore = true })
-IINA.audioDelay01s = Application:createMenuItemAction({ "Audio", "Audio Delay - 0.1s" }, { focusBefore = true })
-IINA.audioDelay000s = Application:createMenuItemAction({ "Audio", "Audio Delay: 0.00s" }, { focusBefore = true })
-IINA.savedAudioFilters = Application:createMenuItemAction({ "Audio", "Saved Audio Filters" }, { focusBefore = true })
-IINA.volumePlus1 = Application:createMenuItemAction({ "Audio", "Volume + 1" }, { focusBefore = true })
-IINA.volumePlus5 = Application:createMenuItemAction({ "Audio", "Volume + 5" }, { focusBefore = true })
-IINA.volumeMinus1 = Application:createMenuItemAction({ "Audio", "Volume - 1" }, { focusBefore = true })
-IINA.volumeMinus5 = Application:createMenuItemAction({ "Audio", "Volume - 5" }, { focusBefore = true })
-IINA.volume100 = Application:createMenuItemAction({ "Audio", "Volume: 100" }, { focusBefore = true })
-IINA.audioDevice = Application:createChooseMenuItemAction({ "Audio", "Audio Device" }, { focusBefore = true })
-IINA.audioTrack = Application:createChooseMenuItemAction({ "Audio", "Audio Track" }, { focusBefore = true })
--- Subtitles actions
-IINA.cycleSubtitles = Application:createMenuItemAction({ "Subtitles", "Cycle Subtitles" }, { focusBefore = true })
-IINA.resetSubtitleDelay = Application:createMenuItemAction({ "Subtitles", "Reset Subtitle Delay" }, { focusBefore = true })
-IINA.findOnlineSubtitles = Application:createMenuItemAction({ "Subtitles", "Find Online Subtitles…" }, { focusBefore = true })
-IINA.showQuickSettingsPanel = Application:createMenuItemAction({ "Subtitles", "Show Quick Settings Panel" }, { focusBefore = true })
-IINA.subtitleDelayPlus05s = Application:createMenuItemAction({ "Subtitles", "Subtitle Delay + 0.5s" }, { focusBefore = true })
-IINA.subtitleDelayMinus05s = Application:createMenuItemAction({ "Subtitles", "Subtitle Delay - 0.5s" }, { focusBefore = true })
-IINA.subtitleDelay01s = Application:createMenuItemAction({ "Subtitles", "Subtitle Delay + 0.1s" }, { focusBefore = true })
-IINA.subtitleDelay01s = Application:createMenuItemAction({ "Subtitles", "Subtitle Delay - 0.1s" }, { focusBefore = true })
-IINA.font = Application:createMenuItemAction({ "Subtitles", "Font…" }, { focusBefore = true })
-IINA.loadExternalSubtitle = Application:createMenuItemAction({ "Subtitles", "Load External Subtitle…" }, { focusBefore = true })
-IINA.resetSubtitleScale = Application:createMenuItemAction({ "Subtitles", "Reset Subtitle Scale" }, { focusBefore = true })
-IINA.saveDownloadedSubtitle = Application:createMenuItemAction({ "Subtitles", "Save Downloaded Subtitle" }, { focusBefore = true })
-IINA.scaleDown = Application:createMenuItemAction({ "Subtitles", "Scale Down" }, { focusBefore = true })
-IINA.scaleUp = Application:createMenuItemAction({ "Subtitles", "Scale Up" }, { focusBefore = true })
-IINA.subtitleDelay000s = Application:createMenuItemAction({ "Subtitles", "Subtitle Delay: 0.00s" }, { focusBefore = true })
-IINA.encoding = Application:createChooseMenuItemAction({ "Subtitles", "Encoding" }, { focusBefore = true })
-IINA.secondSubtitle = Application:createChooseMenuItemAction({ "Subtitles", "Second Subtitle" }, { focusBefore = true })
-IINA.subtitle = Application:createChooseMenuItemAction({ "Subtitles", "Subtitle" }, { focusBefore = true })
--- Window actions
-IINA.inspector = Application:createMenuItemAction({ "Window", "Inspector" }, { focusBefore = true })
-IINA.minimize = Application:createMenuItemAction({ "Window", "Minimize" }, { focusBefore = true })
-IINA.arrangeInFront = Application:createMenuItemAction({ "Window", "Arrange in Front" }, { focusBefore = true })
-IINA.bringAllToFront = Application:createMenuItemAction({ "Window", "Bring All to Front" }, { focusBefore = true })
-IINA.enterFullScreen = Application:createMenuItemAction({ "Window", "Enter Full Screen" }, { focusBefore = true })
-IINA.minimizeAll = Application:createMenuItemAction({ "Window", "Minimize All" }, { focusBefore = true })
-IINA.moveWindowToLeftSideOfScreen = Application:createMenuItemAction({ "Window", "Move Window to Left Side of Screen" }, { focusBefore = true })
-IINA.moveWindowToRightSideOfScreen = Application:createMenuItemAction({ "Window", "Move Window to Right Side of Screen" }, { focusBefore = true })
-IINA.zoomAll = Application:createMenuItemAction({ "Window", "Zoom All" }, { focusBefore = true })
-IINA.zoom = Application:createMenuItemAction({ "Window", "Zoom" }, { focusBefore = true })
--- Help actions
-IINA.gitHub = Application:createMenuItemAction({ "Help", "GitHub" }, { focusBefore = true })
-IINA.IINAHelp = Application:createMenuItemAction({ "Help", "IINA Help" }, { focusBefore = true })
-IINA.website = Application:createMenuItemAction({ "Help", "Website" }, { focusBefore = true })
-
-IINA:registerShortcuts({
-    -- File
-    { nil, "o", IINA.open },
-    { nil, "w", IINA.close },
-    { { "alt" }, "o", IINA.open },
-    { { "alt" }, "w", IINA.closeAll },
-    { { "shift" }, "h", IINA.playbackHistory },
-    { { "shift" }, "o", IINA.openRecent },
-    { { "cmd", "shift" }, "o", IINA.openURL },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.deleteCurrentFile },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.saveCurrentPlaylist },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.share },
-    -- Playback
-    { nil, "space", IINA.playPause },
-    { nil, ".", IINA.stopAndClearPlaylists },
-    { nil, "[", IINA.speedDownBy05x },
-    { nil, "\\", IINA.resetSpeed },
-    { nil, "]", IINA.speedUpBy20x },
-    { nil, "0", IINA.jumpToBeginning },
-    { nil, "c", IINA.chapters },
-    { nil, "j", IINA.jumpTo },
-    { nil, "l", IINA.ABLoop },
-    { nil, "n", IINA.nextMedia },
-    { nil, "p", IINA.previousMedia },
-    { { "alt" }, "[", IINA.speedDownBy09x },
-    { { "alt" }, "]", IINA.speedUpBy11x },
-    { { "shift" }, "<", IINA.previousChapter },
-    { { "shift" }, ">", IINA.nextChapter },
-    { { "shift" }, "c", IINA.showChaptersPanel },
-    { { "shift" }, "l", IINA.fileLoop },
-    { { "shift" }, "p", IINA.playlist },
-    { { "cmd", "shift" }, "p", IINA.showPlaylistPanel },
-    { { "cmd", "shift" }, "s", IINA.takeAScreenshot },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.goToScreenshotFolder },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.nextFrame },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.playlistLoop },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.previousFrame },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.speed100x },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.stepBackward5s },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.stepForward5s },
-    -- Video
-    { nil, "-", IINA.smallerSize },
-    { nil, "0", IINA.halfSize },
-    { nil, "1", IINA.normalSize },
-    { nil, "2", IINA.doubleSize },
-    { nil, "3", IINA.fitToScreen },
-    { nil, "=", IINA.biggerSize },
-    { { "alt" }, "1", IINA.normalSizeRetina },
-    { { "alt" }, "m", IINA.musicMode },
-    { { "ctrl" }, "f", IINA.enterFullScreen },
-    { { "ctrl" }, "p", IINA.enterPictureInPicture },
-    { { "ctrl" }, "t", IINA.floatOnTop },
-    { { "ctrl" }, "v", IINA.cycleVideoTracks },
-    { { "shift" }, "f", IINA.videoFilters },
-    { { "shift" }, "v", IINA.showQuickSettingsPanel },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.deinterlace },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.delogo },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.savedVideoFilters },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.aspectRatio },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.crop },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.flip },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.rotation },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.videoTrack },
-    -- Audio
-    { nil, "/", IINA.mute },
-    { nil, "a", IINA.audioTrack },
-    { { "cmd" }, "c", IINA.audioDevice },
-    { { "ctrl" }, "a", IINA.cycleAudioTracks },
-    { { "shift" }, "(", IINA.audioDelay05s },
-    { { "shift" }, ")", IINA.audioDelay05s },
-    { { "shift" }, "_", IINA.resetAudioDelay },
-    { { "shift" }, "a", IINA.showQuickSettingsPanel },
-    { { "shift" }, "g", IINA.audioFilters },
-    { { "shift", "alt" }, "(", IINA.audioDelay01s },
-    { { "shift", "alt" }, ")", IINA.audioDelay01s },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.audioDelay000s },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.savedAudioFilters },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.volumePlus1 },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.volumePlus5 },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.volumeMinus1 },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.volumeMinus5 },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.volume100 },
-    -- Subtitles
-    { nil, "s", IINA.subtitle },
-    { { "ctrl" }, "s", IINA.cycleSubtitles },
-    { { "shift" }, "c", IINA.resetSubtitleDelay },
-    { { "shift" }, "d", IINA.findOnlineSubtitles },
-    { { "shift" }, "s", IINA.showQuickSettingsPanel },
-    { { "shift" }, "x", IINA.subtitleDelayPlus05s },
-    { { "shift" }, "z", IINA.subtitleDelayMinus05s },
-    { { "shift", "alt" }, "x", IINA.subtitleDelay01s },
-    { { "shift", "alt" }, "z", IINA.subtitleDelay01s },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.font },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.loadExternalSubtitle },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.resetSubtitleScale },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.saveDownloadedSubtitle },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.scaleDown },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.scaleUp },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.subtitleDelay000s },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.encoding },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.secondSubtitle },
-    -- Window
-    { nil, "i", IINA.inspector },
-    { nil, "m", IINA.minimize },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.arrangeInFront },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.bringAllToFront },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.enterFullScreen },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.minimizeAll },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.moveWindowToLeftSideOfScreen },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.moveWindowToRightSideOfScreen },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.zoomAll },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.zoom },
-    -- Help
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.gitHub },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.IINAHelp },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", IINA.website },
-})
-
-return IINA
+return Application {
+    name = "IINA",
+    shortcuts = {
+        IINA = {
+            { nil, ",", FocusAndSelectMenuItem { "IINA", "Preferences…" } },
+            { nil, "h", FocusAndSelectMenuItem { "IINA", "Hide IINA" } },
+            { nil, "q", FocusAndSelectMenuItem { "IINA", "Quit IINA" } },
+            { { "alt" }, "h", FocusAndSelectMenuItem { "IINA", "Hide Others" } },
+            { { "alt" }, "q", FocusAndSelectMenuItem { "IINA", "Quit and Keep Windows" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "IINA", "About IINA" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "IINA", "Check for Updates…" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "IINA", "Services" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "IINA", "Show All" } },
+        },
+        File = {
+            { nil, "o", FocusAndSelectMenuItem { "File", "Open in New Window…" } },
+            { nil, "w", FocusAndSelectMenuItem { "File", "Close" } },
+            { { "alt" }, "o", FocusAndSelectMenuItem { "File", "Open…" } },
+            { { "alt" }, "w", FocusAndSelectMenuItem { "File", "Close All" } },
+            { { "shift" }, "h", FocusAndSelectMenuItem { "File", "Playback History" } },
+            { { "shift" }, "o", FocusAndSelectMenuItem { "File", "Open URL in New Window…" } },
+            { { "shift", "alt" }, "o", FocusAndSelectMenuItem { "File", "Open URL…" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "File", "Delete Current File" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "File", "Open Recent" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "File", "Save Current Playlist…" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "File", "Share" } },
+        },
+        Edit = {
+            { nil, "a", FocusAndSelectMenuItem { "Edit", "Select All" } },
+            { nil, "c", FocusAndSelectMenuItem { "Edit", "Copy" } },
+            { nil, "v", FocusAndSelectMenuItem { "Edit", "Paste" } },
+            { nil, "x", FocusAndSelectMenuItem { "Edit", "Cut" } },
+            { nil, "z", FocusAndSelectMenuItem { "Edit", "Undo" } },
+            { { "shift" }, "z", FocusAndSelectMenuItem { "Edit", "Redo" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Edit", "Delete" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Edit", "Emoji & Symbols" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Edit", "Emoji & Symbols" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Edit", "Speech" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Edit", "Start Dictation" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Edit", "Transformations" } },
+        },
+        Playback = {
+            { nil, "space", FocusAndToggleMenuItem { "Resume", "Pause" } },
+            { nil, ".", FocusAndSelectMenuItem { "Playback", "Stop and Clear Playlists" } },
+            { nil, "[", FocusAndSelectMenuItem { "Playback", "Speed Down by 0.5x" } },
+            { nil, "\\", FocusAndSelectMenuItem { "Playback", "Reset Speed" } },
+            { nil, "]", FocusAndSelectMenuItem { "Playback", "Speed Up by 2.0x" } },
+            { nil, "j", FocusAndSelectMenuItem { "Playback", "Jump to…" } },
+            { nil, "l", FocusAndSelectMenuItem { "Playback", "A-B Loop" } },
+            { nil, "n", FocusAndSelectMenuItem { "Playback", "Next Media" } },
+            { nil, "p", FocusAndSelectMenuItem { "Playback", "Previous Media" } },
+            { nil, "s", FocusAndSelectMenuItem { "Playback", "Take a Screenshot" } },
+            { { "alt" }, "[", FocusAndSelectMenuItem { "Playback", "Speed Down by 0.9x" } },
+            { { "alt" }, "]", FocusAndSelectMenuItem { "Playback", "Speed Up by 1.1x" } },
+            { { "shift" }, "<", FocusAndSelectMenuItem { "Playback", "Previous Chapter" } },
+            { { "shift" }, ">", FocusAndSelectMenuItem { "Playback", "Next Chapter" } },
+            { { "shift" }, "c", FocusAndSelectMenuItem { "Playback", "Show Chapters Panel" } },
+            { { "shift" }, "l", FocusAndSelectMenuItem { "Playback", "File Loop" } },
+            { { "shift" }, "p", FocusAndSelectMenuItem { "Playback", "Show Playlist Panel" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Chapters" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Go to Screenshot Folder" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Jump to Beginning" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Next Frame" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Playlist Loop" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Playback", "Playlist" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Previous Frame" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Speed: 1.00x" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Step Backward 5s" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Playback", "Step Forward 5s" } },
+        },
+        Video = {
+            { nil, "-", FocusAndSelectMenuItem { "Video", "Smaller Size" } },
+            { nil, "0", FocusAndSelectMenuItem { "Video", "Half Size" } },
+            { nil, "1", FocusAndSelectMenuItem { "Video", "Normal Size" } },
+            { nil, "2", FocusAndSelectMenuItem { "Video", "Double Size" } },
+            { nil, "3", FocusAndSelectMenuItem { "Video", "Fit to Screen" } },
+            { nil, "=", FocusAndSelectMenuItem { "Video", "Bigger Size" } },
+            { { "alt" }, "1", FocusAndSelectMenuItem { "Video", "Normal Size (Retina)" } },
+            { { "alt" }, "m", FocusAndSelectMenuItem { "Video", "Music Mode" } },
+            { { "ctrl" }, "f", FocusAndToggleMenuItem { "Enter Full Screen", "Exit Full Screen" } },
+            { { "ctrl" }, "p", FocusAndToggleMenuItem { "Enter Picture-in-Picture", "Exit Picture-in-Picture" } },
+            { { "ctrl" }, "t", FocusAndSelectMenuItem { "Video", "Float on Top" } },
+            { { "ctrl" }, "v", FocusAndSelectMenuItem { "Video", "Cycle Video Tracks" } },
+            { { "shift" }, "f", FocusAndSelectMenuItem { "Video", "Video Filters…" } },
+            { { "shift" }, "v", FocusAndSelectMenuItem { "Video", "Show Quick Settings Panel" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Video", "Aspect Ratio" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Video", "Crop" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Video", "Deinterlace" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Video", "Delogo" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Video", "Flip" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Video", "Rotation" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Video", "Saved Video Filters" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Video", "Video Track" } },
+        },
+        Audio = {
+            { nil, "/", FocusAndSelectMenuItem { "Audio", "Mute" } },
+            { { "ctrl" }, "a", FocusAndSelectMenuItem { "Audio", "Cycle Audio Tracks" } },
+            { { "shift" }, "(", FocusAndSelectMenuItem { "Audio", "Audio Delay + 0.5s" } },
+            { { "shift" }, ")", FocusAndSelectMenuItem { "Audio", "Audio Delay - 0.5s" } },
+            { { "shift" }, "_", FocusAndSelectMenuItem { "Audio", "Reset Audio Delay" } },
+            { { "shift" }, "a", FocusAndSelectMenuItem { "Audio", "Show Quick Settings Panel" } },
+            { { "shift" }, "g", FocusAndSelectMenuItem { "Audio", "Audio Filters…" } },
+            { { "shift", "alt" }, "(", FocusAndSelectMenuItem { "Audio", "Audio Delay + 0.1s" } },
+            { { "shift", "alt" }, ")", FocusAndSelectMenuItem { "Audio", "Audio Delay - 0.1s" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Audio Delay: 0.00s" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Audio", "Audio Device" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Audio", "Audio Track" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Saved Audio Filters" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Volume + 1" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Volume + 5" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Volume - 1" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Volume - 5" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Audio", "Volume: 100" } },
+        },
+        Subtitles = {
+            { { "ctrl" }, "s", FocusAndSelectMenuItem { "Subtitles", "Cycle Subtitles" } },
+            { { "shift" }, "c", FocusAndSelectMenuItem { "Subtitles", "Reset Subtitle Delay" } },
+            { { "shift" }, "d", FocusAndSelectMenuItem { "Subtitles", "Find Online Subtitles…" } },
+            { { "shift" }, "s", FocusAndSelectMenuItem { "Subtitles", "Show Quick Settings Panel" } },
+            { { "shift" }, "x", FocusAndSelectMenuItem { "Subtitles", "Subtitle Delay + 0.5s" } },
+            { { "shift" }, "z", FocusAndSelectMenuItem { "Subtitles", "Subtitle Delay - 0.5s" } },
+            { { "shift", "alt" }, "x", FocusAndSelectMenuItem { "Subtitles", "Subtitle Delay + 0.1s" } },
+            { { "shift", "alt" }, "z", FocusAndSelectMenuItem { "Subtitles", "Subtitle Delay - 0.1s" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Subtitles", "Encoding" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Font…" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Load External Subtitle…" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Reset Subtitle Scale" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Save Downloaded Subtitle" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Scale Down" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Scale Up" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Subtitles", "Second Subtitle" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Subtitles", "Subtitle Delay: 0.00s" } },
+            { unmapped, unmapped, FocusAndChooseMenuItem { "Subtitles", "Subtitle" } },
+        },
+        Window = {
+            { nil, "i", FocusAndSelectMenuItem { "Window", "Inspector" } },
+            { nil, "m", FocusAndSelectMenuItem { "Window", "Minimize" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Arrange in Front" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Bring All to Front" } },
+            { unmapped, unmapped, FocusAndToggleMenuItem { "Enter Full Screen", "Exit Full Screen" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Minimize All" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Move Window to Left Side of Screen" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Move Window to Right Side of Screen" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Zoom All" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Window", "Zoom" } },
+        },
+        Help = {
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Help", "GitHub" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Help", "IINA Help" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Help", "Release Highlights" } },
+            { unmapped, unmapped, FocusAndSelectMenuItem { "Help", "Website" } },
+        },
+    },
+}

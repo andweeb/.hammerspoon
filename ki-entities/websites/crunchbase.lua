@@ -26,7 +26,7 @@ function Crunchbase.getCompanyInfo()
 end
 
 function Crunchbase:copyCompanyInfo()
-    local isOk, _, output = self.getCompanyInfo()
+    local isOk, output = self.getCompanyInfo()
     if isOk then
         hs.pasteboard.setContents(output)
         hs.notify.show("Ki", "Copied copy company info to clipboard", "")

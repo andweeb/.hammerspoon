@@ -53,10 +53,11 @@ Remaps {
 -- Create custom Website entities
 local websites = {
     -- Basic inline Website entities
-    APNews            = Website { name = "AP News"         , url = "https://www.apnews.com"        },
-    Dropbox           = Website { name = "Dropbox"         , url = "https://www.dropbox.com"       },
-    Lobsters          = Website { name = "Lobsters"        , url = "http://lobste.rs"              },
-    TempMail          = Website { name = "Temp Mail"       , url = "https://temp-mail.org/en/"     },
+    APNews            = Website { name = "AP News",   url = "https://www.apnews.com"                },
+    Dropbox           = Website { name = "Dropbox",   url = "https://www.dropbox.com"               },
+    Synchrony         = Website { name = "Synchrony", url = "https://securelogin.synchronybank.com" },
+    Lobsters          = Website { name = "Lobsters",  url = "http://lobste.rs"                      },
+    TempMail          = Website { name = "Temp Mail", url = "https://temp-mail.org/en/"             },
 
     -- Externally defined Website entities
     Airbnb            = requireEntity("website", "airbnb"),
@@ -260,6 +261,7 @@ Mode {
         { { "cmd" }          , "h" , websites.Hammerspoon       },
         { { "cmd" }          , "n" , websites.NYTimes           },
         { { "ctrl" }         , "l" , websites.Lobsters          },
+        { { "ctrl" }         , "s" , websites.Synchrony         },
         { { "ctrl", "cmd" }  , "m" , websites.MapleLegends      },
         { { "shift" }        , "a" , websites.Airbnb            },
         { { "shift" }        , "c" , websites.CapitalOne        },

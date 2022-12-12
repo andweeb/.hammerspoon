@@ -123,7 +123,7 @@ return Entity {
         { nil, "c", TransformTextAction { "Capitalize Words in Text", capitalizeWords } },
         { nil, "d", TransformTextAction { "Decode Base64", hs.base64.decode } },
         { nil, "e", TransformTextAction { "Encode Base64", hs.base64.encode } },
-        { nil, "j", TransformTextAction { "Encode Base64", formatJSON } },
+        { nil, "j", TransformTextAction { "Format JSON", formatJSON } },
         { nil, "k", TransformTextAction { "Convert Text to Kebabcase", kebabCase } },
         { nil, "l", TransformTextAction { "Convert Text to Lowercase", string.lower } },
         { nil, "n", TransformTextAction { "Convert Text to Normal", normalCase } },

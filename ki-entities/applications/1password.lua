@@ -10,7 +10,6 @@ local ToggleMenuItem = Application.ToggleMenuItem
 local unmapped = Application.unmapped
 
 -- Add helper method to create URL handler actions
--- https://flexibits.com/fantastical/help/integration-with-other-apps
 local function URLHandlerAction(options)
     local name, url = table.unpack(options)
     return Action {

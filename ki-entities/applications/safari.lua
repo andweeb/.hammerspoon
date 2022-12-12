@@ -1,6 +1,6 @@
 local Ki = spoon.Ki
+local Action = Ki.Action
 local Website = Ki.Website
-local Action = Website.Action
 local Safari = Ki.defaultEntities.entity.Safari
 local AsyncSearchMixin = require("ki-entities/async-search")
 local COREDATA_EPOCH_OFFSET = 978307200

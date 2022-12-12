@@ -1,35 +1,39 @@
 ----------------------------------------------------------------------------------------------------
 -- TablePlus application config
 --
-local Application = spoon.Ki.Application
-local TablePlus = Application:new("TablePlus")
-TablePlus.dataPath = "~/Library/Application\\ Support/com.tinyapp.TablePlus/Data"
+local Ki = spoon.Ki
+local Action = Ki.Action
+local Application = Ki.Application
+local ChooseMenuItem = Application.ChooseMenuItem
+local SelectMenuItem = Application.SelectMenuItem
+local unmapped = Application.unmapped
 
-local path = TablePlus.dataPath:gsub("%\\", "")
-TablePlus.absoluteDataPath = hs.fs.pathToAbsolute(path)
+local dataPath = "~/Library/Application\\ Support/com.tinyapp.TablePlus/Data"
+local path = dataPath:gsub("%\\", "")
+local absoluteDataPath = hs.fs.pathToAbsolute(path)
 
 -- Validate the data path
-function TablePlus:validateDataPath()
+local function validateDataPath()
     local success, value = pcall(function()
-        return hs.fs.attributes(self.absoluteDataPath)
+        return hs.fs.attributes(absoluteDataPath)
     end)
 
     if not success then
-        self.notifyError("TablePlus data path not found", value or "")
+        Application.notifyError("TablePlus data path not found", value or "")
     end
 end
 
 -- Asynchronously read plist file as json
-function TablePlus:readPlist(name, callback)
+local function readPlist(name, callback)
     local json = ""
-    local filename = self.absoluteDataPath.."/"..name..".plist"
+    local filename = absoluteDataPath.."/"..name..".plist"
     local arguments = { "-convert", "json", "-o", "-", filename }
 
     local taskDoneCallback = function()
         local success, data = pcall(function() return hs.json.decode(json) end)
 
         if not success or not data then
-            return self.notifyError("Unable to initialize TablePlus "..name, "")
+            return Application.notifyError("Unable to initialize TablePlus "..name, "")
         end
 
         callback(data)
@@ -48,11 +52,12 @@ function TablePlus:readPlist(name, callback)
 end
 
 -- Override selection items method to be able to select a TablePlus connection
-function TablePlus.getChooserItems()
+local connections = {}
+local function getChooserItems()
     local choices = {}
 
     -- Initialize connection groups by group id and connections list
-    for _, connection in pairs(TablePlus.connections) do
+    for _, connection in pairs(connections) do
         local text = connection.ConnectionName.." ["..connection.Enviroment.."]"
         local databaseInfoText = connection.DatabaseHost.." : "..connection.DatabaseName
         local subText = hs.styledtext.new(databaseInfoText, {
@@ -71,189 +76,139 @@ function TablePlus.getChooserItems()
 end
 
 -- Activate TablePlus or open a specific connection id
-function TablePlus.open(app, choice)
-    app:activate()
+local Open = Action {
+    name = "Open Application or Database Connection",
+    action = function(app, choice)
+        app:activate()
 
-    if choice then
-        local isOk = hs.urlevent.openURL("tableplus://?id="..choice.id)
+        if choice then
+            local isOk = hs.urlevent.openURL("tableplus://?id="..choice.id)
 
-        if not isOk then
-            TablePlus.notifyError("Error opening the connection")
+            if not isOk then
+                Application.notifyError("Error opening the connection")
+            end
         end
-    end
-end
+    end,
+}
 
 -- Validate data path and initialize connections
-TablePlus:validateDataPath()
-TablePlus:readPlist("Connections", function(connections)
-    TablePlus.connections = connections
-end)
+validateDataPath()
+readPlist("Connections", function(conns) connections = conns end)
 
--- File actions
-TablePlus.newWorkspace = Application:createMenuItemAction({ "File", "New Workspace" })
-TablePlus.openFile = Application:createMenuItemAction({ "File", "Open..." })
-TablePlus.newSQLViewer = Application:createMenuItemAction({ "File", "New SQL Viewer" })
-TablePlus.saveAs = Application:createMenuItemAction({ "File", "Save As..." })
-TablePlus.backup = Application:createMenuItemAction({ "File", "Backup..." })
-TablePlus.closeAll = Application:createMenuItemAction({ "File", "Close All" })
-TablePlus.close = Application:createMenuItemAction({ "File", "Close" })
-TablePlus.export = Application:createMenuItemAction({ "File", "Export..." })
-TablePlus.restore = Application:createMenuItemAction({ "File", "Restore..." })
-TablePlus.import = Application:createChooseMenuItemAction({ "File", "Import" })
-TablePlus.openRecent = Application:createChooseMenuItemAction({ "File", "Open Recent" })
--- Edit actions
-TablePlus.decreaseFontSize = Application:createMenuItemAction({ "Edit", "Decrease Font Size" })
-TablePlus.toggleLineComment = Application:createMenuItemAction({ "Edit", "Toggle Line Comment" })
-TablePlus.increaseFontSize = Application:createMenuItemAction({ "Edit", "Increase Font Size" })
-TablePlus.selectAll = Application:createMenuItemAction({ "Edit", "Select All" })
-TablePlus.copy = Application:createMenuItemAction({ "Edit", "Copy" })
-TablePlus.duplicateRows = Application:createMenuItemAction({ "Edit", "Duplicate Rows" })
-TablePlus.addRow = Application:createMenuItemAction({ "Edit", "Add Row" })
-TablePlus.commit = Application:createMenuItemAction({ "Edit", "Commit" })
-TablePlus.paste = Application:createMenuItemAction({ "Edit", "Paste" })
-TablePlus.cut = Application:createMenuItemAction({ "Edit", "Cut" })
-TablePlus.undo = Application:createMenuItemAction({ "Edit", "Undo" })
-TablePlus.toggleBlockComment = Application:createMenuItemAction({ "Edit", "Toggle Block Comment" })
-TablePlus.selectAllWords = Application:createMenuItemAction({ "Edit", "Select all Words" })
-TablePlus.preview = Application:createMenuItemAction({ "Edit", "Preview" })
-TablePlus.redo = Application:createMenuItemAction({ "Edit", "Redo" })
-TablePlus.delete = Application:createMenuItemAction({ "Edit", "Delete" })
-TablePlus.discard = Application:createMenuItemAction({ "Edit", "Discard" })
-TablePlus.emojiSymbols = Application:createMenuItemAction({ "Edit", "Emoji & Symbols" })
-TablePlus.selectWord = Application:createMenuItemAction({ "Edit", "Select Word" })
-TablePlus.startDictation = Application:createMenuItemAction({ "Edit", "Start Dictation…" })
-TablePlus.find = Application:createChooseMenuItemAction({ "Edit", "Find" })
-TablePlus.speech = Application:createChooseMenuItemAction({ "Edit", "Speech" })
-TablePlus.transformations = Application:createChooseMenuItemAction({ "Edit", "Transformations" })
--- Connection actions
-TablePlus.processList = Application:createMenuItemAction({ "Connection", "Process List..." })
-TablePlus.reloadWorkspace = Application:createMenuItemAction({ "Connection", "Reload Workspace" })
-TablePlus.disconnect = Application:createMenuItemAction({ "Connection", "Disconnect" })
-TablePlus.reloadCurrentTab = Application:createMenuItemAction({ "Connection", "Reload Current Tab" })
-TablePlus.reconnect = Application:createMenuItemAction({ "Connection", "Reconnect" })
-TablePlus.edit = Application:createMenuItemAction({ "Connection", "Edit..." })
-TablePlus.new = Application:createMenuItemAction({ "Connection", "New..." })
-TablePlus.userManagement = Application:createMenuItemAction({ "Connection", "User Management..." })
-TablePlus.viewUsingEncoding = Application:createChooseMenuItemAction({ "Connection", "View Using Encoding" })
--- Plugins actions
-TablePlus.managePlugins = Application:createMenuItemAction({ "Plugins", "Manage Plugins..." })
-TablePlus.runCustomScript = Application:createMenuItemAction({ "Plugins", "Run Custom Script" })
--- Navigate actions
-TablePlus.selectPreviousTab = Application:createMenuItemAction({ "Navigate", "Select Previous Tab" })
-TablePlus.selectNextTab = Application:createMenuItemAction({ "Navigate", "Select Next Tab" })
-TablePlus.switchDatabase = Application:createMenuItemAction({ "Navigate", "Switch Database..." })
-TablePlus.openAnything = Application:createMenuItemAction({ "Navigate", "Open Anything" })
-TablePlus.newTab = Application:createMenuItemAction({ "Navigate", "New Tab" })
-TablePlus.closeTab = Application:createMenuItemAction({ "Navigate", "Close Tab" })
-TablePlus.selectPreviousPane = Application:createMenuItemAction({ "Navigate", "Select Previous Pane" })
-TablePlus.selectNextPane = Application:createMenuItemAction({ "Navigate", "Select Next Pane" })
-TablePlus.showTableData = Application:createMenuItemAction({ "Navigate", "Show Table Data" })
-TablePlus.showTableStructure = Application:createMenuItemAction({ "Navigate", "Show Table Structure" })
-TablePlus.selectPreviousWorkspace = Application:createMenuItemAction({ "Navigate", "Select Previous Workspace" })
-TablePlus.selectNextWorkspace = Application:createMenuItemAction({ "Navigate", "Select Next Workspace" })
-TablePlus.splitHorizontallyPane = Application:createMenuItemAction({ "Navigate", "Split Horizontally Pane" })
-TablePlus.switchConnection = Application:createMenuItemAction({ "Navigate", "Switch Connection..." })
--- View actions
-TablePlus.enterFullScreen = Application:createMenuItemAction({ "View", "Enter Full Screen" })
-TablePlus.toggleConsoleLog = Application:createMenuItemAction({ "View", "Toggle Console Log" })
--- Window actions
-TablePlus.minimize = Application:createMenuItemAction({ "Window", "Minimize" })
-TablePlus.minimizeAll = Application:createMenuItemAction({ "Window", "Minimize All" })
-TablePlus.arrangeInFront = Application:createMenuItemAction({ "Window", "Arrange in Front" })
-TablePlus.bringAllToFront = Application:createMenuItemAction({ "Window", "Bring All to Front" })
-TablePlus.moveWindowToLeftSideOfScreen = Application:createMenuItemAction({ "Window", "Move Window to Left Side of Screen" })
-TablePlus.moveWindowToRightSideOfScreen = Application:createMenuItemAction({ "Window", "Move Window to Right Side of Screen" })
-TablePlus.zoomAll = Application:createMenuItemAction({ "Window", "Zoom All" })
-TablePlus.zoom = Application:createMenuItemAction({ "Window", "Zoom" })
--- Help actions
-TablePlus.changelogs = Application:createMenuItemAction({ "Help", "Changelogs" })
-TablePlus.enableSSHDebugLog = Application:createMenuItemAction({ "Help", "Enable SSH Debug log" })
-TablePlus.privateMessage = Application:createMenuItemAction({ "Help", "Private message..." })
-TablePlus.reportBugFeedback = Application:createMenuItemAction({ "Help", "Report bug & feedback" })
-
-TablePlus:registerShortcuts({
-    { nil, nil, TablePlus.open, "Open Application or Database Connection" },
-    -- File
-    { nil, "i", TablePlus.import, "Import" },
-    { nil, "n", TablePlus.newWorkspace, "New Workspace" },
-    { nil, "o", TablePlus.openFile, "Open..." },
-    { { "shift" }, "o", TablePlus.openRecent, "Open Recent" },
-    { { "shift" }, "s", TablePlus.saveAs, "Save As..." },
-    { { "cmd", "shift" }, "o", TablePlus.newSQLViewer, "New SQL Viewer" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.backup, "Backup..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.closeAll, "Close All" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.close, "Close" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.export, "Export..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.restore, "Restore..." },
-    -- Edit
-    { nil, "-", TablePlus.decreaseFontSize, "Decrease Font Size" },
-    { nil, "/", TablePlus.toggleLineComment, "Toggle Line Comment" },
-    { nil, "=", TablePlus.increaseFontSize, "Increase Font Size" },
-    { nil, "a", TablePlus.selectAll, "Select All" },
-    { nil, "c", TablePlus.copy, "Copy" },
-    { nil, "d", TablePlus.duplicateRows, "Duplicate Rows" },
-    { nil, "i", TablePlus.addRow, "Add Row" },
-    { nil, "s", TablePlus.commit, "Commit" },
-    { nil, "v", TablePlus.paste, "Paste" },
-    { nil, "x", TablePlus.cut, "Cut" },
-    { nil, "z", TablePlus.undo, "Undo" },
-    { { "alt" }, "/", TablePlus.toggleBlockComment, "Toggle Block Comment" },
-    { { "ctrl" }, "g", TablePlus.selectAllWords, "Select all Words" },
-    { { "shift" }, "p", TablePlus.preview, "Preview" },
-    { { "shift" }, "z", TablePlus.redo, "Redo" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.delete, "Delete" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.discard, "Discard" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.emojiSymbols, "Emoji & Symbols" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.selectWord, "Select Word" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.startDictation, "Start Dictation…" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.find, "Find" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.speech, "Speech" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.transformations, "Transformations" },
-    -- Connection
-    { nil, ".", TablePlus.processList, "Process List..." },
-    { nil, "r", TablePlus.reloadWorkspace, "Reload Workspace" },
-    { { "alt" }, ".", TablePlus.disconnect, "Disconnect" },
-    { { "alt" }, "r", TablePlus.reloadCurrentTab, "Reload Current Tab" },
-    { { "shift" }, "r", TablePlus.reconnect, "Reconnect" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.edit, "Edit..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.new, "New..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.userManagement, "User Management..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.viewUsingEncoding, "View Using Encoding" },
-    -- Plugins
-    { nil, "l", TablePlus.managePlugins, "Manage Plugins..." },
-    { { "ctrl" }, "`", TablePlus.runCustomScript, "Run Custom Script" },
-    -- Navigate
-    { nil, "[", TablePlus.selectPreviousTab, "Select Previous Tab" },
-    { nil, "]", TablePlus.selectNextTab, "Select Next Tab" },
-    { nil, "k", TablePlus.switchDatabase, "Switch Database..." },
-    { nil, "p", TablePlus.openAnything, "Open Anything" },
-    { nil, "t", TablePlus.newTab, "New Tab" },
-    { nil, "w", TablePlus.closeTab, "Close Tab" },
-    { { "alt" }, "[", TablePlus.selectPreviousPane, "Select Previous Pane" },
-    { { "alt" }, "]", TablePlus.selectNextPane, "Select Next Pane" },
-    { { "ctrl" }, "[", TablePlus.showTableData, "Show Table Data" },
-    { { "ctrl" }, "]", TablePlus.showTableStructure, "Show Table Structure" },
-    { { "shift" }, "[", TablePlus.selectPreviousWorkspace, "Select Previous Workspace" },
-    { { "shift" }, "]", TablePlus.selectNextWorkspace, "Select Next Workspace" },
-    { { "shift" }, "d", TablePlus.splitHorizontallyPane, "Split Horizontally Pane" },
-    { { "shift" }, "k", TablePlus.switchConnection, "Switch Connection..." },
-    -- View
-    { { "ctrl" }, "f", TablePlus.enterFullScreen, "Enter Full Screen" },
-    { { "shift" }, "c", TablePlus.toggleConsoleLog, "Toggle Console Log" },
-    -- Window
-    { nil, "m", TablePlus.minimize, "Minimize" },
-    { { "alt" }, "m", TablePlus.minimizeAll, "Minimize All" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.arrangeInFront, "Arrange in Front" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.bringAllToFront, "Bring All to Front" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.moveWindowToLeftSideOfScreen, "Move Window to Left Side of Screen" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.moveWindowToRightSideOfScreen, "Move Window to Right Side of Screen" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.zoomAll, "Zoom All" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.zoom, "Zoom" },
-    -- Help
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.changelogs, "Changelogs" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.enableSSHDebugLog, "Enable SSH Debug log" },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.privateMessage, "Private message..." },
-    { { "﴾unmapped﴿" }, "﴾unmapped﴿", TablePlus.reportBugFeedback, "Report bug & feedback" },
-})
-
-return TablePlus
+return Application {
+    name = "TablePlus",
+    shortcuts = {
+        TablePlus = {
+            { nil, nil, Open, "Open Application or Database Connection" },
+            { nil, ",", SelectMenuItem { "TablePlus", "Preferences…" } },
+            { nil, "h", SelectMenuItem { "TablePlus", "Hide TablePlus" } },
+            { nil, "q", SelectMenuItem { "TablePlus", "Quit TablePlus" } },
+            { { "alt" }, "h", SelectMenuItem { "TablePlus", "Hide Others" } },
+            { { "alt" }, "q", SelectMenuItem { "TablePlus", "Quit and Keep Windows" } },
+            { unmapped, unmapped, SelectMenuItem { "TablePlus", "About TablePlus" } },
+            { unmapped, unmapped, SelectMenuItem { "TablePlus", "Check for Updates..." } },
+            { unmapped, unmapped, SelectMenuItem { "TablePlus", "Register license..." } },
+            { unmapped, unmapped, ChooseMenuItem { "TablePlus", "Services" } },
+            { unmapped, unmapped, SelectMenuItem { "TablePlus", "Show All" } },
+        },
+        File = {
+            { nil, "i", ChooseMenuItem { "File", "Import" } },
+            { nil, "n", SelectMenuItem { "File", "New Workspace" } },
+            { nil, "o", SelectMenuItem { "File", "Open..." } },
+            { { "shift" }, "o", ChooseMenuItem { "File", "Open Recent" } },
+            { { "shift" }, "s", SelectMenuItem { "File", "Save As..." } },
+            { { "cmd", "shift" }, "o", SelectMenuItem { "File", "New SQL Viewer" } },
+            { unmapped, unmapped, SelectMenuItem { "File", "Backup..." } },
+            { unmapped, unmapped, SelectMenuItem { "File", "Close All" } },
+            { unmapped, unmapped, SelectMenuItem { "File", "Close" } },
+            { unmapped, unmapped, SelectMenuItem { "File", "Export..." } },
+            { unmapped, unmapped, SelectMenuItem { "File", "Restore..." } },
+        },
+        Edit = {
+            { nil, "-", SelectMenuItem { "Edit", "Decrease Font Size" } },
+            { nil, "/", SelectMenuItem { "Edit", "Toggle Line Comment" } },
+            { nil, "=", SelectMenuItem { "Edit", "Increase Font Size" } },
+            { nil, "a", SelectMenuItem { "Edit", "Select All" } },
+            { nil, "c", SelectMenuItem { "Edit", "Copy" } },
+            { nil, "d", SelectMenuItem { "Edit", "Duplicate Rows" } },
+            { nil, "i", SelectMenuItem { "Edit", "Add Row" } },
+            { nil, "s", SelectMenuItem { "Edit", "Commit" } },
+            { nil, "v", SelectMenuItem { "Edit", "Paste" } },
+            { nil, "x", SelectMenuItem { "Edit", "Cut" } },
+            { nil, "z", SelectMenuItem { "Edit", "Undo" } },
+            { { "alt" }, "/", SelectMenuItem { "Edit", "Toggle Block Comment" } },
+            { { "ctrl" }, "g", SelectMenuItem { "Edit", "Select all Words" } },
+            { { "shift" }, "p", SelectMenuItem { "Edit", "Preview" } },
+            { { "shift" }, "z", SelectMenuItem { "Edit", "Redo" } },
+            { unmapped, unmapped, SelectMenuItem { "Edit", "Delete" } },
+            { unmapped, unmapped, SelectMenuItem { "Edit", "Discard" } },
+            { unmapped, unmapped, SelectMenuItem { "Edit", "Emoji & Symbols" } },
+            { unmapped, unmapped, ChooseMenuItem { "Edit", "Find" } },
+            { unmapped, unmapped, SelectMenuItem { "Edit", "Select Word" } },
+            { unmapped, unmapped, ChooseMenuItem { "Edit", "Speech" } },
+            { unmapped, unmapped, SelectMenuItem { "Edit", "Start Dictation" } },
+            { unmapped, unmapped, ChooseMenuItem { "Edit", "Transformations" } },
+        },
+        Connection = {
+            { nil, ".", SelectMenuItem { "Connection", "Process List..." } },
+            { nil, "k", SelectMenuItem { "Connection", "Open a Database..." } },
+            { nil, "r", SelectMenuItem { "Connection", "Reload Workspace" } },
+            { { "alt" }, ".", SelectMenuItem { "Connection", "Disconnect" } },
+            { { "alt" }, "r", SelectMenuItem { "Connection", "Reload Current Tab" } },
+            { { "shift" }, "k", SelectMenuItem { "Connection", "Open a Connection..." } },
+            { { "shift" }, "r", SelectMenuItem { "Connection", "Reconnect" } },
+            { unmapped, unmapped, SelectMenuItem { "Connection", "Edit..." } },
+            { unmapped, unmapped, SelectMenuItem { "Connection", "New..." } },
+            { unmapped, unmapped, SelectMenuItem { "Connection", "Run All Queries" } },
+            { unmapped, unmapped, SelectMenuItem { "Connection", "Run Current Query" } },
+            { unmapped, unmapped, SelectMenuItem { "Connection", "User Management..." } },
+            { unmapped, unmapped, ChooseMenuItem { "Connection", "View Using Encoding" } },
+        },
+        Plugins = {
+            { nil, "l", SelectMenuItem { "Plugins", "Manage Plugins..." } },
+            { { "ctrl" }, "`", SelectMenuItem { "Plugins", "Run Custom Script" } },
+        },
+        Navigate = {
+            { nil, "[", SelectMenuItem { "Navigate", "Select Previous Tab" } },
+            { nil, "]", SelectMenuItem { "Navigate", "Select Next Tab" } },
+            { nil, "p", SelectMenuItem { "Navigate", "Open Anything" } },
+            { nil, "t", SelectMenuItem { "Navigate", "New Tab" } },
+            { nil, "w", SelectMenuItem { "Navigate", "Close Tab" } },
+            { { "alt" }, "[", SelectMenuItem { "Navigate", "Select Previous Pane" } },
+            { { "alt" }, "]", SelectMenuItem { "Navigate", "Select Next Pane" } },
+            { { "ctrl" }, "[", SelectMenuItem { "Navigate", "Show Table Data" } },
+            { { "ctrl" }, "]", SelectMenuItem { "Navigate", "Show Table Structure" } },
+            { { "shift" }, "[", SelectMenuItem { "Navigate", "Select Previous Workspace" } },
+            { { "shift" }, "]", SelectMenuItem { "Navigate", "Select Next Workspace" } },
+            { { "shift" }, "d", SelectMenuItem { "Navigate", "Split Horizontally Pane" } },
+            { unmapped, unmapped, ChooseMenuItem { "Navigate", "Select Tab at Index" } },
+        },
+        View = {
+            { { "ctrl" }, "f", SelectMenuItem { "View", "Enter Full Screen" } },
+            { { "shift" }, "\\", SelectMenuItem { "View", "Show All Tabs" } },
+            { { "shift" }, "c", SelectMenuItem { "View", "Toggle Console Log" } },
+            { unmapped, unmapped, SelectMenuItem { "View", "Show Tab Bar" } },
+        },
+        Window = {
+            { nil, "m", SelectMenuItem { "Window", "Minimize" } },
+            { { "alt" }, "m", SelectMenuItem { "Window", "Minimize All" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Arrange in Front" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Bring All to Front" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Merge All Windows" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Move Tab to New Window" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Move Window to Left Side of Screen" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Move Window to Right Side of Screen" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Show Next Tab" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Show Previous Tab" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Zoom All" } },
+            { unmapped, unmapped, SelectMenuItem { "Window", "Zoom" } },
+        },
+        Help = {
+            { unmapped, unmapped, SelectMenuItem { "Help", "Changelogs" } },
+            { unmapped, unmapped, SelectMenuItem { "Help", "Enable SSH Debug log" } },
+            { unmapped, unmapped, SelectMenuItem { "Help", "Private message..." } },
+            { unmapped, unmapped, SelectMenuItem { "Help", "Report bug & feedback" } },
+        },
+    },
+    getChooserItems = getChooserItems,
+}

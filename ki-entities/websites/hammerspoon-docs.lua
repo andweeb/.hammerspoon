@@ -112,6 +112,7 @@ return Website {
         { name = "Hammerspoon docs: hs.socket", link = "http://www.hammerspoon.org/docs/hs.socket.html" },
         { name = "Hammerspoon docs: hs.socket.udp", link = "http://www.hammerspoon.org/docs/hs.socket.udp.html" },
         { name = "Hammerspoon docs: hs.sound", link = "http://www.hammerspoon.org/docs/hs.sound.html" },
+        { name = "Hammerspoon docs: hs.spaces", link = "http://www.hammerspoon.org/docs/hs.spaces.html" },
         { name = "Hammerspoon docs: hs.spaces.watcher", link = "http://www.hammerspoon.org/docs/hs.spaces.watcher.html" },
         { name = "Hammerspoon docs: hs.speech", link = "http://www.hammerspoon.org/docs/hs.speech.html" },
         { name = "Hammerspoon docs: hs.speech.listener", link = "http://www.hammerspoon.org/docs/hs.speech.listener.html" },

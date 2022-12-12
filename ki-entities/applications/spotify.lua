@@ -241,7 +241,7 @@ function Spotify:showMyDevices()
     end)
 end
 
-function Spotify:showMyPlaylists()
+function Spotify:chooseMyPlaylist(onChoice)
     self.apiClient:get("/me/playlists?limit=50", nil, function(status, rawResponse)
         local success, response = pcall(function() return hs.json.decode(rawResponse) end)
         local acceptedRequest = tostring(status):sub(1, 1) == "2"
@@ -258,6 +258,7 @@ function Spotify:showMyPlaylists()
         for i = 1, #response.items do
             local playlist = response.items[i]
             table.insert(choices, {
+                id = playlist.id,
                 uri = playlist.uri,
                 text = playlist.name,
                 subText = hs.http.convertHtmlEntities(playlist.description),
@@ -265,10 +266,110 @@ function Spotify:showMyPlaylists()
             })
         end
 
-        local function onChoice(choice)
-            if choice then
-                return os.execute("open "..choice.uri)
-            end
+        self:loadChooserRowImages(choices, false)
+        self:showChooser(updateChoices, onChoice, { placeholderText = "Spotify Playlists" })
+    end)
+end
+
+function Spotify:openMyPlaylist()
+    self:chooseMyPlaylist(function (choice)
+        if choice then
+            return os.execute("open "..choice.uri)
+        end
+    end)
+end
+
+function Spotify:playTrackFromMyPlaylist()
+    self:chooseMyPlaylist(function (playlist)
+        if playlist then
+            local uri = string.format("/playlists/%s/tracks?limit=50", playlist.id)
+            self.apiClient:get(uri, nil, function(status, rawResponse)
+                local success, response = pcall(function() return hs.json.decode(rawResponse) end)
+                local acceptedRequest = tostring(status):sub(1, 1) == "2"
+
+                if not acceptedRequest or not success then
+                    return self.notifyError("Failed to get playlist tracks (status "..status..")", hs.inspect(response))
+                end
+
+                local choices = {}
+                local function updateChoices()
+                    return choices
+                end
+
+                for i = 1, #response.items do
+                    local item = response.items[i]
+                    local album = item.track.album
+
+                    local albumImageURL = ""
+                    if album then
+                        local albumImage = #album.images > 0 and album.images[#album.images] or {}
+                        albumImageURL = albumImage.url or ""
+                    end
+
+                    local artists = item.track.artists
+                    local artistsText = "Unknown artist"
+                    if #artists > 0 then
+                        local featuring = {}
+                        for j = 1, #artists do
+                            local artistName = artists[j].name
+                            if j == 1 then
+                                artistsText = artistName
+                            else
+                                table.insert(featuring, artistName)
+                            end
+                        end
+
+                        if #featuring > 0 then
+                            artistsText = string.format("%s (ft. %s)", artistsText, table.concat(featuring, ", "))
+                        end
+                    end
+
+                    table.insert(choices, {
+                        id = item.track.id,
+                        playlist = playlist,
+                        text = item.track.name,
+                        subText = artistsText,
+                        imageURL = albumImageURL
+                    })
+                end
+
+                local function onChoice(choice)
+                    if choice then
+                        local cmd = string.format("open 'spotify:track:%s?context=spotify%%3Aplaylist%%3A%s'", choice.id, choice.playlist.id)
+                        return os.execute(cmd)
+                    end
+                end
+
+                self:loadChooserRowImages(choices, false)
+                self:showChooser(updateChoices, onChoice, { placeholderText = playlist.name })
+            end)
+        end
+    end)
+end
+
+function Spotify:playSavedTrack(onChoice)
+    self.apiClient:get("/me/playlists?limit=50", nil, function(status, rawResponse)
+        local success, response = pcall(function() return hs.json.decode(rawResponse) end)
+        local acceptedRequest = tostring(status):sub(1, 1) == "2"
+
+        if not acceptedRequest or not success then
+            return self.notifyError("Failed to show playlists (status "..status..")", hs.inspect(response))
+        end
+
+        local choices = {}
+        local function updateChoices()
+            return choices
+        end
+
+        for i = 1, #response.items do
+            local playlist = response.items[i]
+            table.insert(choices, {
+                id = playlist.id,
+                uri = playlist.uri,
+                text = playlist.name,
+                subText = hs.http.convertHtmlEntities(playlist.description),
+                imageURL = playlist.images[1] and playlist.images[1].url or "",
+            })
         end
 
         self:loadChooserRowImages(choices, false)
@@ -358,9 +459,10 @@ Spotify.searchArtists = Spotify:createSearchAction("artist", function(item)
 end)
 
 Spotify:registerShortcuts({
-    { nil, "d", function(...) Spotify:showMyDevices(...) end, "Show My Devices" },
+    { nil, "d", function() Spotify:showMyDevices() end, "Show My Devices" },
     { nil, "s", Spotify.searchTracks, "Search Tracks" },
-    { { "shift" }, "p", function(...) Spotify:showMyPlaylists(...) end, "Show My Playlists" },
+    { { "shift" }, "p", function() Spotify:openMyPlaylist() end, "Open My Playlist" },
     { { "shift" }, "s", Spotify.searchArtists, "Search Artists" },
+    { { "shift" }, "t", function() Spotify:playTrackFromMyPlaylist() end, "Play Track From My Playlist" },
     { { "alt", "cmd" }, "a", function() Spotify:authorize("localhost", 8888) end, "Authorize" }
 })

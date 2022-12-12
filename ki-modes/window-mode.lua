@@ -216,7 +216,7 @@ end
 
 -- Move window to an adjacent space (https://github.com/koekeishiya/kwm/issues/219)
 local function moveWindowOneSpace(direction)
-    local mouseOrigin = hs.mouse.getAbsolutePosition()
+    local mouseOrigin = hs.mouse.absolutePosition()
     local win = hs.window.frontmostWindow()
     local clickPoint = win:zoomButtonRect()
 
