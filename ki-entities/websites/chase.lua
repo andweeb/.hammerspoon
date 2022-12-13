@@ -18,14 +18,29 @@ function Chase.getOffers()
     ]])
 end
 
+function Chase.runJavaScriptInActiveSafariTab(javascript)
+    hs.osascript.applescript([[
+        tell application "Safari" to tell current tab of front window
+            do JavaScript "]]..javascript..[[" 
+        end tell
+    ]])
+end
+
 function Chase:copyOffers()
-    local isOk, output = self.getOffers()
-    if isOk then
-        hs.pasteboard.setContents(output)
-        hs.notify.show("Ki", "Copied copy Chase offers to clipboard", "")
-    else
-        hs.notify.show("Ki", "Unable to copy Chase offers to clipboard", "")
-    end
+    -- Click the "See more offers" button
+    local clickButtonJS = "var btn=document.querySelector(`a[blue-click='requestMoreOffers'`); btn && btn.click()"
+    self.runJavaScriptInActiveSafariTab(clickButtonJS)
+
+    -- Copy offers after a second delay
+    hs.timer.doAfter(1, function()
+        local isOk, output = self.getOffers()
+        if isOk then
+            hs.pasteboard.setContents(output)
+            hs.notify.show("Ki", "Copied copy Chase offers to clipboard", "")
+        else
+            hs.notify.show("Ki", "Unable to copy Chase offers to clipboard", "")
+        end
+    end)
 end
 
 Chase:registerShortcuts({
