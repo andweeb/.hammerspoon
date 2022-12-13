@@ -3,7 +3,7 @@ window.rows = [];
 
 // Helper functions
 var getTarget = (container, selector, attribute) => {
-    var target = container.querySelector(selector);
+    const target = container.querySelector(selector);
 
     if (attribute) {
         return target ? target[attribute] : null;
@@ -12,7 +12,7 @@ var getTarget = (container, selector, attribute) => {
     return target;
 };
 Date.prototype.addDays = function(days) {
-    var date = new Date(this.valueOf());
+    const date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
 }
@@ -27,8 +27,7 @@ var getCardInfo = () => {
     const cardOptions = document.querySelector(CARD_SELECTOR).children;
     const [cardNode] = Array.from(cardOptions)
         .filter(option => option.selected);
-    const [, numbers] = cardNode.label.match(/\(\.\.\.([^)]+)\)/)
-    return `${cardNode.accessibleText} (${numbers})`;
+    return `${cardNode.accessibleText}`;
 }
 
 var cardInfo = getCardInfo();
