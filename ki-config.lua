@@ -57,7 +57,7 @@ local websites = {
     Dropbox           = Website { name = "Dropbox",   url = "https://www.dropbox.com"               },
     Synchrony         = Website { name = "Synchrony", url = "https://securelogin.synchronybank.com" },
     Lobsters          = Website { name = "Lobsters",  url = "http://lobste.rs"                      },
-    TempMail          = Website { name = "Temp Mail", url = "https://temp-mail.org/en/"             },
+    Oreilly           = Website { name = "Oreilly",   url = "http://oreilly.com"                    },
 
     -- Externally defined Website entities
     Airbnb            = requireEntity("website", "airbnb"),
@@ -85,7 +85,6 @@ local websites = {
     NPR               = requireEntity("website", "npr"),
     NYTimes           = requireEntity("website", "nytimes"),
     Netflix           = requireEntity("website", "netflix"),
-    OwlRepo           = requireEntity("website", "owlrepo"),
     Reddit            = requireEntity("website", "reddit"),
     StackOverflow     = requireEntity("website", "stackoverflow"),
     Wikipedia         = requireEntity("website", "wikipedia"),
@@ -270,7 +269,7 @@ Mode {
         { { "shift" }        , "l" , websites.LearnXInYMinutes  },
         { { "shift" }        , "m" , websites.GoogleMaps        },
         { { "shift" }        , "n" , websites.NPM               },
-        { { "shift" }        , "o" , websites.OwlRepo           },
+        { { "shift" }        , "o" , websites.Oreilly           },
         { { "shift" }        , "t" , websites.TempMail          },
         { { "shift" }        , "y" , websites.Yelp              },
         { { "shift" }        , "z" , websites.ZeroTier          },
