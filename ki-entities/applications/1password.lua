@@ -21,9 +21,9 @@ local function URLHandlerAction(options)
 end
 
 return Application {
-    name = "1Password 7",
+    name = "1Password",
     shortcuts = {
-        ["1Password 7"] = {
+        ["1Password"] = {
             { nil, nil, URLHandlerAction { "Open", "search/ " } },
             { nil, ",", SelectMenuItem { "1Password 7", "Preferences…" } },
             { nil, "h", SelectMenuItem { "1Password 7", "Hide 1Password" } },
