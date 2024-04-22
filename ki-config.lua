@@ -55,9 +55,10 @@ local websites = {
     -- Basic inline Website entities
     APNews            = Website { name = "AP News",   url = "https://www.apnews.com"                },
     Dropbox           = Website { name = "Dropbox",   url = "https://www.dropbox.com"               },
-    Synchrony         = Website { name = "Synchrony", url = "https://securelogin.synchronybank.com" },
     Lobsters          = Website { name = "Lobsters",  url = "http://lobste.rs"                      },
     Oreilly           = Website { name = "Oreilly",   url = "http://oreilly.com"                    },
+    Synchrony         = Website { name = "Synchrony", url = "https://securelogin.synchronybank.com" },
+    Upgrade           = Website { name = "Upgrade",   url = "https://www.upgrade.com/portal/"       },
 
     -- Externally defined Website entities
     Airbnb            = requireEntity("website", "airbnb"),
@@ -79,7 +80,7 @@ local websites = {
     LearnXInYMinutes  = requireEntity("website", "learnxinyminutes"),
     Letterboxd        = requireEntity("website", "letterboxd"),
     LinkedIn          = requireEntity("website", "linkedin"),
-    MapleLegends      = requireEntity("website", "maplelegends"),
+    MonarchMoney      = requireEntity("website", "monarch-money"),
     MyAnimeList       = requireEntity("website", "myanimelist"),
     NPM               = requireEntity("website", "npm"),
     NPR               = requireEntity("website", "npr"),
@@ -104,7 +105,7 @@ local files = {
 local LIFX = requireEntity("entity", "lifx")
 local BedroomLIFX = LIFX {
     name          = "Bedroom Light",
-    selector      = "label:Bedroom Light",
+    selector      = "label:Main",
 }
 
 -- Create custom application entities
@@ -115,17 +116,20 @@ local entities = {
     Discord            = Application "Discord",
     Firefox            = Application "Firefox",
     Gitter             = Application "Gitter",
-    Messenger          = Application "Messenger",
     LimeChat           = Application "LimeChat",
+    Messenger          = Application "Messenger",
     Obsidian           = Application "Obsidian",
+    ParallelsDesktop   = Application "Parallels Desktop",
     Plex               = Application "Plex",
     Postico            = Application "Postico",
     ProtonVPN          = Application "ProtonVPN",
+    Signal             = Application "Signal",
     Slack              = Application "Slack",
     VisualStudioCode   = Application "Visual Studio Code",
 
     -- Require externally defined application entities
     ["1Password"]      = requireEntity("application", "1password"),
+    Arc                = requireEntity("application", "arc"),
     Fantastical        = requireEntity("application", "fantastical"),
     IINA               = requireEntity("application", "iina"),
     Hammerspoon        = requireEntity("application", "hammerspoon"),
@@ -137,7 +141,6 @@ local entities = {
     MicrosoftOutlook   = requireEntity("application", "microsoft-outlook"),
     MicrosoftWord      = requireEntity("application", "microsoft-word"),
     ScriptEditor       = requireEntity("application", "script-editor"),
-    Steam              = requireEntity("application", "steam"),
     TablePlus          = requireEntity("application", "tableplus"),
     VMWareFusion       = requireEntity("application", "vmware-fusion"),
     VLC                = requireEntity("application", "vlc"),
@@ -181,6 +184,7 @@ Mode {
         { nil                , "k" , entities.Keyboard           },
         { nil                , "l" , entities.BedroomLIFX        },
         { nil                , "o" , entities.Obsidian           },
+        { nil                , "s" , entities.Arc                },
         { nil                , "v" , entities.VMWareFusion       },
         { nil                , "w" , entities.MicrosoftWord      },
         { nil                , "z" , entities.Zoom               },
@@ -188,7 +192,7 @@ Mode {
         { { "alt" }          , "p" , entities.SmartPlug          },
         { { "alt", "cmd" }   , "c" , entities.Cron               },
         { { "alt", "cmd" }   , "p" , entities.Plex               },
-        { { "alt", "cmd" }   , "s" , entities.Steam              },
+        { { "alt", "cmd" }   , "s" , entities.Signal             },
         { { "cmd" }          , "c" , entities.ClipboardText      },
         { { "cmd" }          , "e" , entities.EmojiPicker        },
         { { "cmd" }          , "g" , entities.GlyphPicker        },
@@ -206,7 +210,7 @@ Mode {
         { { "shift" }        , "i" , entities.IINA               },
         { { "shift" }        , "l" , entities.LINE               },
         { { "shift" }        , "m" , entities.Messenger          },
-        { { "shift" }        , "p" , entities.TablePlus          },
+        { { "shift" }        , "p" , entities.ParallelsDesktop   },
         { { "shift" }        , "t" , entities.iTerm              },
         { { "shift" }        , "v" , entities.VLC                },
         { { "shift", "cmd" } , "f" , entities.FaceTime           },
@@ -224,6 +228,7 @@ Mode {
     shortcuts = {
         { nil                , "e" , entities.MicrosoftExcel   , "Select a Microsoft Excel window"   },
         { nil                , "j" , entities.Java             , "Select a Java app"                 },
+        { nil                , "s" , entities.Arc              , "Select an Arc tab or window"       },
         { nil                , "w" , entities.MicrosoftWord    , "Select a Microsoft Word window"    },
         { nil                , "v" , entities.VMWareFusion     , "Select VMware Fusion window"       },
         { { "cmd" }          , "t" , entities.TextEdit         , "Select a TextEdit window"          },
@@ -260,8 +265,9 @@ Mode {
         { { "cmd" }          , "h" , websites.Hammerspoon       },
         { { "cmd" }          , "n" , websites.NYTimes           },
         { { "ctrl" }         , "l" , websites.Lobsters          },
+        { { "ctrl" }         , "m" , websites.MonarchMoney      },
         { { "ctrl" }         , "s" , websites.Synchrony         },
-        { { "ctrl", "cmd" }  , "m" , websites.MapleLegends      },
+        { { "ctrl" }         , "u" , websites.Upgrade           },
         { { "shift" }        , "a" , websites.Airbnb            },
         { { "shift" }        , "c" , websites.CapitalOne        },
         { { "shift" }        , "g" , websites.Github            },
@@ -322,7 +328,6 @@ Mode {
         { nil                , "y" , websites.YouTube       },
         { { "cmd" }          , "b" , websites.BBC           },
         { { "cmd" }          , "n" , websites.NYTimes       },
-        { { "ctrl", "cmd" }  , "m" , websites.MapleLegends  },
         { { "shift" }        , "g" , websites.Github        },
         { { "shift", "cmd" } , "c" , websites.Crunchbase    },
         { { "shift", "cmd" } , "g" , websites.Glassdoor     },
