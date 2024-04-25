@@ -9,33 +9,39 @@ local SelectMenuItem = Application.SelectMenuItem
 local ToggleMenuItem = Application.ToggleMenuItem
 local unmapped = Application.unmapped
 
+-- Determine script path
+local parentPathRegex = "^(.+)/.+$"
+local spoonPath = hs.spoons.scriptPath()
+local root = spoonPath:match(parentPathRegex):match(parentPathRegex)
+local arcScriptPath = root.."/scripts/arc.applescript"
+local arcTabsScriptPath = root.."/scripts/arc-tabs.applescript"
+
 -- Implement method to support selection of tab titles in select mode
 local function getChooserItems()
     local choices = {}
-    local script = Application.renderScriptTemplate("application-tabs", { application = "Arc" })
-    local isOk, tabList, rawTable = hs.osascript.applescript(script)
+    local script = Application.renderScriptTemplate(arcTabsScriptPath)
+    local isOk, spaceTabs, rawTable = hs.osascript.applescript(script)
 
     if not isOk then
-        Application.notifyError("Error fetching browser tab information", rawTable.NSLocalizedFailureReason)
+        Application.notifyError("Error fetching tab information", rawTable.NSLocalizedFailureReason)
 
         return {}
     end
 
     local windowIndex = 0
 
-    for windowId, titleList in pairs(tabList) do
+    for space, tabTitles in pairs(spaceTabs) do
         windowIndex = windowIndex + 1
-        for tabIndex, tabTitle in pairs(titleList) do
+        for tabIndex, tabTitle in pairs(tabTitles) do
             local lastOpenParenIndex = tabTitle:match("^.*()%(")
             local title = tabTitle:sub(1, lastOpenParenIndex - 1)
             local url = tabTitle:sub(lastOpenParenIndex - #tabTitle - 1):match("%((.-)%)") or ""
 
             table.insert(choices, {
                 text = title,
-                subText = "Window "..windowIndex.." Tab #"..tabIndex.." - "..url,
+                subText = "Space "..space.." Tab #"..tabIndex.." - "..url,
                 tabIndex = tabIndex,
-                windowIndex = windowIndex,
-                windowId = windowId,
+                space = space,
                 imageURL = Website:getFaviconURL(url),
             })
         end
@@ -44,16 +50,9 @@ local function getChooserItems()
     return choices
 end
 
--- Determine sqlformat script path
-local parentPathRegex = "^(.+)/.+$"
-local spoonPath = hs.spoons.scriptPath()
-local root = spoonPath:match(parentPathRegex):match(parentPathRegex)
-local scriptPath = root.."/scripts/arc.applescript"
-
 -- Helper method to run AppleScript actions available in `osascripts/google-chrome.applescript`
 local function runApplescriptAction(errorMessage, viewModel)
-    print(scriptPath)
-    local script = Application.renderScriptTemplate(scriptPath, viewModel)
+    local script = Application.renderScriptTemplate(arcScriptPath, viewModel)
     local isOk, _, rawTable = hs.osascript.applescript(script)
 
     if not isOk then
@@ -64,7 +63,6 @@ end
 -- Action to focus a Arc tab or window
 local function focus(app, choice)
     if choice then
-        hs.inspect(print(choice))
         runApplescriptAction("Error focusing Arc tab", {
             action = "focus-tab",
             windowId = choice.windowId,
@@ -101,6 +99,43 @@ local function close(_, choice)
     })
 end
 
+-- Action to choose and focus an Arc space
+local function focusSpace()
+    local script = Application.renderScriptTemplate(arcScriptPath, {
+        action = "get-spaces",
+    })
+
+    local isOk, spaces, rawTable = hs.osascript.applescript(script)
+
+    if not isOk then
+        Application.notifyError("Error getting spaces", rawTable.NSLocalizedFailureReason)
+        return
+    end
+
+    local choices = {}
+    for _, space in pairs(spaces) do
+        table.insert(choices, {
+            id = space,
+            text = space,
+        })
+    end
+
+    local function onChoice(choice)
+        local focusScript = Application.renderScriptTemplate(arcScriptPath, {
+            action = "focus-space",
+            target = choice.id,
+        })
+
+        local focusIsOk, _, focusRawTable = hs.osascript.applescript(focusScript)
+        if not focusIsOk then
+            Application.notifyError("Error getting spaces", focusRawTable.NSLocalizedFailureReason)
+        end
+    end
+
+    Application:showChooser(choices, onChoice, { placeholderText = "Spaces" })
+end
+
+
 -- Use a helper method to create various browser media actions
 local function createMediaAction(command, errorMessage)
     return function (_, choice)
@@ -130,6 +165,7 @@ return Application {
             { nil, nil, focus, "Activate" },
             { nil, "space", toggleMedia, "Play/Pause Media" },
             { nil, "r", reload, "Reload This Page" },
+            { nil, "s", focusSpace, "Focus Arc Space" },
             { nil, ",", SelectMenuItem { "Arc", "Settings…" } },
             { nil, "h", SelectMenuItem { "Arc", "Hide Arc" } },
             { nil, "q", SelectMenuItem { "Arc", "Quit Arc" } },
@@ -188,8 +224,8 @@ return Application {
             { nil, ".", SelectMenuItem { "View", "Stop Loading" } },
             { nil, "0", SelectMenuItem { "View", "Zoom to Actual Size" } },
             { nil, "r", SelectMenuItem { "View", "Refresh the Page" } },
-            { nil, "s", SelectMenuItem { "View", "Hide Sidebar" } },
             { { "alt" }, "r", ToggleMenuItem { "Enter Reader Mode (beta)", "Exit Reader Mode (beta)" } },
+            { { "alt" }, "s", SelectMenuItem { "View", "Hide Sidebar" } },
             { { "ctrl" }, "f", ToggleMenuItem { "Enter Full Screen", "Exit Full Screen" } },
             { { "shift" }, "d", SelectMenuItem { "View", "Show Toolbar" } },
             { { "shift" }, "r", SelectMenuItem { "View", "Force Refresh the Page" } },

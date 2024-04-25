@@ -1,4 +1,4 @@
--- AppleScript template for activating an Arc tab under a specific window
+-- AppleScript template for activating an Arc tab under a specific space
 set action to "{{{action}}}"
 
 tell application "Arc"
@@ -6,10 +6,19 @@ tell application "Arc"
     if action is "focus-tab" then
 
         {{#tabIndex}}
-        -- `target` - a string that describes the tab target
-        set active tab index of window id {{windowId}} to {{tabIndex}}
-        set index of window id {{windowId}} to 1
+        tell front window 
+            tell space "Personal" 
+                tell tab {{tabIndex}} to select
+            end tell
+        end tell
         {{/tabIndex}}
+
+    else if action is "focus-space" then
+
+        {{#target}}
+        -- `target` - the name of the space
+        focus space "{{target}}" of front window
+        {{/target}}
 
     else if action is "reload" then
 
@@ -22,6 +31,16 @@ tell application "Arc"
         {{#target}}
         close {{target}}
         {{/target}}
+
+    else if action is "get-spaces" then
+
+        set spaceNames to {}
+
+        repeat with currentSpace in every space of front window
+            copy (title of currentSpace) to the end of the |spaceNames|
+        end repeat
+
+        return spaceNames
 
     end if
 
