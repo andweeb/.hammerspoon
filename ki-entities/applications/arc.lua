@@ -65,7 +65,7 @@ local function focus(app, choice)
     if choice then
         runApplescriptAction("Error focusing Arc tab", {
             action = "focus-tab",
-            windowId = choice.windowId,
+            spaceName = choice.space,
             tabIndex = choice.tabIndex,
         })
     else

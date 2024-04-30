@@ -6,11 +6,9 @@ tell application "Arc"
     if action is "focus-tab" then
 
         {{#tabIndex}}
-        tell front window 
-            tell space "Personal" 
-                tell tab {{tabIndex}} to select
-            end tell
-        end tell
+        {{#spaceName}}
+        tell front window to select tab {{tabIndex}} of space "{{spaceName}}" 
+        {{/spaceName}}
         {{/tabIndex}}
 
     else if action is "focus-space" then
