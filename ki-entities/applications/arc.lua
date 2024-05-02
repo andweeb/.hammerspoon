@@ -50,7 +50,7 @@ local function getChooserItems()
     return choices
 end
 
--- Helper method to run AppleScript actions available in `osascripts/google-chrome.applescript`
+-- Helper method to run AppleScript actions available in `osascripts/arc.applescript`
 local function runApplescriptAction(errorMessage, viewModel)
     local script = Application.renderScriptTemplate(arcScriptPath, viewModel)
     local isOk, _, rawTable = hs.osascript.applescript(script)
@@ -75,10 +75,14 @@ end
 
 -- Action to reload a Arc tab or window
 local function reload(_, choice)
-    local targetName = choice and "tab" or "window"
-    local target = choice
-        and "tab "..choice.tabIndex.." of window "..choice.windowId
-        or "active tab of front window"
+    local targetName = "window"
+    local target = "active tab of front window"
+
+    if choice then
+        local targetFmt = [[tab %i of space "%s" of front window]]
+        target = string.format(targetFmt, choice.tabIndex, choice.space)
+        targetName = "tab"
+    end
 
     runApplescriptAction("Error reloading Arc "..targetName, {
         action = "reload",
@@ -88,10 +92,14 @@ end
 
 -- Action to close a Arc tab or window
 local function close(_, choice)
-    local targetName = choice and "tab" or "window"
-    local target = choice
-        and "tab "..choice.tabIndex.." of window "..choice.windowId
-        or "active tab of front window"
+    local targetName = "window"
+    local target = "active tab of front window"
+
+    if choice then
+        local targetFmt = [[tab %i of space "%s" of front window]]
+        target = string.format(targetFmt, choice.tabIndex, choice.space)
+        targetName = "tab"
+    end
 
     runApplescriptAction("Error closing Arc "..targetName, {
         action = "close",
