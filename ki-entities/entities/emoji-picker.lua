@@ -9,20 +9,23 @@ local function createTables()
     local choices = {}
     local categories = {}
     local categoryChoices = {}
+    local categoryNames = {}
 
-    -- Emoji list from https://cdn.rawgit.com/github/gemoji/master/db/emoji.json
+    -- Emoji list from https://unicode.org/Public/emoji/latest/emoji-test.txt, merged with aliases and tags
+    -- from https://raw.githubusercontent.com/github/gemoji/master/db/emoji.json and filtered to the emojis
+    -- rendered by the installed Apple Color Emoji font
     local emojis = hs.json.read("ki-entities/entities/emoji.json")
 
     -- Initialize emoji choices and categories table
-    for _, emoji in pairs(emojis) do
+    for _, emoji in ipairs(emojis) do
         local description = "("..emoji.description..") "
 
         -- Initialize category lists
-        if categories[emoji.category] then
-            table.insert(categories[emoji.category], emoji.emoji)
-        else
+        if not categories[emoji.category] then
             categories[emoji.category] = {}
+            table.insert(categoryNames, emoji.category)
         end
+        table.insert(categories[emoji.category], emoji.emoji)
 
         -- Add emoji aliases and tags to the description
         for _, alias in pairs(emoji.aliases) do description = description.." :"..alias..":" end
@@ -36,17 +39,8 @@ local function createTables()
     end
 
     -- Initialize item category lists
-    for categoryName, list in pairs(categories) do
-        local subText = ""
-        local items = table.pack(table.unpack(list, 1, 10))
-
-        for i, item in pairs(items) do
-            if i == 1 then
-                subText = item
-            else
-                subText = subText.." "..item
-            end
-        end
+    for _, categoryName in ipairs(categoryNames) do
+        local subText = table.concat({ table.unpack(categories[categoryName], 1, 10) }, " ")
 
         table.insert(categoryChoices, {
             text = categoryName,
@@ -107,6 +101,10 @@ local choices = { {
     item = "🙃",
     subText = "(upside-down face)  :upside_down_face:",
     text = "🙃"
+  }, {
+    item = "🫠",
+    subText = "(melting face)  :melting_face: #sarcasm #dread",
+    text = "🫠"
   }, {
     item = "😉",
     subText = "(winking face)  :wink: #flirt",
@@ -181,12 +179,20 @@ local choices = { {
     text = "🤑"
   }, {
     item = "🤗",
-    subText = "(hugging face)  :hugs:",
+    subText = "(smiling face with open hands)  :hugs:",
     text = "🤗"
   }, {
     item = "🤭",
     subText = "(face with hand over mouth)  :hand_over_mouth: #quiet #whoops",
     text = "🤭"
+  }, {
+    item = "🫢",
+    subText = "(face with open eyes and hand over mouth)  :face_with_open_eyes_and_hand_over_mouth: #gasp #shock",
+    text = "🫢"
+  }, {
+    item = "🫣",
+    subText = "(face with peeking eye)  :face_with_peeking_eye:",
+    text = "🫣"
   }, {
     item = "🤫",
     subText = "(shushing face)  :shushing_face: #silence #quiet",
@@ -195,6 +201,10 @@ local choices = { {
     item = "🤔",
     subText = "(thinking face)  :thinking:",
     text = "🤔"
+  }, {
+    item = "🫡",
+    subText = "(saluting face)  :saluting_face: #respect",
+    text = "🫡"
   }, {
     item = "🤐",
     subText = "(zipper-mouth face)  :zipper_mouth_face: #silence #hush",
@@ -216,6 +226,14 @@ local choices = { {
     subText = "(face without mouth)  :no_mouth: #mute #silence",
     text = "😶"
   }, {
+    item = "🫥",
+    subText = "(dotted line face)  :dotted_line_face: #invisible",
+    text = "🫥"
+  }, {
+    item = "😶‍🌫️",
+    subText = "(face in clouds)  :face_in_clouds:",
+    text = "😶‍🌫️"
+  }, {
     item = "😏",
     subText = "(smirking face)  :smirk: #smug",
     text = "😏"
@@ -232,9 +250,25 @@ local choices = { {
     subText = "(grimacing face)  :grimacing:",
     text = "😬"
   }, {
+    item = "😮‍💨",
+    subText = "(face exhaling)  :face_exhaling:",
+    text = "😮‍💨"
+  }, {
     item = "🤥",
     subText = "(lying face)  :lying_face: #liar",
     text = "🤥"
+  }, {
+    item = "🫨",
+    subText = "(shaking face)  :shaking_face: #shock",
+    text = "🫨"
+  }, {
+    item = "🙂‍↔️",
+    subText = "(head shaking horizontally)  :head_shaking_horizontally:",
+    text = "🙂‍↔️"
+  }, {
+    item = "🙂‍↕️",
+    subText = "(head shaking vertically)  :head_shaking_vertically:",
+    text = "🙂‍↕️"
   }, {
     item = "😌",
     subText = "(relieved face)  :relieved: #whew",
@@ -255,6 +289,10 @@ local choices = { {
     item = "😴",
     subText = "(sleeping face)  :sleeping: #zzz",
     text = "😴"
+  }, {
+    item = "🫩",
+    subText = "(face with bags under eyes)  :face_with_bags_under_eyes:",
+    text = "🫩"
   }, {
     item = "😷",
     subText = "(face with medical mask)  :mask: #sick #ill",
@@ -293,8 +331,12 @@ local choices = { {
     text = "🥴"
   }, {
     item = "😵",
-    subText = "(dizzy face)  :dizzy_face:",
+    subText = "(face with crossed-out eyes)  :dizzy_face:",
     text = "😵"
+  }, {
+    item = "😵‍💫",
+    subText = "(face with spiral eyes)  :face_with_spiral_eyes:",
+    text = "😵‍💫"
   }, {
     item = "🤯",
     subText = "(exploding head)  :exploding_head: #mind #blown",
@@ -328,6 +370,10 @@ local choices = { {
     subText = "(confused face)  :confused:",
     text = "😕"
   }, {
+    item = "🫤",
+    subText = "(face with diagonal mouth)  :face_with_diagonal_mouth: #confused",
+    text = "🫤"
+  }, {
     item = "😟",
     subText = "(worried face)  :worried: #nervous",
     text = "😟"
@@ -356,9 +402,17 @@ local choices = { {
     subText = "(flushed face)  :flushed:",
     text = "😳"
   }, {
+    item = "🫪",
+    subText = "(distorted face)  :distorted_face:",
+    text = "🫪"
+  }, {
     item = "🥺",
     subText = "(pleading face)  :pleading_face: #puppy #eyes",
     text = "🥺"
+  }, {
+    item = "🥹",
+    subText = "(face holding back tears)  :face_holding_back_tears: #tears #gratitude",
+    text = "🥹"
   }, {
     item = "😦",
     subText = "(frowning face with open mouth)  :frowning:",
@@ -425,7 +479,7 @@ local choices = { {
     text = "😤"
   }, {
     item = "😡",
-    subText = "(pouting face)  :rage: :pout: #angry",
+    subText = "(enraged face)  :rage: :pout: #angry",
     text = "😡"
   }, {
     item = "😠",
@@ -532,10 +586,6 @@ local choices = { {
     subText = "(speak-no-evil monkey)  :speak_no_evil: #monkey #mute #hush",
     text = "🙊"
   }, {
-    item = "💋",
-    subText = "(kiss mark)  :kiss: #lipstick",
-    text = "💋"
-  }, {
     item = "💌",
     subText = "(love letter)  :love_letter: #email #envelope",
     text = "💌"
@@ -580,9 +630,21 @@ local choices = { {
     subText = "(broken heart)  :broken_heart:",
     text = "💔"
   }, {
+    item = "❤️‍🔥",
+    subText = "(heart on fire)  :heart_on_fire:",
+    text = "❤️‍🔥"
+  }, {
+    item = "❤️‍🩹",
+    subText = "(mending heart)  :mending_heart:",
+    text = "❤️‍🩹"
+  }, {
     item = "❤️",
     subText = "(red heart)  :heart: #love",
     text = "❤️"
+  }, {
+    item = "🩷",
+    subText = "(pink heart)  :pink_heart:",
+    text = "🩷"
   }, {
     item = "🧡",
     subText = "(orange heart)  :orange_heart:",
@@ -600,6 +662,10 @@ local choices = { {
     subText = "(blue heart)  :blue_heart:",
     text = "💙"
   }, {
+    item = "🩵",
+    subText = "(light blue heart)  :light_blue_heart:",
+    text = "🩵"
+  }, {
     item = "💜",
     subText = "(purple heart)  :purple_heart:",
     text = "💜"
@@ -612,9 +678,17 @@ local choices = { {
     subText = "(black heart)  :black_heart:",
     text = "🖤"
   }, {
+    item = "🩶",
+    subText = "(grey heart)  :grey_heart:",
+    text = "🩶"
+  }, {
     item = "🤍",
     subText = "(white heart)  :white_heart:",
     text = "🤍"
+  }, {
+    item = "💋",
+    subText = "(kiss mark)  :kiss: #lipstick",
+    text = "💋"
   }, {
     item = "💯",
     subText = "(hundred points)  :100: #score #perfect",
@@ -623,6 +697,10 @@ local choices = { {
     item = "💢",
     subText = "(anger symbol)  :anger: #angry",
     text = "💢"
+  }, {
+    item = "🫯",
+    subText = "(fight cloud)  :fight_cloud:",
+    text = "🫯"
   }, {
     item = "💥",
     subText = "(collision)  :boom: :collision: #explode",
@@ -643,10 +721,6 @@ local choices = { {
     item = "🕳️",
     subText = "(hole)  :hole:",
     text = "🕳️"
-  }, {
-    item = "💣",
-    subText = "(bomb)  :bomb: #boom",
-    text = "💣"
   }, {
     item = "💬",
     subText = "(speech balloon)  :speech_balloon: #comment",
@@ -669,7 +743,7 @@ local choices = { {
     text = "💭"
   }, {
     item = "💤",
-    subText = "(zzz)  :zzz: #sleeping",
+    subText = "(ZZZ)  :zzz: #sleeping",
     text = "💤"
   }, {
     item = "👋",
@@ -692,6 +766,30 @@ local choices = { {
     subText = "(vulcan salute)  :vulcan_salute: #prosper #spock",
     text = "🖖"
   }, {
+    item = "🫱",
+    subText = "(rightwards hand)  :rightwards_hand:",
+    text = "🫱"
+  }, {
+    item = "🫲",
+    subText = "(leftwards hand)  :leftwards_hand:",
+    text = "🫲"
+  }, {
+    item = "🫳",
+    subText = "(palm down hand)  :palm_down_hand:",
+    text = "🫳"
+  }, {
+    item = "🫴",
+    subText = "(palm up hand)  :palm_up_hand:",
+    text = "🫴"
+  }, {
+    item = "🫷",
+    subText = "(leftwards pushing hand)  :leftwards_pushing_hand:",
+    text = "🫷"
+  }, {
+    item = "🫸",
+    subText = "(rightwards pushing hand)  :rightwards_pushing_hand:",
+    text = "🫸"
+  }, {
     item = "👌",
     subText = "(OK hand)  :ok_hand:",
     text = "👌"
@@ -711,6 +809,10 @@ local choices = { {
     item = "🤞",
     subText = "(crossed fingers)  :crossed_fingers: #luck #hopeful",
     text = "🤞"
+  }, {
+    item = "🫰",
+    subText = "(hand with index finger and thumb crossed)  :hand_with_index_finger_and_thumb_crossed:",
+    text = "🫰"
   }, {
     item = "🤟",
     subText = "(love-you gesture)  :love_you_gesture:",
@@ -748,6 +850,10 @@ local choices = { {
     subText = "(index pointing up)  :point_up:",
     text = "☝️"
   }, {
+    item = "🫵",
+    subText = "(index pointing at the viewer)  :index_pointing_at_the_viewer:",
+    text = "🫵"
+  }, {
     item = "👍",
     subText = "(thumbs up)  :+1: :thumbsup: #approve #ok",
     text = "👍"
@@ -779,6 +885,10 @@ local choices = { {
     item = "🙌",
     subText = "(raising hands)  :raised_hands: #hooray",
     text = "🙌"
+  }, {
+    item = "🫶",
+    subText = "(heart hands)  :heart_hands: #love",
+    text = "🫶"
   }, {
     item = "👐",
     subText = "(open hands)  :open_hands:",
@@ -876,6 +986,10 @@ local choices = { {
     subText = "(mouth)  :lips: #kiss",
     text = "👄"
   }, {
+    item = "🫦",
+    subText = "(biting lip)  :biting_lip:",
+    text = "🫦"
+  }, {
     item = "👶",
     subText = "(baby)  :baby: #child #newborn",
     text = "👶"
@@ -905,8 +1019,16 @@ local choices = { {
     text = "👨"
   }, {
     item = "🧔",
-    subText = "(man: beard)  :bearded_person:",
+    subText = "(person: beard)  :bearded_person:",
     text = "🧔"
+  }, {
+    item = "🧔‍♂️",
+    subText = "(man: beard)  :man_beard:",
+    text = "🧔‍♂️"
+  }, {
+    item = "🧔‍♀️",
+    subText = "(woman: beard)  :woman_beard:",
+    text = "🧔‍♀️"
   }, {
     item = "👨‍🦰",
     subText = "(man: red hair)  :red_haired_man:",
@@ -1344,6 +1466,10 @@ local choices = { {
     subText = "(woman construction worker)  :construction_worker_woman: #helmet",
     text = "👷‍♀️"
   }, {
+    item = "🫅",
+    subText = "(person with crown)  :person_with_crown:",
+    text = "🫅"
+  }, {
     item = "🤴",
     subText = "(prince)  :prince: #crown #royal",
     text = "🤴"
@@ -1399,6 +1525,14 @@ local choices = { {
     item = "🤰",
     subText = "(pregnant woman)  :pregnant_woman:",
     text = "🤰"
+  }, {
+    item = "🫃",
+    subText = "(pregnant man)  :pregnant_man:",
+    text = "🫃"
+  }, {
+    item = "🫄",
+    subText = "(pregnant person)  :pregnant_person:",
+    text = "🫄"
   }, {
     item = "🤱",
     subText = "(breast-feeding)  :breast_feeding: #nursing",
@@ -1540,6 +1674,14 @@ local choices = { {
     subText = "(woman zombie)  :zombie_woman:",
     text = "🧟‍♀️"
   }, {
+    item = "🧌",
+    subText = "(troll)  :troll:",
+    text = "🧌"
+  }, {
+    item = "🫈",
+    subText = "(hairy creature)  :hairy_creature:",
+    text = "🫈"
+  }, {
     item = "💆",
     subText = "(person getting massage)  :massage: #spa",
     text = "💆"
@@ -1576,6 +1718,18 @@ local choices = { {
     subText = "(woman walking)  :walking_woman:",
     text = "🚶‍♀️"
   }, {
+    item = "🚶‍➡️",
+    subText = "(person walking facing right)  :person_walking_facing_right:",
+    text = "🚶‍➡️"
+  }, {
+    item = "🚶‍♀️‍➡️",
+    subText = "(woman walking facing right)  :woman_walking_facing_right:",
+    text = "🚶‍♀️‍➡️"
+  }, {
+    item = "🚶‍♂️‍➡️",
+    subText = "(man walking facing right)  :man_walking_facing_right:",
+    text = "🚶‍♂️‍➡️"
+  }, {
     item = "🧍",
     subText = "(person standing)  :standing_person:",
     text = "🧍"
@@ -1600,41 +1754,89 @@ local choices = { {
     subText = "(woman kneeling)  :kneeling_woman:",
     text = "🧎‍♀️"
   }, {
+    item = "🧎‍➡️",
+    subText = "(person kneeling facing right)  :person_kneeling_facing_right:",
+    text = "🧎‍➡️"
+  }, {
+    item = "🧎‍♀️‍➡️",
+    subText = "(woman kneeling facing right)  :woman_kneeling_facing_right:",
+    text = "🧎‍♀️‍➡️"
+  }, {
+    item = "🧎‍♂️‍➡️",
+    subText = "(man kneeling facing right)  :man_kneeling_facing_right:",
+    text = "🧎‍♂️‍➡️"
+  }, {
     item = "🧑‍🦯",
     subText = "(person with white cane)  :person_with_probing_cane:",
     text = "🧑‍🦯"
+  }, {
+    item = "🧑‍🦯‍➡️",
+    subText = "(person with white cane facing right)  :person_with_white_cane_facing_right:",
+    text = "🧑‍🦯‍➡️"
   }, {
     item = "👨‍🦯",
     subText = "(man with white cane)  :man_with_probing_cane:",
     text = "👨‍🦯"
   }, {
+    item = "👨‍🦯‍➡️",
+    subText = "(man with white cane facing right)  :man_with_white_cane_facing_right:",
+    text = "👨‍🦯‍➡️"
+  }, {
     item = "👩‍🦯",
     subText = "(woman with white cane)  :woman_with_probing_cane:",
     text = "👩‍🦯"
+  }, {
+    item = "👩‍🦯‍➡️",
+    subText = "(woman with white cane facing right)  :woman_with_white_cane_facing_right:",
+    text = "👩‍🦯‍➡️"
   }, {
     item = "🧑‍🦼",
     subText = "(person in motorized wheelchair)  :person_in_motorized_wheelchair:",
     text = "🧑‍🦼"
   }, {
+    item = "🧑‍🦼‍➡️",
+    subText = "(person in motorized wheelchair facing right)  :person_in_motorized_wheelchair_facing_right:",
+    text = "🧑‍🦼‍➡️"
+  }, {
     item = "👨‍🦼",
     subText = "(man in motorized wheelchair)  :man_in_motorized_wheelchair:",
     text = "👨‍🦼"
+  }, {
+    item = "👨‍🦼‍➡️",
+    subText = "(man in motorized wheelchair facing right)  :man_in_motorized_wheelchair_facing_right:",
+    text = "👨‍🦼‍➡️"
   }, {
     item = "👩‍🦼",
     subText = "(woman in motorized wheelchair)  :woman_in_motorized_wheelchair:",
     text = "👩‍🦼"
   }, {
+    item = "👩‍🦼‍➡️",
+    subText = "(woman in motorized wheelchair facing right)  :woman_in_motorized_wheelchair_facing_right:",
+    text = "👩‍🦼‍➡️"
+  }, {
     item = "🧑‍🦽",
     subText = "(person in manual wheelchair)  :person_in_manual_wheelchair:",
     text = "🧑‍🦽"
+  }, {
+    item = "🧑‍🦽‍➡️",
+    subText = "(person in manual wheelchair facing right)  :person_in_manual_wheelchair_facing_right:",
+    text = "🧑‍🦽‍➡️"
   }, {
     item = "👨‍🦽",
     subText = "(man in manual wheelchair)  :man_in_manual_wheelchair:",
     text = "👨‍🦽"
   }, {
+    item = "👨‍🦽‍➡️",
+    subText = "(man in manual wheelchair facing right)  :man_in_manual_wheelchair_facing_right:",
+    text = "👨‍🦽‍➡️"
+  }, {
     item = "👩‍🦽",
     subText = "(woman in manual wheelchair)  :woman_in_manual_wheelchair:",
     text = "👩‍🦽"
+  }, {
+    item = "👩‍🦽‍➡️",
+    subText = "(woman in manual wheelchair facing right)  :woman_in_manual_wheelchair_facing_right:",
+    text = "👩‍🦽‍➡️"
   }, {
     item = "🏃",
     subText = "(person running)  :runner: :running: #exercise #workout #marathon",
@@ -1647,6 +1849,22 @@ local choices = { {
     item = "🏃‍♀️",
     subText = "(woman running)  :running_woman: #exercise #workout #marathon",
     text = "🏃‍♀️"
+  }, {
+    item = "🏃‍➡️",
+    subText = "(person running facing right)  :person_running_facing_right:",
+    text = "🏃‍➡️"
+  }, {
+    item = "🏃‍♀️‍➡️",
+    subText = "(woman running facing right)  :woman_running_facing_right:",
+    text = "🏃‍♀️‍➡️"
+  }, {
+    item = "🏃‍♂️‍➡️",
+    subText = "(man running facing right)  :man_running_facing_right:",
+    text = "🏃‍♂️‍➡️"
+  }, {
+    item = "🧑‍🩰",
+    subText = "(ballet dancer)  :ballet_dancer:",
+    text = "🧑‍🩰"
   }, {
     item = "💃",
     subText = "(woman dancing)  :woman_dancing: :dancer: #dress",
@@ -1936,10 +2154,6 @@ local choices = { {
     subText = "(couple with heart: woman, woman)  :couple_with_heart_woman_woman:",
     text = "👩‍❤️‍👩"
   }, {
-    item = "👪",
-    subText = "(family)  :family: #home #parents #child",
-    text = "👪"
-  }, {
     item = "👨‍👩‍👦",
     subText = "(family: man, woman, boy)  :family_man_woman_boy:",
     text = "👨‍👩‍👦"
@@ -2056,9 +2270,33 @@ local choices = { {
     subText = "(people hugging)  :people_hugging:",
     text = "🫂"
   }, {
+    item = "👪",
+    subText = "(family)  :family: #home #parents #child",
+    text = "👪"
+  }, {
+    item = "🧑‍🧑‍🧒",
+    subText = "(family: adult, adult, child)  :family_adult_adult_child:",
+    text = "🧑‍🧑‍🧒"
+  }, {
+    item = "🧑‍🧑‍🧒‍🧒",
+    subText = "(family: adult, adult, child, child)  :family_adult_adult_child_child:",
+    text = "🧑‍🧑‍🧒‍🧒"
+  }, {
+    item = "🧑‍🧒",
+    subText = "(family: adult, child)  :family_adult_child:",
+    text = "🧑‍🧒"
+  }, {
+    item = "🧑‍🧒‍🧒",
+    subText = "(family: adult, child, child)  :family_adult_child_child:",
+    text = "🧑‍🧒‍🧒"
+  }, {
     item = "👣",
     subText = "(footprints)  :footprints: #feet #tracks",
     text = "👣"
+  }, {
+    item = "🫆",
+    subText = "(fingerprint)  :fingerprint:",
+    text = "🫆"
   }, {
     item = "🐵",
     subText = "(monkey face)  :monkey_face:",
@@ -2139,6 +2377,14 @@ local choices = { {
     item = "🐴",
     subText = "(horse face)  :horse:",
     text = "🐴"
+  }, {
+    item = "🫎",
+    subText = "(moose)  :moose: #canada",
+    text = "🫎"
+  }, {
+    item = "🫏",
+    subText = "(donkey)  :donkey: #mule",
+    text = "🫏"
   }, {
     item = "🐎",
     subText = "(horse)  :racehorse: #speed",
@@ -2388,6 +2634,22 @@ local choices = { {
     subText = "(parrot)  :parrot:",
     text = "🦜"
   }, {
+    item = "🪽",
+    subText = "(wing)  :wing: #fly",
+    text = "🪽"
+  }, {
+    item = "🐦‍⬛",
+    subText = "(black bird)  :black_bird:",
+    text = "🐦‍⬛"
+  }, {
+    item = "🪿",
+    subText = "(goose)  :goose: #honk",
+    text = "🪿"
+  }, {
+    item = "🐦‍🔥",
+    subText = "(phoenix)  :phoenix:",
+    text = "🐦‍🔥"
+  }, {
     item = "🐸",
     subText = "(frog)  :frog:",
     text = "🐸"
@@ -2436,6 +2698,10 @@ local choices = { {
     subText = "(dolphin)  :dolphin: :flipper:",
     text = "🐬"
   }, {
+    item = "🫍",
+    subText = "(orca)  :orca:",
+    text = "🫍"
+  }, {
     item = "🦭",
     subText = "(seal)  :seal:",
     text = "🦭"
@@ -2463,6 +2729,34 @@ local choices = { {
     item = "🐚",
     subText = "(spiral shell)  :shell: #sea #beach",
     text = "🐚"
+  }, {
+    item = "🪸",
+    subText = "(coral)  :coral:",
+    text = "🪸"
+  }, {
+    item = "🪼",
+    subText = "(jellyfish)  :jellyfish:",
+    text = "🪼"
+  }, {
+    item = "🦀",
+    subText = "(crab)  :crab:",
+    text = "🦀"
+  }, {
+    item = "🦞",
+    subText = "(lobster)  :lobster:",
+    text = "🦞"
+  }, {
+    item = "🦐",
+    subText = "(shrimp)  :shrimp:",
+    text = "🦐"
+  }, {
+    item = "🦑",
+    subText = "(squid)  :squid:",
+    text = "🦑"
+  }, {
+    item = "🦪",
+    subText = "(oyster)  :oyster:",
+    text = "🦪"
   }, {
     item = "🐌",
     subText = "(snail)  :snail: #slow",
@@ -2540,6 +2834,10 @@ local choices = { {
     subText = "(white flower)  :white_flower:",
     text = "💮"
   }, {
+    item = "🪷",
+    subText = "(lotus)  :lotus:",
+    text = "🪷"
+  }, {
     item = "🏵️",
     subText = "(rosette)  :rosette:",
     text = "🏵️"
@@ -2567,6 +2865,10 @@ local choices = { {
     item = "🌷",
     subText = "(tulip)  :tulip: #flower",
     text = "🌷"
+  }, {
+    item = "🪻",
+    subText = "(hyacinth)  :hyacinth:",
+    text = "🪻"
   }, {
     item = "🌱",
     subText = "(seedling)  :seedling: #plant",
@@ -2620,6 +2922,22 @@ local choices = { {
     subText = "(leaf fluttering in wind)  :leaves: #leaf",
     text = "🍃"
   }, {
+    item = "🪹",
+    subText = "(empty nest)  :empty_nest:",
+    text = "🪹"
+  }, {
+    item = "🪺",
+    subText = "(nest with eggs)  :nest_with_eggs:",
+    text = "🪺"
+  }, {
+    item = "🍄",
+    subText = "(mushroom)  :mushroom: #fungus",
+    text = "🍄"
+  }, {
+    item = "🪾",
+    subText = "(leafless tree)  :leafless_tree:",
+    text = "🪾"
+  }, {
     item = "🍇",
     subText = "(grapes)  :grapes:",
     text = "🍇"
@@ -2639,6 +2957,10 @@ local choices = { {
     item = "🍋",
     subText = "(lemon)  :lemon:",
     text = "🍋"
+  }, {
+    item = "🍋‍🟩",
+    subText = "(lime)  :lime:",
+    text = "🍋‍🟩"
   }, {
     item = "🍌",
     subText = "(banana)  :banana: #fruit",
@@ -2744,17 +3066,33 @@ local choices = { {
     subText = "(onion)  :onion:",
     text = "🧅"
   }, {
-    item = "🍄",
-    subText = "(mushroom)  :mushroom:",
-    text = "🍄"
-  }, {
     item = "🥜",
     subText = "(peanuts)  :peanuts:",
     text = "🥜"
   }, {
+    item = "🫘",
+    subText = "(beans)  :beans:",
+    text = "🫘"
+  }, {
     item = "🌰",
     subText = "(chestnut)  :chestnut:",
     text = "🌰"
+  }, {
+    item = "🫚",
+    subText = "(ginger root)  :ginger_root:",
+    text = "🫚"
+  }, {
+    item = "🫛",
+    subText = "(pea pod)  :pea_pod:",
+    text = "🫛"
+  }, {
+    item = "🍄‍🟫",
+    subText = "(brown mushroom)  :brown_mushroom:",
+    text = "🍄‍🟫"
+  }, {
+    item = "🫜",
+    subText = "(root vegetable)  :root_vegetable:",
+    text = "🫜"
   }, {
     item = "🍞",
     subText = "(bread)  :bread: #toast",
@@ -2960,26 +3298,6 @@ local choices = { {
     subText = "(takeout box)  :takeout_box:",
     text = "🥡"
   }, {
-    item = "🦀",
-    subText = "(crab)  :crab:",
-    text = "🦀"
-  }, {
-    item = "🦞",
-    subText = "(lobster)  :lobster:",
-    text = "🦞"
-  }, {
-    item = "🦐",
-    subText = "(shrimp)  :shrimp:",
-    text = "🦐"
-  }, {
-    item = "🦑",
-    subText = "(squid)  :squid:",
-    text = "🦑"
-  }, {
-    item = "🦪",
-    subText = "(oyster)  :oyster:",
-    text = "🦪"
-  }, {
     item = "🍦",
     subText = "(soft ice cream)  :icecream:",
     text = "🍦"
@@ -3092,6 +3410,10 @@ local choices = { {
     subText = "(tumbler glass)  :tumbler_glass: #whisky",
     text = "🥃"
   }, {
+    item = "🫗",
+    subText = "(pouring liquid)  :pouring_liquid:",
+    text = "🫗"
+  }, {
     item = "🥤",
     subText = "(cup with straw)  :cup_with_straw:",
     text = "🥤"
@@ -3132,6 +3454,10 @@ local choices = { {
     subText = "(kitchen knife)  :hocho: :knife: #cut #chop",
     text = "🔪"
   }, {
+    item = "🫙",
+    subText = "(jar)  :jar:",
+    text = "🫙"
+  }, {
     item = "🏺",
     subText = "(amphora)  :amphora:",
     text = "🏺"
@@ -3171,6 +3497,10 @@ local choices = { {
     item = "⛰️",
     subText = "(mountain)  :mountain:",
     text = "⛰️"
+  }, {
+    item = "🛘",
+    subText = "(landslide)  :landslide:",
+    text = "🛘"
   }, {
     item = "🌋",
     subText = "(volcano)  :volcano:",
@@ -3380,6 +3710,10 @@ local choices = { {
     subText = "(carousel horse)  :carousel_horse:",
     text = "🎠"
   }, {
+    item = "🛝",
+    subText = "(playground slide)  :playground_slide:",
+    text = "🛝"
+  }, {
     item = "🎡",
     subText = "(ferris wheel)  :ferris_wheel:",
     text = "🎡"
@@ -3572,6 +3906,10 @@ local choices = { {
     subText = "(fuel pump)  :fuelpump:",
     text = "⛽"
   }, {
+    item = "🛞",
+    subText = "(wheel)  :wheel:",
+    text = "🛞"
+  }, {
     item = "🚨",
     subText = "(police car light)  :rotating_light: #911 #emergency",
     text = "🚨"
@@ -3595,6 +3933,10 @@ local choices = { {
     item = "⚓",
     subText = "(anchor)  :anchor: #ship",
     text = "⚓"
+  }, {
+    item = "🛟",
+    subText = "(ring buoy)  :ring_buoy: #life preserver",
+    text = "🛟"
   }, {
     item = "⛵",
     subText = "(sailboat)  :boat: :sailboat:",
@@ -4213,7 +4555,7 @@ local choices = { {
     text = "🥌"
   }, {
     item = "🎯",
-    subText = "(direct hit)  :dart: #target",
+    subText = "(bullseye)  :dart: #target",
     text = "🎯"
   }, {
     item = "🪀",
@@ -4223,6 +4565,10 @@ local choices = { {
     item = "🪁",
     subText = "(kite)  :kite:",
     text = "🪁"
+  }, {
+    item = "🔫",
+    subText = "(water pistol)  :gun: #shoot #weapon",
+    text = "🔫"
   }, {
     item = "🎱",
     subText = "(pool 8 ball)  :8ball: #pool #billiards",
@@ -4235,10 +4581,6 @@ local choices = { {
     item = "🪄",
     subText = "(magic wand)  :magic_wand:",
     text = "🪄"
-  }, {
-    item = "🧿",
-    subText = "(nazar amulet)  :nazar_amulet:",
-    text = "🧿"
   }, {
     item = "🎮",
     subText = "(video game)  :video_game: #play #controller #console",
@@ -4267,6 +4609,10 @@ local choices = { {
     item = "🪅",
     subText = "(piñata)  :pinata:",
     text = "🪅"
+  }, {
+    item = "🪩",
+    subText = "(mirror ball)  :mirror_ball: #disco #party",
+    text = "🪩"
   }, {
     item = "🪆",
     subText = "(nesting dolls)  :nesting_dolls:",
@@ -4412,6 +4758,10 @@ local choices = { {
     subText = "(woman’s clothes)  :womans_clothes:",
     text = "👚"
   }, {
+    item = "🪭",
+    subText = "(folding hand fan)  :folding_hand_fan: #sensu",
+    text = "🪭"
+  }, {
     item = "👛",
     subText = "(purse)  :purse:",
     text = "👛"
@@ -4467,6 +4817,10 @@ local choices = { {
     item = "👢",
     subText = "(woman’s boot)  :boot:",
     text = "👢"
+  }, {
+    item = "🪮",
+    subText = "(hair pick)  :hair_pick:",
+    text = "🪮"
   }, {
     item = "👑",
     subText = "(crown)  :crown: #king #queen #royal",
@@ -4588,6 +4942,14 @@ local choices = { {
     subText = "(saxophone)  :saxophone:",
     text = "🎷"
   }, {
+    item = "🎺",
+    subText = "(trumpet)  :trumpet:",
+    text = "🎺"
+  }, {
+    item = "🪊",
+    subText = "(trombone)  :trombone:",
+    text = "🪊"
+  }, {
     item = "🪗",
     subText = "(accordion)  :accordion:",
     text = "🪗"
@@ -4599,10 +4961,6 @@ local choices = { {
     item = "🎹",
     subText = "(musical keyboard)  :musical_keyboard: #piano",
     text = "🎹"
-  }, {
-    item = "🎺",
-    subText = "(trumpet)  :trumpet:",
-    text = "🎺"
   }, {
     item = "🎻",
     subText = "(violin)  :violin:",
@@ -4619,6 +4977,18 @@ local choices = { {
     item = "🪘",
     subText = "(long drum)  :long_drum:",
     text = "🪘"
+  }, {
+    item = "🪇",
+    subText = "(maracas)  :maracas: #shaker",
+    text = "🪇"
+  }, {
+    item = "🪈",
+    subText = "(flute)  :flute: #recorder",
+    text = "🪈"
+  }, {
+    item = "🪉",
+    subText = "(harp)  :harp:",
+    text = "🪉"
   }, {
     item = "📱",
     subText = "(mobile phone)  :iphone: #smartphone #mobile",
@@ -4647,6 +5017,10 @@ local choices = { {
     item = "🔋",
     subText = "(battery)  :battery: #power",
     text = "🔋"
+  }, {
+    item = "🪫",
+    subText = "(low battery)  :low_battery:",
+    text = "🪫"
   }, {
     item = "🔌",
     subText = "(electric plug)  :electric_plug:",
@@ -4828,13 +5202,17 @@ local choices = { {
     subText = "(label)  :label: #tag",
     text = "🏷️"
   }, {
+    item = "🪙",
+    subText = "(coin)  :coin:",
+    text = "🪙"
+  }, {
     item = "💰",
     subText = "(money bag)  :moneybag: #dollar #cream",
     text = "💰"
   }, {
-    item = "🪙",
-    subText = "(coin)  :coin:",
-    text = "🪙"
+    item = "🪎",
+    subText = "(treasure chest)  :treasure_chest:",
+    text = "🪎"
   }, {
     item = "💴",
     subText = "(yen banknote)  :yen:",
@@ -5092,9 +5470,9 @@ local choices = { {
     subText = "(crossed swords)  :crossed_swords:",
     text = "⚔️"
   }, {
-    item = "🔫",
-    subText = "(pistol)  :gun: #shoot #weapon",
-    text = "🔫"
+    item = "💣",
+    subText = "(bomb)  :bomb: #boom",
+    text = "💣"
   }, {
     item = "🪃",
     subText = "(boomerang)  :boomerang:",
@@ -5144,6 +5522,10 @@ local choices = { {
     subText = "(link)  :link:",
     text = "🔗"
   }, {
+    item = "⛓️‍💥",
+    subText = "(broken chain)  :broken_chain:",
+    text = "⛓️‍💥"
+  }, {
     item = "⛓️",
     subText = "(chains)  :chains:",
     text = "⛓️"
@@ -5163,6 +5545,10 @@ local choices = { {
     item = "🪜",
     subText = "(ladder)  :ladder:",
     text = "🪜"
+  }, {
+    item = "🪏",
+    subText = "(shovel)  :shovel:",
+    text = "🪏"
   }, {
     item = "⚗️",
     subText = "(alembic)  :alembic:",
@@ -5208,9 +5594,17 @@ local choices = { {
     subText = "(adhesive bandage)  :adhesive_bandage:",
     text = "🩹"
   }, {
+    item = "🩼",
+    subText = "(crutch)  :crutch:",
+    text = "🩼"
+  }, {
     item = "🩺",
     subText = "(stethoscope)  :stethoscope:",
     text = "🩺"
+  }, {
+    item = "🩻",
+    subText = "(x-ray)  :x_ray:",
+    text = "🩻"
   }, {
     item = "🚪",
     subText = "(door)  :door:",
@@ -5292,6 +5686,10 @@ local choices = { {
     subText = "(soap)  :soap:",
     text = "🧼"
   }, {
+    item = "🫧",
+    subText = "(bubbles)  :bubbles:",
+    text = "🫧"
+  }, {
     item = "🪥",
     subText = "(toothbrush)  :toothbrush:",
     text = "🪥"
@@ -5324,6 +5722,14 @@ local choices = { {
     subText = "(funeral urn)  :funeral_urn:",
     text = "⚱️"
   }, {
+    item = "🧿",
+    subText = "(nazar amulet)  :nazar_amulet:",
+    text = "🧿"
+  }, {
+    item = "🪬",
+    subText = "(hamsa)  :hamsa:",
+    text = "🪬"
+  }, {
     item = "🗿",
     subText = "(moai)  :moyai: #stone",
     text = "🗿"
@@ -5331,6 +5737,10 @@ local choices = { {
     item = "🪧",
     subText = "(placard)  :placard:",
     text = "🪧"
+  }, {
+    item = "🪪",
+    subText = "(identification card)  :identification_card:",
+    text = "🪪"
   }, {
     item = "🏧",
     subText = "(ATM sign)  :atm:",
@@ -5568,6 +5978,10 @@ local choices = { {
     subText = "(dotted six-pointed star)  :six_pointed_star:",
     text = "🔯"
   }, {
+    item = "🪯",
+    subText = "(khanda)  :khanda:",
+    text = "🪯"
+  }, {
     item = "♈",
     subText = "(Aries)  :aries:",
     text = "♈"
@@ -5708,6 +6122,10 @@ local choices = { {
     subText = "(antenna bars)  :signal_strength: #wifi",
     text = "📶"
   }, {
+    item = "🛜",
+    subText = "(wireless)  :wireless: #wifi",
+    text = "🛜"
+  }, {
     item = "📳",
     subText = "(vibration mode)  :vibration_mode:",
     text = "📳"
@@ -5744,6 +6162,10 @@ local choices = { {
     subText = "(divide)  :heavy_division_sign:",
     text = "➗"
   }, {
+    item = "🟰",
+    subText = "(heavy equals sign)  :heavy_equals_sign:",
+    text = "🟰"
+  }, {
     item = "♾️",
     subText = "(infinity)  :infinity:",
     text = "♾️"
@@ -5757,7 +6179,7 @@ local choices = { {
     text = "⁉️"
   }, {
     item = "❓",
-    subText = "(question mark)  :question: #confused",
+    subText = "(red question mark)  :question: #confused",
     text = "❓"
   }, {
     item = "❔",
@@ -5769,7 +6191,7 @@ local choices = { {
     text = "❕"
   }, {
     item = "❗",
-    subText = "(exclamation mark)  :exclamation: :heavy_exclamation_mark: #bang",
+    subText = "(red exclamation mark)  :exclamation: :heavy_exclamation_mark: #bang",
     text = "❗"
   }, {
     item = "〰️",
@@ -5867,6 +6289,10 @@ local choices = { {
     item = "™️",
     subText = "(trade mark)  :tm: #trademark",
     text = "™️"
+  }, {
+    item = "🫟",
+    subText = "(splatter)  :splatter:",
+    text = "🫟"
   }, {
     item = "#️⃣",
     subText = "(keycap: #)  :hash: #number",
@@ -6447,6 +6873,10 @@ local choices = { {
     item = "🇨🇵",
     subText = "(flag: Clipperton Island)  :clipperton_island:",
     text = "🇨🇵"
+  }, {
+    item = "🇨🇶",
+    subText = "(flag: Sark)  :flag_sark:",
+    text = "🇨🇶"
   }, {
     item = "🇨🇷",
     subText = "(flag: Costa Rica)  :costa_rica:",
@@ -7289,52 +7719,52 @@ local choices = { {
     text = "🏴󠁧󠁢󠁷󠁬󠁳󠁿"
   } }
 local categories = {
-  Activities = { "🎄", "🎆", "🎇", "🧨", "✨", "🎈", "🎉", "🎊", "🎋", "🎍", "🎎", "🎏", "🎐", "🎑", "🧧", "🎀", "🎁", "🎗️", "🎟️", "🎫", "🎖️", "🏆", "🏅", "🥇", "🥈", "🥉", "⚽", "⚾", "🥎", "🏀", "🏐", "🏈", "🏉", "🎾", "🥏", "🎳", "🏏", "🏑", "🏒", "🥍", "🏓", "🏸", "🥊", "🥋", "🥅", "⛳", "⛸️", "🎣", "🤿", "🎽", "🎿", "🛷", "🥌", "🎯", "🪀", "🪁", "🎱", "🔮", "🪄", "🧿", "🎮", "🕹️", "🎰", "🎲", "🧩", "🧸", "🪅", "🪆", "♠️", "♥️", "♦️", "♣️", "♟️", "🃏", "🀄", "🎴", "🎭", "🖼️", "🎨", "🧵", "🪡", "🧶", "🪢" },
-  ["Animals & Nature"] = { "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐕‍🦺", "🐩", "🐺", "🦊", "🦝", "🐱", "🐈", "🐈‍⬛", "🦁", "🐯", "🐅", "🐆", "🐴", "🐎", "🦄", "🦓", "🦌", "🦬", "🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑", "🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️", "🦫", "🦔", "🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🦦", "🦨", "🦘", "🦡", "🐾", "🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", "🦢", "🦉", "🦤", "🪶", "🦩", "🦚", "🦜", "🐸", "🐊", "🐢", "🦎", "🐍", "🐲", "🐉", "🦕", "🦖", "🐳", "🐋", "🐬", "🦭", "🐟", "🐠", "🐡", "🦈", "🐙", "🐚", "🐌", "🦋", "🐛", "🐜", "🐝", "🪲", "🐞", "🦗", "🪳", "🕷️", "🕸️", "🦂", "🦟", "🪰", "🪱", "🦠", "💐", "🌸", "💮", "🏵️", "🌹", "🥀", "🌺", "🌻", "🌼", "🌷", "🌱", "🪴", "🌲", "🌳", "🌴", "🌵", "🌾", "🌿", "☘️", "🍀", "🍁", "🍂", "🍃" },
-  Flags = { "🚩", "🎌", "🏴", "🏳️", "🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️", "🇦🇨", "🇦🇩", "🇦🇪", "🇦🇫", "🇦🇬", "🇦🇮", "🇦🇱", "🇦🇲", "🇦🇴", "🇦🇶", "🇦🇷", "🇦🇸", "🇦🇹", "🇦🇺", "🇦🇼", "🇦🇽", "🇦🇿", "🇧🇦", "🇧🇧", "🇧🇩", "🇧🇪", "🇧🇫", "🇧🇬", "🇧🇭", "🇧🇮", "🇧🇯", "🇧🇱", "🇧🇲", "🇧🇳", "🇧🇴", "🇧🇶", "🇧🇷", "🇧🇸", "🇧🇹", "🇧🇻", "🇧🇼", "🇧🇾", "🇧🇿", "🇨🇦", "🇨🇨", "🇨🇩", "🇨🇫", "🇨🇬", "🇨🇭", "🇨🇮", "🇨🇰", "🇨🇱", "🇨🇲", "🇨🇳", "🇨🇴", "🇨🇵", "🇨🇷", "🇨🇺", "🇨🇻", "🇨🇼", "🇨🇽", "🇨🇾", "🇨🇿", "🇩🇪", "🇩🇬", "🇩🇯", "🇩🇰", "🇩🇲", "🇩🇴", "🇩🇿", "🇪🇦", "🇪🇨", "🇪🇪", "🇪🇬", "🇪🇭", "🇪🇷", "🇪🇸", "🇪🇹", "🇪🇺", "🇫🇮", "🇫🇯", "🇫🇰", "🇫🇲", "🇫🇴", "🇫🇷", "🇬🇦", "🇬🇧", "🇬🇩", "🇬🇪", "🇬🇫", "🇬🇬", "🇬🇭", "🇬🇮", "🇬🇱", "🇬🇲", "🇬🇳", "🇬🇵", "🇬🇶", "🇬🇷", "🇬🇸", "🇬🇹", "🇬🇺", "🇬🇼", "🇬🇾", "🇭🇰", "🇭🇲", "🇭🇳", "🇭🇷", "🇭🇹", "🇭🇺", "🇮🇨", "🇮🇩", "🇮🇪", "🇮🇱", "🇮🇲", "🇮🇳", "🇮🇴", "🇮🇶", "🇮🇷", "🇮🇸", "🇮🇹", "🇯🇪", "🇯🇲", "🇯🇴", "🇯🇵", "🇰🇪", "🇰🇬", "🇰🇭", "🇰🇮", "🇰🇲", "🇰🇳", "🇰🇵", "🇰🇷", "🇰🇼", "🇰🇾", "🇰🇿", "🇱🇦", "🇱🇧", "🇱🇨", "🇱🇮", "🇱🇰", "🇱🇷", "🇱🇸", "🇱🇹", "🇱🇺", "🇱🇻", "🇱🇾", "🇲🇦", "🇲🇨", "🇲🇩", "🇲🇪", "🇲🇫", "🇲🇬", "🇲🇭", "🇲🇰", "🇲🇱", "🇲🇲", "🇲🇳", "🇲🇴", "🇲🇵", "🇲🇶", "🇲🇷", "🇲🇸", "🇲🇹", "🇲🇺", "🇲🇻", "🇲🇼", "🇲🇽", "🇲🇾", "🇲🇿", "🇳🇦", "🇳🇨", "🇳🇪", "🇳🇫", "🇳🇬", "🇳🇮", "🇳🇱", "🇳🇴", "🇳🇵", "🇳🇷", "🇳🇺", "🇳🇿", "🇴🇲", "🇵🇦", "🇵🇪", "🇵🇫", "🇵🇬", "🇵🇭", "🇵🇰", "🇵🇱", "🇵🇲", "🇵🇳", "🇵🇷", "🇵🇸", "🇵🇹", "🇵🇼", "🇵🇾", "🇶🇦", "🇷🇪", "🇷🇴", "🇷🇸", "🇷🇺", "🇷🇼", "🇸🇦", "🇸🇧", "🇸🇨", "🇸🇩", "🇸🇪", "🇸🇬", "🇸🇭", "🇸🇮", "🇸🇯", "🇸🇰", "🇸🇱", "🇸🇲", "🇸🇳", "🇸🇴", "🇸🇷", "🇸🇸", "🇸🇹", "🇸🇻", "🇸🇽", "🇸🇾", "🇸🇿", "🇹🇦", "🇹🇨", "🇹🇩", "🇹🇫", "🇹🇬", "🇹🇭", "🇹🇯", "🇹🇰", "🇹🇱", "🇹🇲", "🇹🇳", "🇹🇴", "🇹🇷", "🇹🇹", "🇹🇻", "🇹🇼", "🇹🇿", "🇺🇦", "🇺🇬", "🇺🇲", "🇺🇳", "🇺🇸", "🇺🇾", "🇺🇿", "🇻🇦", "🇻🇨", "🇻🇪", "🇻🇬", "🇻🇮", "🇻🇳", "🇻🇺", "🇼🇫", "🇼🇸", "🇽🇰", "🇾🇪", "🇾🇹", "🇿🇦", "🇿🇲", "🇿🇼", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿" },
-  ["Food & Drink"] = { "🍈", "🍉", "🍊", "🍋", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄", "🧅", "🍄", "🥜", "🌰", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗", "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧈", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", "🥡", "🦀", "🦞", "🦐", "🦑", "🦪", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🥤", "🧋", "🧃", "🧉", "🧊", "🥢", "🍽️", "🍴", "🥄", "🔪", "🏺" },
-  Objects = { "🕶️", "🥽", "🥼", "🦺", "👔", "👕", "👖", "🧣", "🧤", "🧥", "🧦", "👗", "👘", "🥻", "🩱", "🩲", "🩳", "👙", "👚", "👛", "👜", "👝", "🛍️", "🎒", "🩴", "👞", "👟", "🥾", "🥿", "👠", "👡", "🩰", "👢", "👑", "👒", "🎩", "🎓", "🧢", "🪖", "⛑️", "📿", "💄", "💍", "💎", "🔇", "🔈", "🔉", "🔊", "📢", "📣", "📯", "🔔", "🔕", "🎼", "🎵", "🎶", "🎙️", "🎚️", "🎛️", "🎤", "🎧", "📻", "🎷", "🪗", "🎸", "🎹", "🎺", "🎻", "🪕", "🥁", "🪘", "📱", "📲", "☎️", "📞", "📟", "📠", "🔋", "🔌", "💻", "🖥️", "🖨️", "⌨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "🎥", "🎞️", "📽️", "🎬", "📺", "📷", "📸", "📹", "📼", "🔍", "🔎", "🕯️", "💡", "🔦", "🏮", "🪔", "📔", "📕", "📖", "📗", "📘", "📙", "📚", "📓", "📒", "📃", "📜", "📄", "📰", "🗞️", "📑", "🔖", "🏷️", "💰", "🪙", "💴", "💵", "💶", "💷", "💸", "💳", "🧾", "💹", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "🖌️", "🖍️", "📝", "💼", "📁", "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "📎", "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "🔫", "🪃", "🏹", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", "🗜️", "⚖️", "🦯", "🔗", "⛓️", "🪝", "🧰", "🧲", "🪜", "⚗️", "🧪", "🧫", "🧬", "🔬", "🔭", "📡", "💉", "🩸", "💊", "🩹", "🩺", "🚪", "🛗", "🪞", "🪟", "🛏️", "🛋️", "🪑", "🚽", "🪠", "🚿", "🛁", "🪤", "🪒", "🧴", "🧷", "🧹", "🧺", "🧻", "🪣", "🧼", "🪥", "🧽", "🧯", "🛒", "🚬", "⚰️", "🪦", "⚱️", "🗿", "🪧" },
-  ["People & Body"] = { "🤚", "🖐️", "✋", "🖖", "👌", "🤌", "🤏", "✌️", "🤞", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "👨‍🦰", "👨‍🦱", "👨‍🦳", "👨‍🦲", "👩", "👩‍🦰", "🧑‍🦰", "👩‍🦱", "🧑‍🦱", "👩‍🦳", "🧑‍🦳", "👩‍🦲", "🧑‍🦲", "👱‍♀️", "👱‍♂️", "🧓", "👴", "👵", "🙍", "🙍‍♂️", "🙍‍♀️", "🙎", "🙎‍♂️", "🙎‍♀️", "🙅", "🙅‍♂️", "🙅‍♀️", "🙆", "🙆‍♂️", "🙆‍♀️", "💁", "💁‍♂️", "💁‍♀️", "🙋", "🙋‍♂️", "🙋‍♀️", "🧏", "🧏‍♂️", "🧏‍♀️", "🙇", "🙇‍♂️", "🙇‍♀️", "🤦", "🤦‍♂️", "🤦‍♀️", "🤷", "🤷‍♂️", "🤷‍♀️", "🧑‍⚕️", "👨‍⚕️", "👩‍⚕️", "🧑‍🎓", "👨‍🎓", "👩‍🎓", "🧑‍🏫", "👨‍🏫", "👩‍🏫", "🧑‍⚖️", "👨‍⚖️", "👩‍⚖️", "🧑‍🌾", "👨‍🌾", "👩‍🌾", "🧑‍🍳", "👨‍🍳", "👩‍🍳", "🧑‍🔧", "👨‍🔧", "👩‍🔧", "🧑‍🏭", "👨‍🏭", "👩‍🏭", "🧑‍💼", "👨‍💼", "👩‍💼", "🧑‍🔬", "👨‍🔬", "👩‍🔬", "🧑‍💻", "👨‍💻", "👩‍💻", "🧑‍🎤", "👨‍🎤", "👩‍🎤", "🧑‍🎨", "👨‍🎨", "👩‍🎨", "🧑‍✈️", "👨‍✈️", "👩‍✈️", "🧑‍🚀", "👨‍🚀", "👩‍🚀", "🧑‍🚒", "👨‍🚒", "👩‍🚒", "👮", "👮‍♂️", "👮‍♀️", "🕵️", "🕵️‍♂️", "🕵️‍♀️", "💂", "💂‍♂️", "💂‍♀️", "🥷", "👷", "👷‍♂️", "👷‍♀️", "🤴", "👸", "👳", "👳‍♂️", "👳‍♀️", "👲", "🧕", "🤵", "🤵‍♂️", "🤵‍♀️", "👰", "👰‍♂️", "👰‍♀️", "🤰", "🤱", "👩‍🍼", "👨‍🍼", "🧑‍🍼", "👼", "🎅", "🤶", "🧑‍🎄", "🦸", "🦸‍♂️", "🦸‍♀️", "🦹", "🦹‍♂️", "🦹‍♀️", "🧙", "🧙‍♂️", "🧙‍♀️", "🧚", "🧚‍♂️", "🧚‍♀️", "🧛", "🧛‍♂️", "🧛‍♀️", "🧜", "🧜‍♂️", "🧜‍♀️", "🧝", "🧝‍♂️", "🧝‍♀️", "🧞", "🧞‍♂️", "🧞‍♀️", "🧟", "🧟‍♂️", "🧟‍♀️", "💆", "💆‍♂️", "💆‍♀️", "💇", "💇‍♂️", "💇‍♀️", "🚶", "🚶‍♂️", "🚶‍♀️", "🧍", "🧍‍♂️", "🧍‍♀️", "🧎", "🧎‍♂️", "🧎‍♀️", "🧑‍🦯", "👨‍🦯", "👩‍🦯", "🧑‍🦼", "👨‍🦼", "👩‍🦼", "🧑‍🦽", "👨‍🦽", "👩‍🦽", "🏃", "🏃‍♂️", "🏃‍♀️", "💃", "🕺", "🕴️", "👯", "👯‍♂️", "👯‍♀️", "🧖", "🧖‍♂️", "🧖‍♀️", "🧗", "🧗‍♂️", "🧗‍♀️", "🤺", "🏇", "⛷️", "🏂", "🏌️", "🏌️‍♂️", "🏌️‍♀️", "🏄", "🏄‍♂️", "🏄‍♀️", "🚣", "🚣‍♂️", "🚣‍♀️", "🏊", "🏊‍♂️", "🏊‍♀️", "⛹️", "⛹️‍♂️", "⛹️‍♀️", "🏋️", "🏋️‍♂️", "🏋️‍♀️", "🚴", "🚴‍♂️", "🚴‍♀️", "🚵", "🚵‍♂️", "🚵‍♀️", "🤸", "🤸‍♂️", "🤸‍♀️", "🤼", "🤼‍♂️", "🤼‍♀️", "🤽", "🤽‍♂️", "🤽‍♀️", "🤾", "🤾‍♂️", "🤾‍♀️", "🤹", "🤹‍♂️", "🤹‍♀️", "🧘", "🧘‍♂️", "🧘‍♀️", "🛀", "🛌", "🧑‍🤝‍🧑", "👭", "👫", "👬", "💏", "👩‍❤️‍💋‍👨", "👨‍❤️‍💋‍👨", "👩‍❤️‍💋‍👩", "💑", "👩‍❤️‍👨", "👨‍❤️‍👨", "👩‍❤️‍👩", "👪", "👨‍👩‍👦", "👨‍👩‍👧", "👨‍👩‍👧‍👦", "👨‍👩‍👦‍👦", "👨‍👩‍👧‍👧", "👨‍👨‍👦", "👨‍👨‍👧", "👨‍👨‍👧‍👦", "👨‍👨‍👦‍👦", "👨‍👨‍👧‍👧", "👩‍👩‍👦", "👩‍👩‍👧", "👩‍👩‍👧‍👦", "👩‍👩‍👦‍👦", "👩‍👩‍👧‍👧", "👨‍👦", "👨‍👦‍👦", "👨‍👧", "👨‍👧‍👦", "👨‍👧‍👧", "👩‍👦", "👩‍👦‍👦", "👩‍👧", "👩‍👧‍👦", "👩‍👧‍👧", "🗣️", "👤", "👥", "🫂", "👣" },
-  ["Smileys & Emotion"] = { "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔", "🤐", "🤨", "😐", "😑", "😶", "😏", "😒", "🙄", "😬", "🤥", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🥺", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🙈", "🙉", "🙊", "💋", "💌", "💘", "💝", "💖", "💗", "💓", "💞", "💕", "💟", "❣️", "💔", "❤️", "🧡", "💛", "💚", "💙", "💜", "🤎", "🖤", "🤍", "💯", "💢", "💥", "💫", "💦", "💨", "🕳️", "💣", "💬", "👁️‍🗨️", "🗨️", "🗯️", "💭", "💤" },
-  Symbols = { "🚮", "🚰", "♿", "🚹", "🚺", "🚻", "🚼", "🚾", "🛂", "🛃", "🛄", "🛅", "⚠️", "🚸", "⛔", "🚫", "🚳", "🚭", "🚯", "🚱", "🚷", "📵", "🔞", "☢️", "☣️", "⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️", "↕️", "↔️", "↩️", "↪️", "⤴️", "⤵️", "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⚛️", "🕉️", "✡️", "☸️", "☯️", "✝️", "☦️", "☪️", "☮️", "🕎", "🔯", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "⛎", "🔀", "🔁", "🔂", "▶️", "⏩", "⏭️", "⏯️", "◀️", "⏪", "⏮️", "🔼", "⏫", "🔽", "⏬", "⏸️", "⏹️", "⏺️", "⏏️", "🎦", "🔅", "🔆", "📶", "📳", "📴", "♀️", "♂️", "⚧️", "✖️", "➕", "➖", "➗", "♾️", "‼️", "⁉️", "❓", "❔", "❕", "❗", "〰️", "💱", "💲", "⚕️", "♻️", "⚜️", "🔱", "📛", "🔰", "⭕", "✅", "☑️", "✔️", "❌", "❎", "➰", "➿", "〽️", "✳️", "✴️", "❇️", "©️", "®️", "™️", "#️⃣", "*️⃣", "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟", "🔠", "🔡", "🔢", "🔣", "🔤", "🅰️", "🆎", "🅱️", "🆑", "🆒", "🆓", "ℹ️", "🆔", "Ⓜ️", "🆕", "🆖", "🅾️", "🆗", "🅿️", "🆘", "🆙", "🆚", "🈁", "🈂️", "🈷️", "🈶", "🈯", "🉐", "🈹", "🈚", "🈲", "🉑", "🈸", "🈴", "🈳", "㊗️", "㊙️", "🈺", "🈵", "🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪", "🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "🟫", "⬛", "⬜", "◼️", "◻️", "◾", "◽", "▪️", "▫️", "🔶", "🔷", "🔸", "🔹", "🔺", "🔻", "💠", "🔘", "🔳", "🔲" },
-  ["Travel & Places"] = { "🌎", "🌏", "🌐", "🗺️", "🗾", "🧭", "🏔️", "⛰️", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🎡", "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎️", "🏍️", "🛵", "🦽", "🦼", "🛺", "🚲", "🛴", "🛹", "🛼", "🚏", "🛣️", "🛤️", "🛢️", "⛽", "🚨", "🚥", "🚦", "🛑", "🚧", "⚓", "⛵", "🛶", "🚤", "🛳️", "⛴️", "🛥️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", "🚟", "🚠", "🚡", "🛰️", "🚀", "🛸", "🛎️", "🧳", "⌛", "⏳", "⌚", "⏰", "⏱️", "⏲️", "🕰️", "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠", "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌙", "🌚", "🌛", "🌜", "🌡️", "☀️", "🌝", "🌞", "🪐", "⭐", "🌟", "🌠", "🌌", "☁️", "⛅", "⛈️", "🌤️", "🌥️", "🌦️", "🌧️", "🌨️", "🌩️", "🌪️", "🌫️", "🌬️", "🌀", "🌈", "🌂", "☂️", "☔", "⛱️", "⚡", "❄️", "☃️", "⛄", "☄️", "🔥", "💧", "🌊" }
+  Activities = { "🎃", "🎄", "🎆", "🎇", "🧨", "✨", "🎈", "🎉", "🎊", "🎋", "🎍", "🎎", "🎏", "🎐", "🎑", "🧧", "🎀", "🎁", "🎗️", "🎟️", "🎫", "🎖️", "🏆", "🏅", "🥇", "🥈", "🥉", "⚽", "⚾", "🥎", "🏀", "🏐", "🏈", "🏉", "🎾", "🥏", "🎳", "🏏", "🏑", "🏒", "🥍", "🏓", "🏸", "🥊", "🥋", "🥅", "⛳", "⛸️", "🎣", "🤿", "🎽", "🎿", "🛷", "🥌", "🎯", "🪀", "🪁", "🔫", "🎱", "🔮", "🪄", "🎮", "🕹️", "🎰", "🎲", "🧩", "🧸", "🪅", "🪩", "🪆", "♠️", "♥️", "♦️", "♣️", "♟️", "🃏", "🀄", "🎴", "🎭", "🖼️", "🎨", "🧵", "🪡", "🧶", "🪢" },
+  ["Animals & Nature"] = { "🐵", "🐒", "🦍", "🦧", "🐶", "🐕", "🦮", "🐕‍🦺", "🐩", "🐺", "🦊", "🦝", "🐱", "🐈", "🐈‍⬛", "🦁", "🐯", "🐅", "🐆", "🐴", "🫎", "🫏", "🐎", "🦄", "🦓", "🦌", "🦬", "🐮", "🐂", "🐃", "🐄", "🐷", "🐖", "🐗", "🐽", "🐏", "🐑", "🐐", "🐪", "🐫", "🦙", "🦒", "🐘", "🦣", "🦏", "🦛", "🐭", "🐁", "🐀", "🐹", "🐰", "🐇", "🐿️", "🦫", "🦔", "🦇", "🐻", "🐻‍❄️", "🐨", "🐼", "🦥", "🦦", "🦨", "🦘", "🦡", "🐾", "🦃", "🐔", "🐓", "🐣", "🐤", "🐥", "🐦", "🐧", "🕊️", "🦅", "🦆", "🦢", "🦉", "🦤", "🪶", "🦩", "🦚", "🦜", "🪽", "🐦‍⬛", "🪿", "🐦‍🔥", "🐸", "🐊", "🐢", "🦎", "🐍", "🐲", "🐉", "🦕", "🦖", "🐳", "🐋", "🐬", "🫍", "🦭", "🐟", "🐠", "🐡", "🦈", "🐙", "🐚", "🪸", "🪼", "🦀", "🦞", "🦐", "🦑", "🦪", "🐌", "🦋", "🐛", "🐜", "🐝", "🪲", "🐞", "🦗", "🪳", "🕷️", "🕸️", "🦂", "🦟", "🪰", "🪱", "🦠", "💐", "🌸", "💮", "🪷", "🏵️", "🌹", "🥀", "🌺", "🌻", "🌼", "🌷", "🪻", "🌱", "🪴", "🌲", "🌳", "🌴", "🌵", "🌾", "🌿", "☘️", "🍀", "🍁", "🍂", "🍃", "🪹", "🪺", "🍄", "🪾" },
+  Flags = { "🏁", "🚩", "🎌", "🏴", "🏳️", "🏳️‍🌈", "🏳️‍⚧️", "🏴‍☠️", "🇦🇨", "🇦🇩", "🇦🇪", "🇦🇫", "🇦🇬", "🇦🇮", "🇦🇱", "🇦🇲", "🇦🇴", "🇦🇶", "🇦🇷", "🇦🇸", "🇦🇹", "🇦🇺", "🇦🇼", "🇦🇽", "🇦🇿", "🇧🇦", "🇧🇧", "🇧🇩", "🇧🇪", "🇧🇫", "🇧🇬", "🇧🇭", "🇧🇮", "🇧🇯", "🇧🇱", "🇧🇲", "🇧🇳", "🇧🇴", "🇧🇶", "🇧🇷", "🇧🇸", "🇧🇹", "🇧🇻", "🇧🇼", "🇧🇾", "🇧🇿", "🇨🇦", "🇨🇨", "🇨🇩", "🇨🇫", "🇨🇬", "🇨🇭", "🇨🇮", "🇨🇰", "🇨🇱", "🇨🇲", "🇨🇳", "🇨🇴", "🇨🇵", "🇨🇶", "🇨🇷", "🇨🇺", "🇨🇻", "🇨🇼", "🇨🇽", "🇨🇾", "🇨🇿", "🇩🇪", "🇩🇬", "🇩🇯", "🇩🇰", "🇩🇲", "🇩🇴", "🇩🇿", "🇪🇦", "🇪🇨", "🇪🇪", "🇪🇬", "🇪🇭", "🇪🇷", "🇪🇸", "🇪🇹", "🇪🇺", "🇫🇮", "🇫🇯", "🇫🇰", "🇫🇲", "🇫🇴", "🇫🇷", "🇬🇦", "🇬🇧", "🇬🇩", "🇬🇪", "🇬🇫", "🇬🇬", "🇬🇭", "🇬🇮", "🇬🇱", "🇬🇲", "🇬🇳", "🇬🇵", "🇬🇶", "🇬🇷", "🇬🇸", "🇬🇹", "🇬🇺", "🇬🇼", "🇬🇾", "🇭🇰", "🇭🇲", "🇭🇳", "🇭🇷", "🇭🇹", "🇭🇺", "🇮🇨", "🇮🇩", "🇮🇪", "🇮🇱", "🇮🇲", "🇮🇳", "🇮🇴", "🇮🇶", "🇮🇷", "🇮🇸", "🇮🇹", "🇯🇪", "🇯🇲", "🇯🇴", "🇯🇵", "🇰🇪", "🇰🇬", "🇰🇭", "🇰🇮", "🇰🇲", "🇰🇳", "🇰🇵", "🇰🇷", "🇰🇼", "🇰🇾", "🇰🇿", "🇱🇦", "🇱🇧", "🇱🇨", "🇱🇮", "🇱🇰", "🇱🇷", "🇱🇸", "🇱🇹", "🇱🇺", "🇱🇻", "🇱🇾", "🇲🇦", "🇲🇨", "🇲🇩", "🇲🇪", "🇲🇫", "🇲🇬", "🇲🇭", "🇲🇰", "🇲🇱", "🇲🇲", "🇲🇳", "🇲🇴", "🇲🇵", "🇲🇶", "🇲🇷", "🇲🇸", "🇲🇹", "🇲🇺", "🇲🇻", "🇲🇼", "🇲🇽", "🇲🇾", "🇲🇿", "🇳🇦", "🇳🇨", "🇳🇪", "🇳🇫", "🇳🇬", "🇳🇮", "🇳🇱", "🇳🇴", "🇳🇵", "🇳🇷", "🇳🇺", "🇳🇿", "🇴🇲", "🇵🇦", "🇵🇪", "🇵🇫", "🇵🇬", "🇵🇭", "🇵🇰", "🇵🇱", "🇵🇲", "🇵🇳", "🇵🇷", "🇵🇸", "🇵🇹", "🇵🇼", "🇵🇾", "🇶🇦", "🇷🇪", "🇷🇴", "🇷🇸", "🇷🇺", "🇷🇼", "🇸🇦", "🇸🇧", "🇸🇨", "🇸🇩", "🇸🇪", "🇸🇬", "🇸🇭", "🇸🇮", "🇸🇯", "🇸🇰", "🇸🇱", "🇸🇲", "🇸🇳", "🇸🇴", "🇸🇷", "🇸🇸", "🇸🇹", "🇸🇻", "🇸🇽", "🇸🇾", "🇸🇿", "🇹🇦", "🇹🇨", "🇹🇩", "🇹🇫", "🇹🇬", "🇹🇭", "🇹🇯", "🇹🇰", "🇹🇱", "🇹🇲", "🇹🇳", "🇹🇴", "🇹🇷", "🇹🇹", "🇹🇻", "🇹🇼", "🇹🇿", "🇺🇦", "🇺🇬", "🇺🇲", "🇺🇳", "🇺🇸", "🇺🇾", "🇺🇿", "🇻🇦", "🇻🇨", "🇻🇪", "🇻🇬", "🇻🇮", "🇻🇳", "🇻🇺", "🇼🇫", "🇼🇸", "🇽🇰", "🇾🇪", "🇾🇹", "🇿🇦", "🇿🇲", "🇿🇼", "🏴󠁧󠁢󠁥󠁮󠁧󠁿", "🏴󠁧󠁢󠁳󠁣󠁴󠁿", "🏴󠁧󠁢󠁷󠁬󠁳󠁿" },
+  ["Food & Drink"] = { "🍇", "🍈", "🍉", "🍊", "🍋", "🍋‍🟩", "🍌", "🍍", "🥭", "🍎", "🍏", "🍐", "🍑", "🍒", "🍓", "🫐", "🥝", "🍅", "🫒", "🥥", "🥑", "🍆", "🥔", "🥕", "🌽", "🌶️", "🫑", "🥒", "🥬", "🥦", "🧄", "🧅", "🥜", "🫘", "🌰", "🫚", "🫛", "🍄‍🟫", "🫜", "🍞", "🥐", "🥖", "🫓", "🥨", "🥯", "🥞", "🧇", "🧀", "🍖", "🍗", "🥩", "🥓", "🍔", "🍟", "🍕", "🌭", "🥪", "🌮", "🌯", "🫔", "🥙", "🧆", "🥚", "🍳", "🥘", "🍲", "🫕", "🥣", "🥗", "🍿", "🧈", "🧂", "🥫", "🍱", "🍘", "🍙", "🍚", "🍛", "🍜", "🍝", "🍠", "🍢", "🍣", "🍤", "🍥", "🥮", "🍡", "🥟", "🥠", "🥡", "🍦", "🍧", "🍨", "🍩", "🍪", "🎂", "🍰", "🧁", "🥧", "🍫", "🍬", "🍭", "🍮", "🍯", "🍼", "🥛", "☕", "🫖", "🍵", "🍶", "🍾", "🍷", "🍸", "🍹", "🍺", "🍻", "🥂", "🥃", "🫗", "🥤", "🧋", "🧃", "🧉", "🧊", "🥢", "🍽️", "🍴", "🥄", "🔪", "🫙", "🏺" },
+  Objects = { "👓", "🕶️", "🥽", "🥼", "🦺", "👔", "👕", "👖", "🧣", "🧤", "🧥", "🧦", "👗", "👘", "🥻", "🩱", "🩲", "🩳", "👙", "👚", "🪭", "👛", "👜", "👝", "🛍️", "🎒", "🩴", "👞", "👟", "🥾", "🥿", "👠", "👡", "🩰", "👢", "🪮", "👑", "👒", "🎩", "🎓", "🧢", "🪖", "⛑️", "📿", "💄", "💍", "💎", "🔇", "🔈", "🔉", "🔊", "📢", "📣", "📯", "🔔", "🔕", "🎼", "🎵", "🎶", "🎙️", "🎚️", "🎛️", "🎤", "🎧", "📻", "🎷", "🎺", "🪊", "🪗", "🎸", "🎹", "🎻", "🪕", "🥁", "🪘", "🪇", "🪈", "🪉", "📱", "📲", "☎️", "📞", "📟", "📠", "🔋", "🪫", "🔌", "💻", "🖥️", "🖨️", "⌨️", "🖱️", "🖲️", "💽", "💾", "💿", "📀", "🧮", "🎥", "🎞️", "📽️", "🎬", "📺", "📷", "📸", "📹", "📼", "🔍", "🔎", "🕯️", "💡", "🔦", "🏮", "🪔", "📔", "📕", "📖", "📗", "📘", "📙", "📚", "📓", "📒", "📃", "📜", "📄", "📰", "🗞️", "📑", "🔖", "🏷️", "🪙", "💰", "🪎", "💴", "💵", "💶", "💷", "💸", "💳", "🧾", "💹", "✉️", "📧", "📨", "📩", "📤", "📥", "📦", "📫", "📪", "📬", "📭", "📮", "🗳️", "✏️", "✒️", "🖋️", "🖊️", "🖌️", "🖍️", "📝", "💼", "📁", "📂", "🗂️", "📅", "📆", "🗒️", "🗓️", "📇", "📈", "📉", "📊", "📋", "📌", "📍", "📎", "🖇️", "📏", "📐", "✂️", "🗃️", "🗄️", "🗑️", "🔒", "🔓", "🔏", "🔐", "🔑", "🗝️", "🔨", "🪓", "⛏️", "⚒️", "🛠️", "🗡️", "⚔️", "💣", "🪃", "🏹", "🛡️", "🪚", "🔧", "🪛", "🔩", "⚙️", "🗜️", "⚖️", "🦯", "🔗", "⛓️‍💥", "⛓️", "🪝", "🧰", "🧲", "🪜", "🪏", "⚗️", "🧪", "🧫", "🧬", "🔬", "🔭", "📡", "💉", "🩸", "💊", "🩹", "🩼", "🩺", "🩻", "🚪", "🛗", "🪞", "🪟", "🛏️", "🛋️", "🪑", "🚽", "🪠", "🚿", "🛁", "🪤", "🪒", "🧴", "🧷", "🧹", "🧺", "🧻", "🪣", "🧼", "🫧", "🪥", "🧽", "🧯", "🛒", "🚬", "⚰️", "🪦", "⚱️", "🧿", "🪬", "🗿", "🪧", "🪪" },
+  ["People & Body"] = { "👋", "🤚", "🖐️", "✋", "🖖", "🫱", "🫲", "🫳", "🫴", "🫷", "🫸", "👌", "🤌", "🤏", "✌️", "🤞", "🫰", "🤟", "🤘", "🤙", "👈", "👉", "👆", "🖕", "👇", "☝️", "🫵", "👍", "👎", "✊", "👊", "🤛", "🤜", "👏", "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✍️", "💅", "🤳", "💪", "🦾", "🦿", "🦵", "🦶", "👂", "🦻", "👃", "🧠", "🫀", "🫁", "🦷", "🦴", "👀", "👁️", "👅", "👄", "🫦", "👶", "🧒", "👦", "👧", "🧑", "👱", "👨", "🧔", "🧔‍♂️", "🧔‍♀️", "👨‍🦰", "👨‍🦱", "👨‍🦳", "👨‍🦲", "👩", "👩‍🦰", "🧑‍🦰", "👩‍🦱", "🧑‍🦱", "👩‍🦳", "🧑‍🦳", "👩‍🦲", "🧑‍🦲", "👱‍♀️", "👱‍♂️", "🧓", "👴", "👵", "🙍", "🙍‍♂️", "🙍‍♀️", "🙎", "🙎‍♂️", "🙎‍♀️", "🙅", "🙅‍♂️", "🙅‍♀️", "🙆", "🙆‍♂️", "🙆‍♀️", "💁", "💁‍♂️", "💁‍♀️", "🙋", "🙋‍♂️", "🙋‍♀️", "🧏", "🧏‍♂️", "🧏‍♀️", "🙇", "🙇‍♂️", "🙇‍♀️", "🤦", "🤦‍♂️", "🤦‍♀️", "🤷", "🤷‍♂️", "🤷‍♀️", "🧑‍⚕️", "👨‍⚕️", "👩‍⚕️", "🧑‍🎓", "👨‍🎓", "👩‍🎓", "🧑‍🏫", "👨‍🏫", "👩‍🏫", "🧑‍⚖️", "👨‍⚖️", "👩‍⚖️", "🧑‍🌾", "👨‍🌾", "👩‍🌾", "🧑‍🍳", "👨‍🍳", "👩‍🍳", "🧑‍🔧", "👨‍🔧", "👩‍🔧", "🧑‍🏭", "👨‍🏭", "👩‍🏭", "🧑‍💼", "👨‍💼", "👩‍💼", "🧑‍🔬", "👨‍🔬", "👩‍🔬", "🧑‍💻", "👨‍💻", "👩‍💻", "🧑‍🎤", "👨‍🎤", "👩‍🎤", "🧑‍🎨", "👨‍🎨", "👩‍🎨", "🧑‍✈️", "👨‍✈️", "👩‍✈️", "🧑‍🚀", "👨‍🚀", "👩‍🚀", "🧑‍🚒", "👨‍🚒", "👩‍🚒", "👮", "👮‍♂️", "👮‍♀️", "🕵️", "🕵️‍♂️", "🕵️‍♀️", "💂", "💂‍♂️", "💂‍♀️", "🥷", "👷", "👷‍♂️", "👷‍♀️", "🫅", "🤴", "👸", "👳", "👳‍♂️", "👳‍♀️", "👲", "🧕", "🤵", "🤵‍♂️", "🤵‍♀️", "👰", "👰‍♂️", "👰‍♀️", "🤰", "🫃", "🫄", "🤱", "👩‍🍼", "👨‍🍼", "🧑‍🍼", "👼", "🎅", "🤶", "🧑‍🎄", "🦸", "🦸‍♂️", "🦸‍♀️", "🦹", "🦹‍♂️", "🦹‍♀️", "🧙", "🧙‍♂️", "🧙‍♀️", "🧚", "🧚‍♂️", "🧚‍♀️", "🧛", "🧛‍♂️", "🧛‍♀️", "🧜", "🧜‍♂️", "🧜‍♀️", "🧝", "🧝‍♂️", "🧝‍♀️", "🧞", "🧞‍♂️", "🧞‍♀️", "🧟", "🧟‍♂️", "🧟‍♀️", "🧌", "🫈", "💆", "💆‍♂️", "💆‍♀️", "💇", "💇‍♂️", "💇‍♀️", "🚶", "🚶‍♂️", "🚶‍♀️", "🚶‍➡️", "🚶‍♀️‍➡️", "🚶‍♂️‍➡️", "🧍", "🧍‍♂️", "🧍‍♀️", "🧎", "🧎‍♂️", "🧎‍♀️", "🧎‍➡️", "🧎‍♀️‍➡️", "🧎‍♂️‍➡️", "🧑‍🦯", "🧑‍🦯‍➡️", "👨‍🦯", "👨‍🦯‍➡️", "👩‍🦯", "👩‍🦯‍➡️", "🧑‍🦼", "🧑‍🦼‍➡️", "👨‍🦼", "👨‍🦼‍➡️", "👩‍🦼", "👩‍🦼‍➡️", "🧑‍🦽", "🧑‍🦽‍➡️", "👨‍🦽", "👨‍🦽‍➡️", "👩‍🦽", "👩‍🦽‍➡️", "🏃", "🏃‍♂️", "🏃‍♀️", "🏃‍➡️", "🏃‍♀️‍➡️", "🏃‍♂️‍➡️", "🧑‍🩰", "💃", "🕺", "🕴️", "👯", "👯‍♂️", "👯‍♀️", "🧖", "🧖‍♂️", "🧖‍♀️", "🧗", "🧗‍♂️", "🧗‍♀️", "🤺", "🏇", "⛷️", "🏂", "🏌️", "🏌️‍♂️", "🏌️‍♀️", "🏄", "🏄‍♂️", "🏄‍♀️", "🚣", "🚣‍♂️", "🚣‍♀️", "🏊", "🏊‍♂️", "🏊‍♀️", "⛹️", "⛹️‍♂️", "⛹️‍♀️", "🏋️", "🏋️‍♂️", "🏋️‍♀️", "🚴", "🚴‍♂️", "🚴‍♀️", "🚵", "🚵‍♂️", "🚵‍♀️", "🤸", "🤸‍♂️", "🤸‍♀️", "🤼", "🤼‍♂️", "🤼‍♀️", "🤽", "🤽‍♂️", "🤽‍♀️", "🤾", "🤾‍♂️", "🤾‍♀️", "🤹", "🤹‍♂️", "🤹‍♀️", "🧘", "🧘‍♂️", "🧘‍♀️", "🛀", "🛌", "🧑‍🤝‍🧑", "👭", "👫", "👬", "💏", "👩‍❤️‍💋‍👨", "👨‍❤️‍💋‍👨", "👩‍❤️‍💋‍👩", "💑", "👩‍❤️‍👨", "👨‍❤️‍👨", "👩‍❤️‍👩", "👨‍👩‍👦", "👨‍👩‍👧", "👨‍👩‍👧‍👦", "👨‍👩‍👦‍👦", "👨‍👩‍👧‍👧", "👨‍👨‍👦", "👨‍👨‍👧", "👨‍👨‍👧‍👦", "👨‍👨‍👦‍👦", "👨‍👨‍👧‍👧", "👩‍👩‍👦", "👩‍👩‍👧", "👩‍👩‍👧‍👦", "👩‍👩‍👦‍👦", "👩‍👩‍👧‍👧", "👨‍👦", "👨‍👦‍👦", "👨‍👧", "👨‍👧‍👦", "👨‍👧‍👧", "👩‍👦", "👩‍👦‍👦", "👩‍👧", "👩‍👧‍👦", "👩‍👧‍👧", "🗣️", "👤", "👥", "🫂", "👪", "🧑‍🧑‍🧒", "🧑‍🧑‍🧒‍🧒", "🧑‍🧒", "🧑‍🧒‍🧒", "👣", "🫆" },
+  ["Smileys & Emotion"] = { "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃", "🫠", "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "☺️", "😚", "😙", "🥲", "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🫢", "🫣", "🤫", "🤔", "🫡", "🤐", "🤨", "😐", "😑", "😶", "🫥", "😶‍🌫️", "😏", "😒", "🙄", "😬", "😮‍💨", "🤥", "🫨", "🙂‍↔️", "🙂‍↕️", "😌", "😔", "😪", "🤤", "😴", "🫩", "😷", "🤒", "🤕", "🤢", "🤮", "🤧", "🥵", "🥶", "🥴", "😵", "😵‍💫", "🤯", "🤠", "🥳", "🥸", "😎", "🤓", "🧐", "😕", "🫤", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳", "🫪", "🥺", "🥹", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖", "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬", "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽", "👾", "🤖", "😺", "😸", "😹", "😻", "😼", "😽", "🙀", "😿", "😾", "🙈", "🙉", "🙊", "💌", "💘", "💝", "💖", "💗", "💓", "💞", "💕", "💟", "❣️", "💔", "❤️‍🔥", "❤️‍🩹", "❤️", "🩷", "🧡", "💛", "💚", "💙", "🩵", "💜", "🤎", "🖤", "🩶", "🤍", "💋", "💯", "💢", "🫯", "💥", "💫", "💦", "💨", "🕳️", "💬", "👁️‍🗨️", "🗨️", "🗯️", "💭", "💤" },
+  Symbols = { "🏧", "🚮", "🚰", "♿", "🚹", "🚺", "🚻", "🚼", "🚾", "🛂", "🛃", "🛄", "🛅", "⚠️", "🚸", "⛔", "🚫", "🚳", "🚭", "🚯", "🚱", "🚷", "📵", "🔞", "☢️", "☣️", "⬆️", "↗️", "➡️", "↘️", "⬇️", "↙️", "⬅️", "↖️", "↕️", "↔️", "↩️", "↪️", "⤴️", "⤵️", "🔃", "🔄", "🔙", "🔚", "🔛", "🔜", "🔝", "🛐", "⚛️", "🕉️", "✡️", "☸️", "☯️", "✝️", "☦️", "☪️", "☮️", "🕎", "🔯", "🪯", "♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓", "⛎", "🔀", "🔁", "🔂", "▶️", "⏩", "⏭️", "⏯️", "◀️", "⏪", "⏮️", "🔼", "⏫", "🔽", "⏬", "⏸️", "⏹️", "⏺️", "⏏️", "🎦", "🔅", "🔆", "📶", "🛜", "📳", "📴", "♀️", "♂️", "⚧️", "✖️", "➕", "➖", "➗", "🟰", "♾️", "‼️", "⁉️", "❓", "❔", "❕", "❗", "〰️", "💱", "💲", "⚕️", "♻️", "⚜️", "🔱", "📛", "🔰", "⭕", "✅", "☑️", "✔️", "❌", "❎", "➰", "➿", "〽️", "✳️", "✴️", "❇️", "©️", "®️", "™️", "🫟", "#️⃣", "*️⃣", "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟", "🔠", "🔡", "🔢", "🔣", "🔤", "🅰️", "🆎", "🅱️", "🆑", "🆒", "🆓", "ℹ️", "🆔", "Ⓜ️", "🆕", "🆖", "🅾️", "🆗", "🅿️", "🆘", "🆙", "🆚", "🈁", "🈂️", "🈷️", "🈶", "🈯", "🉐", "🈹", "🈚", "🈲", "🉑", "🈸", "🈴", "🈳", "㊗️", "㊙️", "🈺", "🈵", "🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "🟤", "⚫", "⚪", "🟥", "🟧", "🟨", "🟩", "🟦", "🟪", "🟫", "⬛", "⬜", "◼️", "◻️", "◾", "◽", "▪️", "▫️", "🔶", "🔷", "🔸", "🔹", "🔺", "🔻", "💠", "🔘", "🔳", "🔲" },
+  ["Travel & Places"] = { "🌍", "🌎", "🌏", "🌐", "🗺️", "🗾", "🧭", "🏔️", "⛰️", "🛘", "🌋", "🗻", "🏕️", "🏖️", "🏜️", "🏝️", "🏞️", "🏟️", "🏛️", "🏗️", "🧱", "🪨", "🪵", "🛖", "🏘️", "🏚️", "🏠", "🏡", "🏢", "🏣", "🏤", "🏥", "🏦", "🏨", "🏩", "🏪", "🏫", "🏬", "🏭", "🏯", "🏰", "💒", "🗼", "🗽", "⛪", "🕌", "🛕", "🕍", "⛩️", "🕋", "⛲", "⛺", "🌁", "🌃", "🏙️", "🌄", "🌅", "🌆", "🌇", "🌉", "♨️", "🎠", "🛝", "🎡", "🎢", "💈", "🎪", "🚂", "🚃", "🚄", "🚅", "🚆", "🚇", "🚈", "🚉", "🚊", "🚝", "🚞", "🚋", "🚌", "🚍", "🚎", "🚐", "🚑", "🚒", "🚓", "🚔", "🚕", "🚖", "🚗", "🚘", "🚙", "🛻", "🚚", "🚛", "🚜", "🏎️", "🏍️", "🛵", "🦽", "🦼", "🛺", "🚲", "🛴", "🛹", "🛼", "🚏", "🛣️", "🛤️", "🛢️", "⛽", "🛞", "🚨", "🚥", "🚦", "🛑", "🚧", "⚓", "🛟", "⛵", "🛶", "🚤", "🛳️", "⛴️", "🛥️", "🚢", "✈️", "🛩️", "🛫", "🛬", "🪂", "💺", "🚁", "🚟", "🚠", "🚡", "🛰️", "🚀", "🛸", "🛎️", "🧳", "⌛", "⏳", "⌚", "⏰", "⏱️", "⏲️", "🕰️", "🕛", "🕧", "🕐", "🕜", "🕑", "🕝", "🕒", "🕞", "🕓", "🕟", "🕔", "🕠", "🕕", "🕡", "🕖", "🕢", "🕗", "🕣", "🕘", "🕤", "🕙", "🕥", "🕚", "🕦", "🌑", "🌒", "🌓", "🌔", "🌕", "🌖", "🌗", "🌘", "🌙", "🌚", "🌛", "🌜", "🌡️", "☀️", "🌝", "🌞", "🪐", "⭐", "🌟", "🌠", "🌌", "☁️", "⛅", "⛈️", "🌤️", "🌥️", "🌦️", "🌧️", "🌨️", "🌩️", "🌪️", "🌫️", "🌬️", "🌀", "🌈", "🌂", "☂️", "☔", "⛱️", "⚡", "❄️", "☃️", "⛄", "☄️", "🔥", "💧", "🌊" }
 }
 local categoryChoices = { {
+    categoryName = "Smileys & Emotion",
+    subText = "😀 😃 😄 😁 😆 😅 🤣 😂 🙂 🙃",
+    text = "Smileys & Emotion"
+  }, {
+    categoryName = "People & Body",
+    subText = "👋 🤚 🖐️ ✋ 🖖 🫱 🫲 🫳 🫴 🫷",
+    text = "People & Body"
+  }, {
+    categoryName = "Animals & Nature",
+    subText = "🐵 🐒 🦍 🦧 🐶 🐕 🦮 🐕‍🦺 🐩 🐺",
+    text = "Animals & Nature"
+  }, {
+    categoryName = "Food & Drink",
+    subText = "🍇 🍈 🍉 🍊 🍋 🍋‍🟩 🍌 🍍 🥭 🍎",
+    text = "Food & Drink"
+  }, {
+    categoryName = "Travel & Places",
+    subText = "🌍 🌎 🌏 🌐 🗺️ 🗾 🧭 🏔️ ⛰️ 🛘",
+    text = "Travel & Places"
+  }, {
+    categoryName = "Activities",
+    subText = "🎃 🎄 🎆 🎇 🧨 ✨ 🎈 🎉 🎊 🎋",
+    text = "Activities"
+  }, {
     categoryName = "Objects",
-    subText = "🕶️ 🥽 🥼 🦺 👔 👕 👖 🧣 🧤 🧥 10",
+    subText = "👓 🕶️ 🥽 🥼 🦺 👔 👕 👖 🧣 🧤",
     text = "Objects"
   }, {
     categoryName = "Symbols",
-    subText = "🚮 🚰 ♿ 🚹 🚺 🚻 🚼 🚾 🛂 🛃 10",
+    subText = "🏧 🚮 🚰 ♿ 🚹 🚺 🚻 🚼 🚾 🛂",
     text = "Symbols"
   }, {
-    categoryName = "Smileys & Emotion",
-    subText = "😃 😄 😁 😆 😅 🤣 😂 🙂 🙃 😉 10",
-    text = "Smileys & Emotion"
-  }, {
-    categoryName = "Activities",
-    subText = "🎄 🎆 🎇 🧨 ✨ 🎈 🎉 🎊 🎋 🎍 10",
-    text = "Activities"
-  }, {
-    categoryName = "Food & Drink",
-    subText = "🍈 🍉 🍊 🍋 🍌 🍍 🥭 🍎 🍏 🍐 10",
-    text = "Food & Drink"
-  }, {
-    categoryName = "People & Body",
-    subText = "🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🤟 10",
-    text = "People & Body"
-  }, {
     categoryName = "Flags",
-    subText = "🚩 🎌 🏴 🏳️ 🏳️‍🌈 🏳️‍⚧️ 🏴‍☠️ 🇦🇨 🇦🇩 🇦🇪 10",
+    subText = "🏁 🚩 🎌 🏴 🏳️ 🏳️‍🌈 🏳️‍⚧️ 🏴‍☠️ 🇦🇨 🇦🇩",
     text = "Flags"
-  }, {
-    categoryName = "Animals & Nature",
-    subText = "🐒 🦍 🦧 🐶 🐕 🦮 🐕‍🦺 🐩 🐺 🦊 10",
-    text = "Animals & Nature"
-  }, {
-    categoryName = "Travel & Places",
-    subText = "🌎 🌏 🌐 🗺️ 🗾 🧭 🏔️ ⛰️ 🌋 🗻 10",
-    text = "Travel & Places"
   } }
 -- luacheck: pop
 
