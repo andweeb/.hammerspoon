@@ -2087,15 +2087,15 @@ local choices = { {
     text = "🤹‍♀️"
   }, {
     item = "🧘",
-    subText = "(person in lotus position)  :lotus_position: #meditation",
+    subText = "(person in lotus position)  :lotus_position: #meditation #yoga",
     text = "🧘"
   }, {
     item = "🧘‍♂️",
-    subText = "(man in lotus position)  :lotus_position_man: #meditation",
+    subText = "(man in lotus position)  :lotus_position_man: #meditation #yoga",
     text = "🧘‍♂️"
   }, {
     item = "🧘‍♀️",
-    subText = "(woman in lotus position)  :lotus_position_woman: #meditation",
+    subText = "(woman in lotus position)  :lotus_position_woman: #meditation #yoga",
     text = "🧘‍♀️"
   }, {
     item = "🛀",
